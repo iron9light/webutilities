@@ -144,12 +144,12 @@ public class JSCSSMergeServlet extends HttpServlet{
 	}
 	
 	private String addHeaders(HttpServletRequest req,HttpServletResponse resp){
-		String url = req.getRequestURI().toLowerCase();
-		if(url.endsWith(".json")){
+		String url = req.getRequestURI(), lowerUrl = url.toLowerCase();
+		if(lowerUrl.endsWith(".json")){
 			resp.setContentType("application/json");
-		}else if(url.endsWith(".js")){
+		}else if(lowerUrl.endsWith(".js")){
 			resp.setContentType("text/javascript");
-		}else if(url.endsWith(".css")){
+		}else if(lowerUrl.endsWith(".css")){
 			resp.setContentType("text/css");
 		}
 		resp.addDateHeader("Expires", new Date().getTime() + expiresMinutes*60*1000);
