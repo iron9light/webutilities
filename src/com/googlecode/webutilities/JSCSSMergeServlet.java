@@ -17,14 +17,16 @@
 package com.googlecode.webutilities;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -131,6 +133,12 @@ public class JSCSSMergeServlet extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 	
+	private static final String EXT_JS=".js";
+	
+	private static final String EXT_JSON=".json";
+	
+	private static final String EXT_CSS=".css";
+	
 	private long expiresMinutes = 7*24*60; //+ or - minutes to be added as expires header from current time. default 7 days
 	
 	private boolean useCahce = true;
@@ -143,13 +151,18 @@ public class JSCSSMergeServlet extends HttpServlet{
 		this.expiresMinutes = ifValidNumber(config.getInitParameter("expiresMinutes"), this.expiresMinutes);
 	}
 	
+	/**
+	 * @param req
+	 * @param resp
+	 * @return
+	 */
 	private String addHeaders(HttpServletRequest req,HttpServletResponse resp){
 		String url = req.getRequestURI(), lowerUrl = url.toLowerCase();
-		if(lowerUrl.endsWith(".json")){
+		if(lowerUrl.endsWith(EXT_JSON)){
 			resp.setContentType("application/json");
-		}else if(lowerUrl.endsWith(".js")){
+		}else if(lowerUrl.endsWith(EXT_JS)){
 			resp.setContentType("text/javascript");
-		}else if(lowerUrl.endsWith(".css")){
+		}else if(lowerUrl.endsWith(EXT_CSS)){
 			resp.setContentType("text/css");
 		}
 		resp.addDateHeader("Expires", new Date().getTime() + expiresMinutes*60*1000);
@@ -157,19 +170,40 @@ public class JSCSSMergeServlet extends HttpServlet{
 		return url;
 	}
 	
+	/**
+	 * @param requestURI
+	 * @return
+	 */
+	private String getExtension(String requestURI){
+		String requestURIExtension;
+		if(requestURI.endsWith(EXT_JS)){
+			requestURIExtension=EXT_JS;
+		}else if(requestURI.endsWith(EXT_JSON)){
+			requestURIExtension=EXT_JSON;
+		}else if(requestURI.endsWith(EXT_CSS)){
+			requestURIExtension=EXT_CSS;
+		}else{
+			requestURIExtension="";
+		}
+		return requestURIExtension;		
+	}
+	
 	private void expireCache(){
 		this.cache.clear();
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
-		
+						
 		String url = addHeaders(req, resp);
 		if(req.getParameter("_expirecache_") != null){
 			this.expireCache();
 		}
+		
 		boolean useCache = this.useCahce && req.getParameter("_skipcache_") == null && req.getParameter("_dbg_") == null;
 		
 		if(useCache){
@@ -183,56 +217,64 @@ public class JSCSSMergeServlet extends HttpServlet{
 			}
 		}
 		url = url.replace(req.getContextPath(), ""); 
-		//Split multiple files with comma eg. if URL is http://server/context/js/a,b,c.js then a.js, b.js and c.js have to loaded together
-		String path = super.getServletContext().getRealPath(url.substring(0,url.lastIndexOf("/")));
-		String file = url.substring(url.lastIndexOf("/")+1);
-		
 		Writer out = new StringWriter();
 		if(!useCache){
 			out = resp.getWriter();
 		}
-		String[] files = file.split(",");
-		for(String f : files){
-			if(url.endsWith(".json") && !f.endsWith(".json")){
-				f += ".json";
-			}
-			if(url.endsWith(".js") && !f.endsWith(".js")){
-				f += ".js";
-			}
-			if(url.endsWith(".css") && !f.endsWith(".css")){
-				f += ".css";
-			}
-			String fullPath = path + File.separator + f;
-			FileInputStream fis = null;
+				
+		for(String fullPath : getResources(url)){
+			InputStream is=null;
 			try{
-				File fl = new File(fullPath);
-				fis = new FileInputStream(fl);
-				int c;
-				while((c = fis.read()) != -1){
-					out.write(c);
+				log(fullPath);
+				is = super.getServletContext().getResourceAsStream(fullPath);
+				if(is!=null){
+					int c;
+					while((c = is.read()) != -1){
+						out.write(c);
+					}
+					out.flush();
 				}
-				out.flush();
 			}catch (Exception e) {
-				
 				log("Exception in "+JSCSSMergeServlet.class.getSimpleName()+":" + e);
-				
 			}finally{
-				if(fis != null){
-					fis.close();
+				if(is != null){
+					is.close();
 				}
 				if(out != null){
 					out.close();
 				}
-			}
-			
+			}			
 		}
 		if(useCache){
 			cache.put(req.getRequestURI(), out.toString());
 			resp.getWriter().write(out.toString());
-		}
-		
+		}		
 	}
 	
+	/**
+	 * Split multiple files with comma eg. if URL is http://server/context/js/a,b,c.js 
+	 * then a.js, b.js and c.js have to loaded together.
+	 * 
+	 * @param requestURI
+	 * @return
+	 */
+	private Set<String> getResources(String requestURI){
+		String path = requestURI.substring(0,requestURI.lastIndexOf("/"));
+		String filesPath = requestURI.substring(requestURI.lastIndexOf("/")+1,requestURI.lastIndexOf("."));
+		String extension = getExtension(requestURI);
+		String[] files = filesPath.split(",");
+		Set<String> resources=new HashSet<String>();
+		for(String file:files){
+			resources.add(path + File.separator + file + extension);
+		}				
+		return resources;
+	}
+	
+	/**
+	 * @param s
+	 * @param def
+	 * @return
+	 */
 	private long ifValidNumber(String s, long def){
 		if(s != null && s.matches("[0-9]+")){
 			try{
