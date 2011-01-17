@@ -40,6 +40,8 @@ public final class Constants {
 
     public static final long DEFAULT_EXPIRES_MINUTES = 7 * 24 * 60; //7 days
 
+    public static final long DEFAULT_COMPRESSION_SIZE_THRESHOLD = 128 * 1024; //128KB
+
     private Constants() {
     } //non instantiable
 
