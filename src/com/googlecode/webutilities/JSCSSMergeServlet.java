@@ -209,7 +209,7 @@ public class JSCSSMergeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
+        logger.info("doGetCalled : " + req.getRequestURI());
         String url = setResponseMimeAndHeaders(req, resp);
 
         if (req.getParameter(Constants.PARAM_EXPIRE_CACHE) != null) {
@@ -261,9 +261,6 @@ public class JSCSSMergeServlet extends HttpServlet {
                     is.close();
                 }
                 out.flush();
-//                if (out != null) {
-//                    out.close();
-//                }
             }
         }
         if (out != null) {
@@ -314,15 +311,35 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         for (String filePath : resourcesPath) {
             if (filePath == null) continue;
+
+            if(filePath.startsWith("./")){
+                filePath = filePath.replaceFirst("./","");
+            }
+            
+            if(filePath.contains("/./")){
+                filePath = filePath.replaceAll("/./","");
+            }
+
             String path = filePath + extension;
+
             if (filePath.startsWith("/")) { //absolute
                 path = filePath + extension;
-                currentPath = new File(path).getParent(); // should be like /path/subpath/
-            } else {
+            } else if(filePath.startsWith("../")){
+                while(filePath.startsWith("../")){
+                    filePath = filePath.replaceFirst("../","");
+                    currentPath = new File(currentPath).getParent();
+                }
                 path = currentPath + File.separator + filePath + extension;
-                currentPath = new File(path).getParent(); //this will be current path for next relative resource
+            }else{
+                path = currentPath + File.separator + filePath + extension;
             }
+
+            path = path.replaceAll("//","/");
+
+            currentPath = new File(path).getParent();
+
             logger.info("Adding path: " + path + "(Path for next relative resource will be : " + currentPath + ")");
+
             if(!resources.contains(path)){
                 resources.add(path);
             }
@@ -330,5 +347,6 @@ public class JSCSSMergeServlet extends HttpServlet {
         logger.info("Found " + resources.size() + " resources to process and merge.");
         return resources;
     }
+
 
 }

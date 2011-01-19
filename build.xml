@@ -12,7 +12,7 @@
     <path id="compile.classpath">
         <pathelement location="${build.dir}/classes" />
         <pathelement location="${build.dir}/tests" />
-        <pathelement location="${lib.dir}/yuicompressor-2.4.2.jar"/>
+        <pathelement location="${lib.dir}/yuicompressor.jar"/>
         <pathelement location="${lib.dir}/jsp-api.jar"/>
         <pathelement location="${lib.dir}/servlet-api.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
@@ -20,7 +20,7 @@
         <pathelement location="${lib.dir}/mockrunner-tag.jar"/>
         <pathelement location="${lib.dir}/mockrunner.jar"/>
         <pathelement location="${lib.dir}/jdom.jar"/>
-        <pathelement location="${lib.dir}/commons-logging-api-1.1.1.jar"/>
+        <pathelement location="${lib.dir}/commons-logging.jar"/>
     </path>
 
     <target name="compile" depends="init">
@@ -55,7 +55,7 @@
 
     <target name="test" depends="compileTests">
         <junit fork="yes" haltonfailure="yes">
-            <test name="com.googlecode.webutilities.test.JSCSSMergeServletTest" />
+            <test name="com.googlecode.webutilities.test.JSCSSMergeServletTestCase" />
             <formatter type="plain" usefile="false" />
             <classpath refid="compile.classpath" />
         </junit>
@@ -69,7 +69,7 @@
         <jar destfile="${build.dir}/${jar.name}" basedir="${build.dir}/jar">
         	<metainf dir="${meta-inf.dir}"></metainf>
             <manifest>
-        		<!--attribute name="Class-Path" value="yuicompressor-2.4.2.jar"/-->
+        		<!--attribute name="Class-Path" value="yuicompressor.jar"/-->
             </manifest>
         </jar>
     </target>
@@ -83,7 +83,7 @@
                      private="false"
                      version="true">
                 <classpath>
-            		<pathelement location="${lib.dir}/yuicompressor-2.4.2.jar"/>
+            		<pathelement location="lib/yuicompressor.jar"/>
                     <pathelement location="${lib.dir}/jsp-api.jar"/>
             		<pathelement location="${lib.dir}/servlet-api.jar"/>
             	</classpath>
