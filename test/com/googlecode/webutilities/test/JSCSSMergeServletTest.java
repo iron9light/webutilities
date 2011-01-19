@@ -3,6 +3,7 @@ package com.googlecode.webutilities.test;
 import com.googlecode.webutilities.JSCSSMergeServlet;
 import com.mockrunner.mock.web.*;
 import com.mockrunner.servlet.BasicServletTestCaseAdapter;
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.BufferedReader;
+import java.util.Properties;
 
 public class JSCSSMergeServletTest extends BasicServletTestCaseAdapter {
 
@@ -21,56 +23,91 @@ public class JSCSSMergeServletTest extends BasicServletTestCaseAdapter {
 
     private HttpServlet jsCssMergeServlet = new JSCSSMergeServlet();
 
-    private void setUpCSSResources(){
-        MockServletContext mockServletContext = factory.getMockServletContext();
-        mockServletContext.setResourceAsStream("/css/a.css",this.getClass().getResourceAsStream("resources/css/a.css"));
-        mockServletContext.setResourceAsStream("/css/b.css",this.getClass().getResourceAsStream("resources/css/b.css"));
-        mockServletContext.setResourceAsStream("/css/c.css",this.getClass().getResourceAsStream("resources/css/c.css"));
+    private Properties properties = new Properties();
+
+    private int currentTestNumber = 1;
+
+    public JSCSSMergeServletTest() throws Exception{
+        properties.load(this.getClass().getResourceAsStream("resources/JSCSSMergeServletTest.properties"));
     }
 
-    private void setUpJSResources(){
+    private void setUpInitParams(){
+        String value = properties.getProperty(this.currentTestNumber+".test.init.params");
+        if(value != null && !value.trim().equals("")){
+            String[] params = value.split(",");
+            for(String param: params){
+                String[] keyAndValue = param.split(":");
+                servletConfig.setInitParameter(keyAndValue[0], keyAndValue[1]);
+            }
+        }else{ //default
+            servletConfig.setInitParameter("useCache", "false");
+            servletConfig.setInitParameter("expiresMinutes", "2"); //one minute
+        }
+
+    }
+
+    private void setUpResources() throws  Exception{
         MockServletContext mockServletContext = factory.getMockServletContext();
-        mockServletContext.setResourceAsStream("/js/a.js",this.getClass().getResourceAsStream("resources/js/a.js"));
-        mockServletContext.setResourceAsStream("/js/b.js",this.getClass().getResourceAsStream("resources/js/b.js"));
-        mockServletContext.setResourceAsStream("/js/c.js",this.getClass().getResourceAsStream("resources/js/c.js"));
+        String resourcesString = properties.getProperty(this.currentTestNumber+".test.resources");
+        if(resourcesString != null && !resourcesString.trim().equals("")){
+            String[] resources = resourcesString.split(",");
+            for(String resource: resources){
+                System.out.print(resource);
+                 mockServletContext.setResourceAsStream("/" + resource , this.getClass().getResourceAsStream(resource));
+            }
+        }
+    }
+
+    private void setUpRequest() throws  Exception{
+        MockServletContext mockServletContext = factory.getMockServletContext();
+        String requestURI = properties.getProperty(this.currentTestNumber+".test.request.uri");
+        request.setContextPath("/webutilities");
+        if(requestURI != null && !requestURI.trim().equals("")){
+            request.setRequestURI(requestURI);
+        }
+    }
+    private String getExpectedOutput() throws Exception{
+
+        String expectedResource = properties.getProperty(this.currentTestNumber+".test.expected");
+        if(expectedResource == null || expectedResource.trim().equals("")) return null;
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource));
+
     }
 
     protected void setUp() throws Exception {
         super.setUp();
-        servletConfig.setInitParameter("useCache", "false");
-        servletConfig.setInitParameter("expiresMinutes", "2"); //one minute
-        setServlet(jsCssMergeServlet, true);
-        request.setContextPath("/webutilities");
-        setUpCSSResources();
-        setUpJSResources();
+        this.setUpInitParams();
+        this.setServlet(jsCssMergeServlet, true);
+        this.setUpResources();
+        this.setUpRequest();
+        jsCssMergeServlet.init();
     }
 
-    public void testMergeCSSFiles() throws Exception {
+    public void testAllTheTestCases() throws Exception {
 
-        request.setRequestURI("/css/a,b,c.css");
-        jsCssMergeServlet.init();
+        while(true){
+            String testCase = properties.getProperty(this.currentTestNumber+".test.name");
+            if(testCase == null || testCase.trim().equals("")){
+                break; // no more test cases in properties file.
+            }
+            System.out.println("Running test " + testCase);
+            doGet();
 
-        doGet();
+            String actualOutput = getOutput();
+            String expectedOutput = this.getExpectedOutput();
 
-        String actualOutput = getOutput();
-        String expectedOutput = TestUtils.readContents(this.getClass().getResourceAsStream("resources/css/expected-a-b-c.css"));
+            assertNotNull(actualOutput);
+            assertEquals(expectedOutput.trim(),actualOutput.trim());
 
-        assertNotNull(actualOutput);
-        assertEquals(expectedOutput.trim(),actualOutput.trim());
+            this.currentTestNumber++;
+        }
 
     }
 
-    public void testMergeJSFiles() throws Exception {
-        request.setRequestURI("/js/a,b,c,a.js");
-        jsCssMergeServlet.init();
+    protected void tearDown() throws Exception {
 
-        doGet();
+       jsCssMergeServlet.destroy();
 
-        String actualOutput = getOutput();
-        String expectedOutput = TestUtils.readContents(this.getClass().getResourceAsStream("resources/js/expected-a-b-c.js"));
-
-        assertNotNull(actualOutput);
-        assertEquals(expectedOutput.trim(),actualOutput.trim());
     }
 
 }

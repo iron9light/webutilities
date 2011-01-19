@@ -61,7 +61,7 @@
         </junit>
     </target>
 
-    <target name="jar" depends="compile">
+    <target name="jar" depends="compile,test">
         <mkdir dir="${build.dir}/jar"/>
         <copy todir="${build.dir}/jar">
             <fileset dir="${build.dir}/classes" includes="**/*.class"/>

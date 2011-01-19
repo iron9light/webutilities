@@ -1,6 +1,6 @@
 package com.googlecode.webutilities.test;
 
-import java.io.*;
+import java.io.*   ;
 
 public final class TestUtils {
 
