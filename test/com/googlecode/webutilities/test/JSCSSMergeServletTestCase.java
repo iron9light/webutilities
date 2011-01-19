@@ -105,7 +105,7 @@ public class JSCSSMergeServletTestCase extends TestCase {
         
     }
 
-    public synchronized void testServletUsingDifferentScenarios() throws Exception {
+    public void testServletUsingDifferentScenarios() throws Exception {
 
         while (true) {
             this.pre();
