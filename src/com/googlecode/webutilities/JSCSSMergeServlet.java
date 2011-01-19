@@ -21,12 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
@@ -301,7 +296,7 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @return Set of resources to be processed
      */
 
-    private Set<String> findResourcesToMerge(HttpServletRequest request) {
+    private List<String> findResourcesToMerge(HttpServletRequest request) {
 
         String contextPath = request.getContextPath();
 
@@ -312,21 +307,23 @@ public class JSCSSMergeServlet extends HttpServlet {
         requestURI = requestURI.replace(contextPath, "").replace(extension, "");//remove the context path & ext. will become /path/subpath/a,b,/anotherpath/c
 
         String[] resourcesPath = requestURI.split(",");
-        Set<String> resources = new HashSet<String>();
+
+        List<String> resources = new ArrayList<String>();
 
         String currentPath = "/"; //default
 
         for (String filePath : resourcesPath) {
             if (filePath == null) continue;
+            String path = filePath + extension;
             if (filePath.startsWith("/")) { //absolute
-                String path = filePath + extension;
+                path = filePath + extension;
                 currentPath = new File(path).getParent(); // should be like /path/subpath/
-                logger.info("Adding path: " + path + "(Path for next relative resource will be : " + currentPath + ")");
-                resources.add(path);
             } else {
-                String path = currentPath + File.separator + filePath + extension;
+                path = currentPath + File.separator + filePath + extension;
                 currentPath = new File(path).getParent(); //this will be current path for next relative resource
-                logger.info("Adding path: " + path + "(Path for next relative resource will be : " + currentPath + ")");
+            }
+            logger.info("Adding path: " + path + "(Path for next relative resource will be : " + currentPath + ")");
+            if(!resources.contains(path)){
                 resources.add(path);
             }
         }

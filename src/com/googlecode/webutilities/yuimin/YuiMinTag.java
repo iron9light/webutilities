@@ -16,17 +16,16 @@
  */
 package com.googlecode.webutilities.yuimin;
 
-import java.io.StringReader;
-import java.util.logging.Logger;
+import com.googlecode.webutilities.common.Constants;
+import com.yahoo.platform.yui.compressor.CssCompressor;
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import com.googlecode.webutilities.common.Constants;
-import com.yahoo.platform.yui.compressor.CssCompressor;
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import java.io.StringReader;
+import java.util.logging.Logger;
 
 /**
  * The <code>YuiMinTag</code> is the JSP custom tag to expose the YUICompressor functionality in the JSP.
