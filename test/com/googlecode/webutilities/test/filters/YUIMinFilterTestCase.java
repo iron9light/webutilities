@@ -1,37 +1,36 @@
-package com.googlecode.webutilities.test;
+package com.googlecode.webutilities.test.filters;
 
 import com.googlecode.webutilities.JSCSSMergeServlet;
-import com.mockrunner.mock.web.*;
+import com.googlecode.webutilities.common.Constants;
+import com.googlecode.webutilities.test.common.TestUtils;
+import com.googlecode.webutilities.yuimin.YUIMinFilter;
+import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import junit.framework.TestCase;
 
 import java.util.Properties;
 import java.util.logging.Logger;
 
-public class JSCSSMergeServletTestCase extends TestCase {
+public class YUIMinFilterTestCase extends TestCase {
 
     private JSCSSMergeServlet jscssMergeServlet = new JSCSSMergeServlet();
+
+    private YUIMinFilter yuiMinFilter = new YUIMinFilter();
 
     private WebMockObjectFactory webMockObjectFactory = new WebMockObjectFactory();
 
     private ServletTestModule servletTestModule = new ServletTestModule(webMockObjectFactory);
-    
-    private MockServletConfig servletConfig;
-
-    private MockServletContext mockServletContext;
-
-    private MockHttpServletRequest request;
 
     private Properties properties = new Properties();
 
     private int currentTestNumber = 1;
 
-    private static final Logger logger = Logger.getLogger(JSCSSMergeServletTestCase.class.getName());
+    private static final Logger logger = Logger.getLogger(YUIMinFilterTestCase.class.getName());
 
     public static final String TEST_CONTEXT_PATH = "/webutilities";
 
-    public JSCSSMergeServletTestCase() throws Exception {
-        properties.load(this.getClass().getResourceAsStream("resources/JSCSSMergeServletTest.properties"));
+    public YUIMinFilterTestCase() throws Exception {
+        properties.load(this.getClass().getResourceAsStream(YUIMinFilter.class.getSimpleName() + "Test.properties"));
     }
 
     private void setUpInitParams() {
@@ -40,12 +39,11 @@ public class JSCSSMergeServletTestCase extends TestCase {
             String[] params = value.split(",");
             for (String param : params) {
                 String[] keyAndValue = param.split(":");
-                servletConfig.setInitParameter(keyAndValue[0], keyAndValue[1]);
+                webMockObjectFactory.getMockFilterConfig().setInitParameter(keyAndValue[0], keyAndValue[1]);
             }
-        } else { //default
-            servletConfig.setInitParameter("useCache", "false");
-            servletConfig.setInitParameter("expiresMinutes", "2"); //one minute
         }
+
+        webMockObjectFactory.getMockServletConfig().setInitParameter(Constants.INIT_PARAM_USE_CACHE,"false"); //never use servlet cache
 
     }
 
@@ -54,25 +52,34 @@ public class JSCSSMergeServletTestCase extends TestCase {
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                logger.info("Setting resource : " + "/" + resource);
-                mockServletContext.setResourceAsStream("/" + resource, this.getClass().getResourceAsStream(resource));
+                logger.info("Setting resource : " + resource);
+                webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
             }
         }
     }
 
     private void setUpRequest() throws Exception {
         String requestURI = properties.getProperty(this.currentTestNumber + ".test.request.uri");
-        request.setContextPath(TEST_CONTEXT_PATH);
+        webMockObjectFactory.getMockRequest().setContextPath(TEST_CONTEXT_PATH);
         if (requestURI != null && !requestURI.trim().equals("")) {
-            request.setRequestURI(requestURI);
+            String[] uriAndQuery = requestURI.split("\\?");
+            webMockObjectFactory.getMockRequest().setRequestURI(uriAndQuery[0]);
+            if(uriAndQuery.length > 1){
+                String[] params = uriAndQuery[1].split("&");
+                for(String param: params){
+                    String[] nameValue = param.split("=");
+                    webMockObjectFactory.getMockRequest().setupAddParameter(nameValue[0],nameValue[1]);
+                }
+
+            }
         }
-        String filter = properties.getProperty(this.currentTestNumber + ".test.filter");
-        if (filter != null && !filter.trim().equals("")) {
-            Class clazz = Class.forName(filter);
-            //MockFilterConfig mockFilterConfig  = webMockObjectFactory.getMockFilterConfig();
-            servletTestModule.addFilter(servletTestModule.createFilter(clazz));
-            servletTestModule.setDoChain(true);
-        }
+//        String filter = properties.getProperty(this.currentTestNumber + ".test.filter");
+//        if (filter != null && !filter.trim().equals("")) {
+//            Class clazz = Class.forName(filter);
+//            //MockFilterConfig mockFilterConfig  = webMockObjectFactory.getMockFilterConfig();
+//            servletTestModule.addFilter(servletTestModule.createFilter(clazz));
+//            servletTestModule.setDoChain(true);
+//        }
     }
 
     private String getExpectedOutput() throws Exception {
@@ -83,67 +90,62 @@ public class JSCSSMergeServletTestCase extends TestCase {
 
     }
 
-    private void pre() throws java.lang.Exception {
+    private void pre() throws Exception {
+
 
         webMockObjectFactory = new WebMockObjectFactory();
 
-        servletConfig = webMockObjectFactory.getMockServletConfig();
-
-        request = webMockObjectFactory.getMockRequest();
-
-        mockServletContext = webMockObjectFactory.getMockServletContext();
-
         servletTestModule = new ServletTestModule(webMockObjectFactory);
+
         this.setUpInitParams();
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
+        servletTestModule.addFilter(yuiMinFilter,true);
+        servletTestModule.setDoChain(true);
+
         this.setUpResources();
 
         this.setUpRequest();
-        
-        
+
+
     }
 
-    public void testServletUsingDifferentScenarios() throws Exception {
+    public void testFilterUsingDifferentScenarios() throws Exception {
 
         while (true) {
             this.pre();
-            
+
             String testCase = properties.getProperty(this.currentTestNumber + ".test.name");
-            
+
             if (testCase == null || testCase.trim().equals("")) {
                 return; // no more test cases in properties file.
             }
-            
+
             logger.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");
             System.out.println("##################################################################################################################");
-            
-            servletTestModule.doGet();
+
+            servletTestModule.doFilter();
 
             String actualOutput = servletTestModule.getOutput();
 
-            String expectedOutput = this.getExpectedOutput();
-
             assertNotNull(actualOutput);
+
+            String expectedOutput = this.getExpectedOutput();
 
             assertEquals(expectedOutput.trim(), actualOutput.trim());
 
             this.post();
-
-//            System.out.println("##################################################################################################################");
-//            System.out.println("TEST (" + this.currentTestNumber + ") PASSED");
-//            System.out.println("##################################################################################################################");
 
         }
 
     }
 
 
-    private void post() throws java.lang.Exception {
+    private void post() throws Exception {
         this.currentTestNumber++;
     }
 

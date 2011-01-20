@@ -133,7 +133,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String INIT_PARAM_EXPIRES_MINUTES = "expiresMinutes";
+    public static final String INIT_PARAM_EXPIRES_MINUTES = "expiresMinutes";
 
     private long expiresMinutes = Constants.DEFAULT_EXPIRES_MINUTES; //default value 7 days
 
@@ -156,47 +156,19 @@ public class JSCSSMergeServlet extends HttpServlet {
     }
 
     /**
-     * @param req
-     * @param resp
-     * @return URL String
+     *
+     * @param extension - .css or .js etc. (lower case)
+     * @param resp - response object
      */
-    private String setResponseMimeAndHeaders(HttpServletRequest req, HttpServletResponse resp) {
-        String url = req.getRequestURI(), lowerUrl = url.toLowerCase();
-        logger.info("Processing URI: " + url);
-        if (lowerUrl.endsWith(Constants.EXT_JSON)) {
-            resp.setContentType(Constants.MIME_JSON);
-            logger.info("Mime set to " + Constants.MIME_JSON);
-        } else if (lowerUrl.endsWith(Constants.EXT_JS)) {
-            resp.setContentType(Constants.MIME_JS);
-            logger.info("Mime set to " + Constants.MIME_JS);
-        } else if (lowerUrl.endsWith(Constants.EXT_CSS)) {
-            resp.setContentType(Constants.MIME_CSS);
-            logger.info("Mime set to " + Constants.MIME_CSS);
-        }
+    private void setResponseMimeAndHeaders(String extension, HttpServletResponse resp) {
+        String mime = Utils.selectMimeForExtension(extension);
+        logger.info("Setting MIME to " + mime);
+        resp.setContentType(mime);
         resp.addDateHeader(Constants.HEADER_EXPIRES, new Date().getTime() + expiresMinutes * 60 * 1000);
         resp.addDateHeader(Constants.HEADER_LAST_MODIFIED, new Date().getTime());
         logger.info("Added expires and last-modified headers");
-        return url;
     }
 
-    /**
-     * @param requestURI
-     * @return
-     */
-    private String detectExtension(String requestURI) { //!TODO case sensitivity? http://server/context/path/a.CSS
-        String requestURIExtension;
-        if (requestURI.endsWith(Constants.EXT_JS)) {
-            requestURIExtension = Constants.EXT_JS;
-        } else if (requestURI.endsWith(Constants.EXT_JSON)) {
-            requestURIExtension = Constants.EXT_JSON;
-        } else if (requestURI.endsWith(Constants.EXT_CSS)) {
-            requestURIExtension = Constants.EXT_CSS;
-        } else {
-            requestURIExtension = "";
-        }
-        logger.info("Detected extension : " + requestURIExtension);
-        return requestURIExtension;
-    }
 
     private void expireCache() {
         logger.info("Expiring Cache");
@@ -209,8 +181,14 @@ public class JSCSSMergeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        logger.info("doGetCalled : " + req.getRequestURI());
-        String url = setResponseMimeAndHeaders(req, resp);
+
+        String url = req.getRequestURI();
+
+        logger.info("doGetCalled : " + url);
+
+        String extension = Utils.detectExtension(url);
+
+        this.setResponseMimeAndHeaders(extension, resp);
 
         if (req.getParameter(Constants.PARAM_EXPIRE_CACHE) != null) {
             this.expireCache();
@@ -299,7 +277,9 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         String requestURI = request.getRequestURI(); //w/o hostname, starts with context. eg. /context/path/subpath/a,b,/anotherpath/c.js
 
-        String extension = detectExtension(requestURI);
+        String extension = Utils.detectExtension(requestURI);
+
+        logger.info("Detected extension : " + extension);
 
         requestURI = requestURI.replace(contextPath, "").replace(extension, "");//remove the context path & ext. will become /path/subpath/a,b,/anotherpath/c
 

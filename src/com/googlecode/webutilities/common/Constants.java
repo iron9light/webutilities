@@ -1,5 +1,8 @@
 package com.googlecode.webutilities.common;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * Common Class to hold the public static constant so that to share across the project
  *
@@ -7,6 +10,7 @@ package com.googlecode.webutilities.common;
  * @version 1.0
  */
 public final class Constants {
+
 
     public static final String TYPE_JS = "js";
 

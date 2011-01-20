@@ -21,6 +21,7 @@
         <pathelement location="${lib.dir}/mockrunner.jar"/>
         <pathelement location="${lib.dir}/jdom.jar"/>
         <pathelement location="${lib.dir}/commons-logging.jar"/>
+        <pathelement location="${lib.dir}/commons-beanutils.jar"/>
     </path>
 
     <target name="compile" depends="init">
@@ -48,14 +49,17 @@
             <classpath refid="compile.classpath">
             </classpath>
         </javac>
-        <copy todir="${build.dir}/tests/com/googlecode/webutilities/test/resources">
-            <fileset dir="${test.dir}/com/googlecode/webutilities/test/resources"/>
+        <copy todir="${build.dir}/tests/resources">
+            <fileset dir="${test.dir}/resources"/>
+        </copy>
+        <copy todir="${build.dir}/tests/">
+           <fileset dir="${test.dir}" includes="**/*.properties"/>
         </copy>
     </target>
 
     <target name="test" depends="compileTests">
         <junit fork="yes" haltonfailure="yes">
-            <test name="com.googlecode.webutilities.test.JSCSSMergeServletTestCase" />
+            <test name="com.googlecode.webutilities.test.WebutilitiesTestSuit" />
             <formatter type="plain" usefile="false" />
             <classpath refid="compile.classpath" />
         </junit>
