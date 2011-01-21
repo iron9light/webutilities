@@ -117,7 +117,7 @@ public class CharacterEncodingFilter implements Filter {
 
         this.encoding = filterConfig.getInitParameter("encoding");
         this.force = Utils.readBoolean(filterConfig.getInitParameter("force"), this.force);
-        this.ignoreURLPattern = filterConfig.getInitParameter("ignoreURLPatten");
+        this.ignoreURLPattern = filterConfig.getInitParameter("ignoreURLPattern");
         logger.info("Filter initialized with: " +
                 "{" +
                 "   encoding:" + encoding + "," +
@@ -130,7 +130,7 @@ public class CharacterEncodingFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         String url = req.getRequestURI();
-        if (!url.matches(ignoreURLPattern) && (force || request.getCharacterEncoding() == null)) {
+        if ((ignoreURLPattern == null || !url.matches(ignoreURLPattern)) && (force || request.getCharacterEncoding() == null)) {
             if (encoding != null) {
                 request.setCharacterEncoding(encoding);
                 logger.info("Applied request encoding : " + encoding);

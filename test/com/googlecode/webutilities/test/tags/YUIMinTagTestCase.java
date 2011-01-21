@@ -1,5 +1,6 @@
 package com.googlecode.webutilities.test.tags;
 
+import com.googlecode.webutilities.test.WebutilitiesTestSuit;
 import com.googlecode.webutilities.test.common.TestUtils;
 import com.googlecode.webutilities.yuimin.YuiMinTag;
 import com.mockrunner.mock.web.WebMockObjectFactory;
@@ -7,6 +8,7 @@ import com.mockrunner.tag.NestedTag;
 import com.mockrunner.tag.TagTestModule;
 import junit.framework.TestCase;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -31,7 +33,7 @@ public class YUIMinTagTestCase extends TestCase {
     }
 
     private void setUpTag() {
-        Map attributeMap = new HashMap();
+        Map<Object,Object> attributeMap = new HashMap<Object,Object>();
         String value = properties.getProperty(this.currentTestNumber + ".test.init.params");
         if (value != null && !value.trim().equals("")) {
             String[] params = value.split(",");
@@ -77,7 +79,7 @@ public class YUIMinTagTestCase extends TestCase {
 
     }
 
-    public void testFilterUsingDifferentScenarios() throws Exception {
+    public void testTagUsingDifferentScenarios() throws Exception {
 
         while (true) {
             this.pre();
