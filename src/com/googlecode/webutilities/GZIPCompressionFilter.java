@@ -28,7 +28,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.googlecode.webutilities.common.Constants;
+import static com.googlecode.webutilities.common.Constants.*;
 import com.googlecode.webutilities.common.Utils;
 
 /**
@@ -44,7 +44,7 @@ public class GZIPCompressionFilter implements Filter {
 
     private String ignoreUserAgentsPattern;
 
-    private long compressionMinSize = Constants.DEFAULT_COMPRESSION_SIZE_THRESHOLD; // Anything above ~128KB
+    private long compressionMinSize = DEFAULT_COMPRESSION_SIZE_THRESHOLD; // Anything above ~128KB
 
     private String ignoreURLPattern;
 

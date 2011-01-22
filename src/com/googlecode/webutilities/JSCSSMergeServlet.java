@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.googlecode.webutilities.common.Constants;
+import static com.googlecode.webutilities.common.Constants.*;
 import com.googlecode.webutilities.common.Utils;
 
 /**
@@ -135,7 +135,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     public static final String INIT_PARAM_EXPIRES_MINUTES = "expiresMinutes";
 
-    private long expiresMinutes = Constants.DEFAULT_EXPIRES_MINUTES; //default value 7 days
+    private long expiresMinutes = DEFAULT_EXPIRES_MINUTES; //default value 7 days
 
     private boolean useCache = true; //default true
 
@@ -147,11 +147,11 @@ public class JSCSSMergeServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         this.expiresMinutes = Utils.readLong(config.getInitParameter(INIT_PARAM_EXPIRES_MINUTES), this.expiresMinutes);
-        this.useCache = Utils.readBoolean(config.getInitParameter(Constants.INIT_PARAM_USE_CACHE), this.useCache);
+        this.useCache = Utils.readBoolean(config.getInitParameter(INIT_PARAM_USE_CACHE), this.useCache);
         logger.info("Servlet initialized: " +
                 "{" +
                 "   " + INIT_PARAM_EXPIRES_MINUTES + ":" + this.expiresMinutes + "" +
-                "   " + Constants.INIT_PARAM_USE_CACHE + ":" + this.useCache + "" +
+                "   " + INIT_PARAM_USE_CACHE + ":" + this.useCache + "" +
                 "}");
     }
 
@@ -164,8 +164,8 @@ public class JSCSSMergeServlet extends HttpServlet {
         String mime = Utils.selectMimeForExtension(extension);
         logger.info("Setting MIME to " + mime);
         resp.setContentType(mime);
-        resp.addDateHeader(Constants.HEADER_EXPIRES, new Date().getTime() + expiresMinutes * 60 * 1000);
-        resp.addDateHeader(Constants.HEADER_LAST_MODIFIED, new Date().getTime());
+        resp.addDateHeader(HEADER_EXPIRES, new Date().getTime() + expiresMinutes * 60 * 1000);
+        resp.addDateHeader(HEADER_LAST_MODIFIED, new Date().getTime());
         logger.info("Added expires and last-modified headers");
     }
 
@@ -190,11 +190,11 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         this.setResponseMimeAndHeaders(extension, resp);
 
-        if (req.getParameter(Constants.PARAM_EXPIRE_CACHE) != null) {
+        if (req.getParameter(PARAM_EXPIRE_CACHE) != null) {
             this.expireCache();
         }
 
-        boolean useCache = this.useCache && req.getParameter(Constants.PARAM_SKIP_CACHE) == null && req.getParameter(Constants.PARAM_DEBUG) == null;
+        boolean useCache = this.useCache && req.getParameter(PARAM_SKIP_CACHE) == null && req.getParameter(PARAM_DEBUG) == null;
 
         if (useCache) {
             logger.info("Using cache for : " + url);

@@ -16,7 +16,8 @@
  */
 package com.googlecode.webutilities.yuimin;
 
-import com.googlecode.webutilities.common.Constants;
+import static com.googlecode.webutilities.common.Constants.*;
+
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
@@ -131,13 +132,13 @@ public class YuiMinTag extends BodyTagSupport {
         JspWriter jspWriter = content.getEnclosingWriter();
         try {
             if (stringReader != null) {
-                if (Constants.TYPE_JS.equals(type.toLowerCase())) {
+                if (TYPE_JS.equals(type.toLowerCase())) {
                     JavaScriptCompressor compressor = new JavaScriptCompressor(stringReader, null);
-                    logger.info("Compressing " + Constants.TYPE_JS);
+                    logger.info("Compressing " + TYPE_JS);
                     compressor.compress(jspWriter, this.lineBreak, !this.noMunge, false, this.preserveSemi, this.disableOptimizations);
-                } else if (Constants.TYPE_CSS.equals(type.toLowerCase())) {
+                } else if (TYPE_CSS.equals(type.toLowerCase())) {
                     CssCompressor compressor = new CssCompressor(stringReader);
-                    logger.info("Compressing " + Constants.TYPE_CSS);
+                    logger.info("Compressing " + TYPE_CSS);
                     compressor.compress(jspWriter, this.lineBreak);
                 }
             }

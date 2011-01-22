@@ -17,6 +17,8 @@
 
 package com.googlecode.webutilities.yuimin;
 
+import static com.googlecode.webutilities.common.Constants.*;
+
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,7 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.common.Utils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
@@ -127,7 +128,7 @@ public class YUIMinFilter implements Filter {
 
     private FilterConfig config;
 
-    private String charset = Constants.DEFAULT_CHARSET;
+    private String charset = DEFAULT_CHARSET;
 
     private static final String INIT_PARAM_LINE_BREAK = "lineBreak";
 
@@ -173,13 +174,13 @@ public class YUIMinFilter implements Filter {
 
         logger.info("Filtering URI: " + url);
 
-        if (req.getParameter(Constants.PARAM_EXPIRE_CACHE) != null) {
+        if (req.getParameter(PARAM_EXPIRE_CACHE) != null) {
             this.expireCache();
         }
 
-        if (config != null && (lowerUrl.endsWith(Constants.EXT_JS) || lowerUrl.endsWith(Constants.EXT_JSON) || lowerUrl.endsWith(Constants.EXT_CSS))) {
+        if (config != null && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
 
-            boolean useCache = this.useCahce && req.getParameter(Constants.PARAM_SKIP_CACHE) == null && req.getParameter(Constants.PARAM_DEBUG) == null;
+            boolean useCache = this.useCahce && req.getParameter(PARAM_SKIP_CACHE) == null && req.getParameter(PARAM_DEBUG) == null;
 
             Writer out = new StringWriter();
 
@@ -207,11 +208,11 @@ public class YUIMinFilter implements Filter {
             }
             StringReader sr = new StringReader(new String(wrapper.toString().getBytes(), this.charset));
             //work on generated response
-            if (lowerUrl.endsWith(Constants.EXT_JS) || lowerUrl.endsWith(Constants.EXT_JSON) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(Constants.MIME_JS) || wrapper.getContentType().equals(Constants.MIME_JSON)))) {
+            if (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_JS) || wrapper.getContentType().equals(MIME_JSON)))) {
                 JavaScriptCompressor compressor = new JavaScriptCompressor(sr, null);
                 logger.info("Compressing JS/JSON type");
                 compressor.compress(out, this.lineBreak, !this.noMunge, false, this.preserveSemi, this.disableOptimizations);
-            } else if (lowerUrl.endsWith(Constants.EXT_CSS) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(Constants.MIME_CSS)))) {
+            } else if (lowerUrl.endsWith(EXT_CSS) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_CSS)))) {
                 CssCompressor compressor = new CssCompressor(sr);
                 logger.info("Compressing CSS type");
                 compressor.compress(out, this.lineBreak);
@@ -240,7 +241,7 @@ public class YUIMinFilter implements Filter {
         this.noMunge = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_NO_MUNGE), this.noMunge);
         this.preserveSemi = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_PRESERVE_SEMI), this.preserveSemi);
         this.disableOptimizations = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
-        this.useCahce = Utils.readBoolean(this.config.getInitParameter(Constants.INIT_PARAM_USE_CACHE), this.useCahce);
+        this.useCahce = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_USE_CACHE), this.useCahce);
 
         logger.info("Filter initialized with: " +
                 "{" +
@@ -248,7 +249,7 @@ public class YUIMinFilter implements Filter {
                 "   " + INIT_PARAM_NO_MUNGE + ":" + noMunge + "," +
                 "   " + INIT_PARAM_PRESERVE_SEMI + ":" + preserveSemi + "," +
                 "   " + INIT_PARAM_DISABLE_OPTIMIZATIONS + ":" + disableOptimizations + "," +
-                "   " + Constants.INIT_PARAM_USE_CACHE + ":" + useCahce + "," +
+                "   " + INIT_PARAM_USE_CACHE + ":" + useCahce + "," +
                 "}");
 
     }

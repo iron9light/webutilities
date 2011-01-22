@@ -1,17 +1,17 @@
 package com.googlecode.webutilities.test.filters;
 
-import com.googlecode.webutilities.CharacterEncodingFilter;
-import com.googlecode.webutilities.JSCSSMergeServlet;
-import com.googlecode.webutilities.common.Constants;
-import com.googlecode.webutilities.common.Utils;
-import com.googlecode.webutilities.test.common.TestUtils;
-import com.googlecode.webutilities.yuimin.YUIMinFilter;
-import com.mockrunner.mock.web.WebMockObjectFactory;
-import com.mockrunner.servlet.ServletTestModule;
-import junit.framework.TestCase;
+import static com.googlecode.webutilities.common.Constants.INIT_PARAM_USE_CACHE;
 
 import java.util.Properties;
 import java.util.logging.Logger;
+
+import junit.framework.TestCase;
+
+import com.googlecode.webutilities.CharacterEncodingFilter;
+import com.googlecode.webutilities.JSCSSMergeServlet;
+import com.googlecode.webutilities.common.Utils;
+import com.mockrunner.mock.web.WebMockObjectFactory;
+import com.mockrunner.servlet.ServletTestModule;
 
 public class CharacterEncodingFilterTestCase extends TestCase {
 
@@ -50,7 +50,7 @@ public class CharacterEncodingFilterTestCase extends TestCase {
             }
         }
 
-        webMockObjectFactory.getMockServletConfig().setInitParameter(Constants.INIT_PARAM_USE_CACHE,"false"); //never use servlet cache
+        webMockObjectFactory.getMockServletConfig().setInitParameter(INIT_PARAM_USE_CACHE,"false"); //never use servlet cache
 
     }
 

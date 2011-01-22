@@ -1,13 +1,6 @@
 package com.googlecode.webutilities.common;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
+import static com.googlecode.webutilities.common.Constants.*;
 /**
  * Common Utilities provider class
  *
@@ -70,12 +63,12 @@ public final class Utils {
      */
     public static String detectExtension(String requestURI) { //!TODO case sensitivity? http://server/context/path/a.CSS
         String requestURIExtension;
-        if (requestURI.endsWith(Constants.EXT_JS)) {
-            requestURIExtension = Constants.EXT_JS;
-        } else if (requestURI.endsWith(Constants.EXT_JSON)) {
-            requestURIExtension = Constants.EXT_JSON;
-        } else if (requestURI.endsWith(Constants.EXT_CSS)) {
-            requestURIExtension = Constants.EXT_CSS;
+        if (requestURI.endsWith(EXT_JS)) {
+            requestURIExtension = EXT_JS;
+        } else if (requestURI.endsWith(EXT_JSON)) {
+            requestURIExtension = EXT_JSON;
+        } else if (requestURI.endsWith(EXT_CSS)) {
+            requestURIExtension = EXT_CSS;
         } else {
             requestURIExtension = "";
         }
@@ -88,12 +81,12 @@ public final class Utils {
      * @return - mime like text/javascript or text/css etc.
      */
     public static String selectMimeForExtension(String extension){
-        if (Constants.EXT_JS.equals(extension)) {
-            return Constants.MIME_JS;
-        }else        if (Constants.EXT_CSS.equals(extension)) {
-            return Constants.MIME_CSS;
-        }else        if (Constants.EXT_JSON.equals(extension)) {
-            return Constants.MIME_JSON;
+        if (EXT_JS.equals(extension)) {
+            return MIME_JS;
+        }else        if (EXT_CSS.equals(extension)) {
+            return MIME_CSS;
+        }else        if (EXT_JSON.equals(extension)) {
+            return MIME_JSON;
         }
         return null;//"plain/text";
     }
@@ -101,7 +94,4 @@ public final class Utils {
     private Utils() {
     } //non instantiable
 
-//    public static void main(String[] args) throws Exception{
-//        System.out.println(readDateFromHeader("Thu, 20 Jan 2011 16:11:23 GMT"));
-//    }
 }

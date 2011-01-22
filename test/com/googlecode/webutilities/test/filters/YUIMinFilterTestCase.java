@@ -1,15 +1,17 @@
 package com.googlecode.webutilities.test.filters;
 
+import static com.googlecode.webutilities.common.Constants.INIT_PARAM_USE_CACHE;
+
+import java.util.Properties;
+import java.util.logging.Logger;
+
+import junit.framework.TestCase;
+
 import com.googlecode.webutilities.JSCSSMergeServlet;
-import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.test.common.TestUtils;
 import com.googlecode.webutilities.yuimin.YUIMinFilter;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
-import junit.framework.TestCase;
-
-import java.util.Properties;
-import java.util.logging.Logger;
 
 public class YUIMinFilterTestCase extends TestCase {
 
@@ -43,7 +45,7 @@ public class YUIMinFilterTestCase extends TestCase {
             }
         }
 
-        webMockObjectFactory.getMockServletConfig().setInitParameter(Constants.INIT_PARAM_USE_CACHE,"false"); //never use servlet cache
+        webMockObjectFactory.getMockServletConfig().setInitParameter(INIT_PARAM_USE_CACHE,"false"); //never use servlet cache
 
     }
 

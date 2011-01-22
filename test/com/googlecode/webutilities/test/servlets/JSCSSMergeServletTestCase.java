@@ -1,16 +1,18 @@
 package com.googlecode.webutilities.test.servlets;
 
-import com.googlecode.webutilities.JSCSSMergeServlet;
-import com.googlecode.webutilities.common.Constants;
-import com.googlecode.webutilities.common.Utils;
-import com.googlecode.webutilities.test.common.TestUtils;
-import com.mockrunner.mock.web.*;
-import com.mockrunner.servlet.ServletTestModule;
-import junit.framework.TestCase;
+import static com.googlecode.webutilities.common.Constants.*;
 
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Logger;
+
+import junit.framework.TestCase;
+
+import com.googlecode.webutilities.JSCSSMergeServlet;
+import com.googlecode.webutilities.common.Utils;
+import com.googlecode.webutilities.test.common.TestUtils;
+import com.mockrunner.mock.web.WebMockObjectFactory;
+import com.mockrunner.servlet.ServletTestModule;
 
 public class JSCSSMergeServletTestCase extends TestCase {
 
@@ -49,7 +51,7 @@ public class JSCSSMergeServletTestCase extends TestCase {
             for (String param : params) {
                 String[] keyAndValue = param.split(":");
                 webMockObjectFactory.getMockServletConfig().setInitParameter(keyAndValue[0], keyAndValue[1]);
-                if(Constants.INIT_PARAM_USE_CACHE.equals(keyAndValue[0])){
+                if(INIT_PARAM_USE_CACHE.equals(keyAndValue[0])){
                     useCache = Utils.readBoolean(keyAndValue[1],useCache);
                 }
                 if(JSCSSMergeServlet.INIT_PARAM_EXPIRES_MINUTES.equals(keyAndValue[0])){
@@ -57,7 +59,7 @@ public class JSCSSMergeServletTestCase extends TestCase {
                 }
             }
         } else { //default
-            webMockObjectFactory.getMockServletConfig().setInitParameter(Constants.INIT_PARAM_USE_CACHE, useCache + "");
+            webMockObjectFactory.getMockServletConfig().setInitParameter(INIT_PARAM_USE_CACHE, useCache + "");
             webMockObjectFactory.getMockServletConfig().setInitParameter(JSCSSMergeServlet.INIT_PARAM_EXPIRES_MINUTES, expiresMinutes + ""); //one minute
         }
 
@@ -126,9 +128,9 @@ public class JSCSSMergeServletTestCase extends TestCase {
 
     public boolean hasCorrectDateHeaders(){
 
-        Date lastModified = TestUtils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(Constants.HEADER_LAST_MODIFIED));
+        Date lastModified = TestUtils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_LAST_MODIFIED));
 
-        Date expires = TestUtils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(Constants.HEADER_EXPIRES));
+        Date expires = TestUtils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_EXPIRES));
 
         if(lastModified == null || expires == null) return false;
 

@@ -1,18 +1,17 @@
 package com.googlecode.webutilities.test.tags;
 
-import com.googlecode.webutilities.test.WebutilitiesTestSuit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Logger;
+
+import junit.framework.TestCase;
+
 import com.googlecode.webutilities.test.common.TestUtils;
 import com.googlecode.webutilities.yuimin.YuiMinTag;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.tag.NestedTag;
 import com.mockrunner.tag.TagTestModule;
-import junit.framework.TestCase;
-
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
 
 public class YUIMinTagTestCase extends TestCase {
 

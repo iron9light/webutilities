@@ -1,7 +1,5 @@
 package com.googlecode.webutilities.common;
 
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Common Class to hold the public static constant so that to share across the project
