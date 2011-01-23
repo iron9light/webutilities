@@ -1,5 +1,6 @@
 package com.googlecode.webutilities.test;
 
+import com.googlecode.webutilities.test.filters.CharacterEncodingFilterTestCase;
 import com.googlecode.webutilities.test.filters.YUIMinFilterTestCase;
 import com.googlecode.webutilities.test.servlets.JSCSSMergeServletTestCase;
 import com.googlecode.webutilities.test.tags.YUIMinTagTestCase;
@@ -19,6 +20,7 @@ public class WebutilitiesTestSuit extends TestSuite {
         suite.addTestSuite(JSCSSMergeServletTestCase.class);
         suite.addTestSuite(YUIMinFilterTestCase.class);
         suite.addTestSuite(YUIMinTagTestCase.class);
+        suite.addTestSuite(CharacterEncodingFilterTestCase.class);
 
 
         return suite;

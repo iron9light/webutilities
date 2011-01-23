@@ -45,11 +45,11 @@ public class YUIMinFilterTestCase extends TestCase {
             }
         }
 
-        webMockObjectFactory.getMockServletConfig().setInitParameter(INIT_PARAM_USE_CACHE,"false"); //never use servlet cache
+        webMockObjectFactory.getMockServletConfig().setInitParameter(INIT_PARAM_USE_CACHE, "false"); //never use servlet cache
 
     }
 
-    private void setUpResources() throws Exception {
+    private void setUpResources() {
         String resourcesString = properties.getProperty(this.currentTestNumber + ".test.resources");
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
@@ -60,17 +60,17 @@ public class YUIMinFilterTestCase extends TestCase {
         }
     }
 
-    private void setUpRequest() throws Exception {
+    private void setUpRequest() {
         String requestURI = properties.getProperty(this.currentTestNumber + ".test.request.uri");
         webMockObjectFactory.getMockRequest().setContextPath(TEST_CONTEXT_PATH);
         if (requestURI != null && !requestURI.trim().equals("")) {
             String[] uriAndQuery = requestURI.split("\\?");
             webMockObjectFactory.getMockRequest().setRequestURI(uriAndQuery[0]);
-            if(uriAndQuery.length > 1){
+            if (uriAndQuery.length > 1) {
                 String[] params = uriAndQuery[1].split("&");
-                for(String param: params){
+                for (String param : params) {
                     String[] nameValue = param.split("=");
-                    webMockObjectFactory.getMockRequest().setupAddParameter(nameValue[0],nameValue[1]);
+                    webMockObjectFactory.getMockRequest().setupAddParameter(nameValue[0], nameValue[1]);
                 }
 
             }
@@ -103,7 +103,7 @@ public class YUIMinFilterTestCase extends TestCase {
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
-        servletTestModule.addFilter(yuiMinFilter,true);
+        servletTestModule.addFilter(yuiMinFilter, true);
         servletTestModule.setDoChain(true);
 
         this.setUpResources();
@@ -147,7 +147,7 @@ public class YUIMinFilterTestCase extends TestCase {
     }
 
 
-    private void post() throws Exception {
+    private void post() {
         this.currentTestNumber++;
     }
 

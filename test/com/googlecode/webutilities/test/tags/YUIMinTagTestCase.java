@@ -19,7 +19,7 @@ public class YUIMinTagTestCase extends TestCase {
 
     private TagTestModule tagTestModule = new TagTestModule(webMockObjectFactory);
 
-    private NestedTag yuiMinTag ;
+    private NestedTag yuiMinTag;
 
     private Properties properties = new Properties();
 
@@ -32,17 +32,17 @@ public class YUIMinTagTestCase extends TestCase {
     }
 
     private void setUpTag() {
-        Map<Object,Object> attributeMap = new HashMap<Object,Object>();
+        Map<Object, Object> attributeMap = new HashMap<Object, Object>();
         String value = properties.getProperty(this.currentTestNumber + ".test.init.params");
         if (value != null && !value.trim().equals("")) {
             String[] params = value.split(",");
             for (String param : params) {
                 String[] keyAndValue = param.split(":");
-                attributeMap.put(keyAndValue[0],keyAndValue[1]);
+                attributeMap.put(keyAndValue[0], keyAndValue[1]);
             }
         }
 
-        yuiMinTag = tagTestModule.createNestedTag(YuiMinTag.class,attributeMap);
+        yuiMinTag = tagTestModule.createNestedTag(YuiMinTag.class, attributeMap);
 
     }
 
@@ -112,7 +112,7 @@ public class YUIMinTagTestCase extends TestCase {
     }
 
 
-    private void post() throws Exception {
+    private void post() {
         this.currentTestNumber++;
     }
 

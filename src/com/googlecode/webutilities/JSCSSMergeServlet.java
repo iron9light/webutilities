@@ -223,7 +223,6 @@ public class JSCSSMergeServlet extends HttpServlet {
             logger.info("Processing resource : " + fullPath);
             InputStream is = null;
             try {
-                log(fullPath);
                 is = super.getServletContext().getResourceAsStream(fullPath);
                 if (is != null) {
                     int c;
@@ -267,7 +266,7 @@ public class JSCSSMergeServlet extends HttpServlet {
      * http://server/context/js/a,/js/libs/b,../yui/c.js - relative path used for c.js (relative to b) OR
      * http://server/context/js/a,/js/libs/b,./c.js OR - b & c are in same directory /js/libs
      *
-     * @param request
+     * @param request HttpServletRequest
      * @return Set of resources to be processed
      */
 
@@ -300,7 +299,7 @@ public class JSCSSMergeServlet extends HttpServlet {
                 filePath = filePath.replaceAll("/./","");
             }
 
-            String path = filePath + extension;
+            String path = "";
 
             if (filePath.startsWith("/")) { //absolute
                 path = filePath + extension;

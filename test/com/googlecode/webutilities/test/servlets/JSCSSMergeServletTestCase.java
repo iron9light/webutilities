@@ -21,12 +21,6 @@ public class JSCSSMergeServletTestCase extends TestCase {
     private WebMockObjectFactory webMockObjectFactory = new WebMockObjectFactory();
 
     private ServletTestModule servletTestModule = new ServletTestModule(webMockObjectFactory);
-//
-//    private MockServletConfig servletConfig = webMockObjectFactory.getMockServletConfig();
-//
-//    private MockServletContext mockServletContext = webMockObjectFactory.getMockServletContext();
-//
-//    private MockHttpServletRequest request;
 
     private Properties properties = new Properties();
 
@@ -51,11 +45,11 @@ public class JSCSSMergeServletTestCase extends TestCase {
             for (String param : params) {
                 String[] keyAndValue = param.split(":");
                 webMockObjectFactory.getMockServletConfig().setInitParameter(keyAndValue[0], keyAndValue[1]);
-                if(INIT_PARAM_USE_CACHE.equals(keyAndValue[0])){
-                    useCache = Utils.readBoolean(keyAndValue[1],useCache);
+                if (INIT_PARAM_USE_CACHE.equals(keyAndValue[0])) {
+                    useCache = Utils.readBoolean(keyAndValue[1], useCache);
                 }
-                if(JSCSSMergeServlet.INIT_PARAM_EXPIRES_MINUTES.equals(keyAndValue[0])){
-                    expiresMinutes = Utils.readInt(keyAndValue[1],expiresMinutes);
+                if (JSCSSMergeServlet.INIT_PARAM_EXPIRES_MINUTES.equals(keyAndValue[0])) {
+                    expiresMinutes = Utils.readInt(keyAndValue[1], expiresMinutes);
                 }
             }
         } else { //default
@@ -65,12 +59,12 @@ public class JSCSSMergeServletTestCase extends TestCase {
 
     }
 
-    private void setUpResources() throws Exception {
+    private void setUpResources() {
         String resourcesString = properties.getProperty(this.currentTestNumber + ".test.resources");
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                logger.info("Setting resource : " +  resource);
+                logger.info("Setting resource : " + resource);
                 webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
             }
         }
@@ -82,11 +76,11 @@ public class JSCSSMergeServletTestCase extends TestCase {
         if (requestURI != null && !requestURI.trim().equals("")) {
             String[] uriAndQuery = requestURI.split("\\?");
             webMockObjectFactory.getMockRequest().setRequestURI(uriAndQuery[0]);
-            if(uriAndQuery.length > 1){
+            if (uriAndQuery.length > 1) {
                 String[] params = uriAndQuery[1].split("&");
-                for(String param: params){
+                for (String param : params) {
                     String[] nameValue = param.split("=");
-                    webMockObjectFactory.getMockRequest().setupAddParameter(nameValue[0],nameValue[1]);
+                    webMockObjectFactory.getMockRequest().setupAddParameter(nameValue[0], nameValue[1]);
                 }
 
             }
@@ -122,19 +116,19 @@ public class JSCSSMergeServletTestCase extends TestCase {
         this.setUpResources();
 
         this.setUpRequest();
-        
-        
+
+
     }
 
-    public boolean hasCorrectDateHeaders(){
+    public boolean hasCorrectDateHeaders() {
 
         Date lastModified = TestUtils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_LAST_MODIFIED));
 
         Date expires = TestUtils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_EXPIRES));
 
-        if(lastModified == null || expires == null) return false;
+        if (lastModified == null || expires == null) return false;
 
-        long differenceInMinutes = (expires.getTime() - lastModified.getTime())/1000/60;
+        long differenceInMinutes = (expires.getTime() - lastModified.getTime()) / 1000 / 60;
 
         return (differenceInMinutes == expiresMinutes); //ensure difference between last modified and expires is exactly same as we mentioned in test
 
@@ -144,19 +138,19 @@ public class JSCSSMergeServletTestCase extends TestCase {
 
         while (true) {
             this.pre();
-            
+
             String testCase = properties.getProperty(this.currentTestNumber + ".test.name");
-            
+
             if (testCase == null || testCase.trim().equals("")) {
                 return; // no more test cases in properties file.
             }
-            
+
             logger.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");
             System.out.println("##################################################################################################################");
-            
+
             servletTestModule.doGet();
 
             assertTrue(this.hasCorrectDateHeaders());
@@ -176,7 +170,7 @@ public class JSCSSMergeServletTestCase extends TestCase {
     }
 
 
-    private void post() throws java.lang.Exception {
+    private void post() {
         this.currentTestNumber++;
     }
 

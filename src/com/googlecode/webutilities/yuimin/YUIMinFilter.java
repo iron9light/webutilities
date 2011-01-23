@@ -146,7 +146,7 @@ public class YUIMinFilter implements Filter {
 
     private boolean disableOptimizations = false;
 
-    private boolean useCahce = true;
+    private boolean useCache = true;
 
     private Map<String, String> cache = Collections.synchronizedMap(new LinkedHashMap<String, String>());
 
@@ -180,7 +180,7 @@ public class YUIMinFilter implements Filter {
 
         if (config != null && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
 
-            boolean useCache = this.useCahce && req.getParameter(PARAM_SKIP_CACHE) == null && req.getParameter(PARAM_DEBUG) == null;
+            boolean useCache = this.useCache && req.getParameter(PARAM_SKIP_CACHE) == null && req.getParameter(PARAM_DEBUG) == null;
 
             Writer out = new StringWriter();
 
@@ -241,7 +241,7 @@ public class YUIMinFilter implements Filter {
         this.noMunge = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_NO_MUNGE), this.noMunge);
         this.preserveSemi = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_PRESERVE_SEMI), this.preserveSemi);
         this.disableOptimizations = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
-        this.useCahce = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_USE_CACHE), this.useCahce);
+        this.useCache = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_USE_CACHE), this.useCache);
 
         logger.info("Filter initialized with: " +
                 "{" +
@@ -249,7 +249,7 @@ public class YUIMinFilter implements Filter {
                 "   " + INIT_PARAM_NO_MUNGE + ":" + noMunge + "," +
                 "   " + INIT_PARAM_PRESERVE_SEMI + ":" + preserveSemi + "," +
                 "   " + INIT_PARAM_DISABLE_OPTIMIZATIONS + ":" + disableOptimizations + "," +
-                "   " + INIT_PARAM_USE_CACHE + ":" + useCahce + "," +
+                "   " + INIT_PARAM_USE_CACHE + ":" + useCache + "," +
                 "}");
 
     }

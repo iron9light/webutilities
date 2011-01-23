@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  * Put the <b>webutilities-x.y.z.jar</b> and <b>yuicompressor-x.y.z.jar</b> (See dependency mentioned below) in your classpath (WEB-INF/lib folder of your webapp).
  * </p>
  * <p>
- * Delcare the taglib and prefix in your JSP
+ * Declare the taglib and prefix in your JSP
  * </p>
  * <pre>
  * <b>&lt;%@ taglib uri="http://webutilities.googlecode.com/taglib/yuimin" prefix="ymin" %&gt;</b>
@@ -131,16 +131,14 @@ public class YuiMinTag extends BodyTagSupport {
         StringReader stringReader = new StringReader(content.getString());
         JspWriter jspWriter = content.getEnclosingWriter();
         try {
-            if (stringReader != null) {
-                if (TYPE_JS.equals(type.toLowerCase())) {
-                    JavaScriptCompressor compressor = new JavaScriptCompressor(stringReader, null);
-                    logger.info("Compressing " + TYPE_JS);
-                    compressor.compress(jspWriter, this.lineBreak, !this.noMunge, false, this.preserveSemi, this.disableOptimizations);
-                } else if (TYPE_CSS.equals(type.toLowerCase())) {
-                    CssCompressor compressor = new CssCompressor(stringReader);
-                    logger.info("Compressing " + TYPE_CSS);
-                    compressor.compress(jspWriter, this.lineBreak);
-                }
+            if (TYPE_JS.equals(type.toLowerCase())) {
+                JavaScriptCompressor compressor = new JavaScriptCompressor(stringReader, null);
+                logger.info("Compressing " + TYPE_JS);
+                compressor.compress(jspWriter, this.lineBreak, !this.noMunge, false, this.preserveSemi, this.disableOptimizations);
+            } else if (TYPE_CSS.equals(type.toLowerCase())) {
+                CssCompressor compressor = new CssCompressor(stringReader);
+                logger.info("Compressing " + TYPE_CSS);
+                compressor.compress(jspWriter, this.lineBreak);
             }
         } catch (Exception e) {
             logger.severe("Exception in YUIMinTag: " + e);

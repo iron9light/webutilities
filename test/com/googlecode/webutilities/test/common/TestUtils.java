@@ -9,17 +9,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 public final class TestUtils {
 
     //HTTP dates are in one of these format
     //@see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html
 
-    public static final String DATE_PATTERN_RFC_1123 = "EEE, dd MMM yyyyy HH:mm:ss z";
+    public static final String DATE_PATTERN_RFC_1123 = "EEE, dd MMM yyyy HH:mm:ss z";
 
     public static final String DATE_PATTERN_RFC_1036 = "EEEEEEEEE, dd-MMM-yy HH:mm:ss z";
 
-    public static final String DATE_PATTERN_ANSI_C = "EEE MMM d HH:mm:ss yyyyy";
+    public static final String DATE_PATTERN_ANSI_C = "EEE MMM d HH:mm:ss yyyy";
 
     public static final String DATE_PATTERN_HTTP_HEADER ="EEE, dd MMM yyyy HH:mm:ss zzz";
 
@@ -29,7 +30,7 @@ public final class TestUtils {
     //HTTP timeZone - GMT
     public final static TimeZone DEFAULT_ZONE_GMT = TimeZone.getTimeZone("GMT");
 
-
+    private static final Logger logger = Logger.getLogger(TestUtils.class.getName());
 
     private TestUtils() {
     }
@@ -50,33 +51,40 @@ public final class TestUtils {
     /**
      *
      * @param headerDateString - from request header
-     * @return
-     * @throws java.text.ParseException
+     * @return Date object after reading from header string
      */
     public static Date readDateFromHeader(String headerDateString){
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN_HTTP_HEADER, DEFAULT_LOCALE_US);
         try{
             return simpleDateFormat.parse(headerDateString);
-        }catch (Exception e){}
+        }catch (Exception e){
+            logger.warning("Date parsing using HTTP header pattern failed.");
+        }
 
         //try another rfc1123
         simpleDateFormat = new SimpleDateFormat(DATE_PATTERN_RFC_1123,DEFAULT_LOCALE_US);
         try{
             return simpleDateFormat.parse(headerDateString);
-        }catch (Exception e){}
+        }catch (Exception e){
+            logger.warning("Date parsing using RFC_1123 pattern failed.");
+        }
 
         //try another rfc1036
         simpleDateFormat = new SimpleDateFormat(DATE_PATTERN_RFC_1036,DEFAULT_LOCALE_US);
         try{
             return simpleDateFormat.parse(headerDateString);
-        }catch (Exception e){}
+        }catch (Exception e){
+            logger.warning("Date parsing using RFC_1036 pattern failed.");
+        }
 
         //try another ansi
         simpleDateFormat = new SimpleDateFormat(DATE_PATTERN_ANSI_C,DEFAULT_LOCALE_US);
         try{
             return simpleDateFormat.parse(headerDateString);
-        }catch (Exception e){}
+        }catch (Exception e){
+            logger.warning("Date is not even ANSI C pattern.");
+        }
 
         return null;
     }
