@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.googlecode.webutilities.filters.GZIPCompressionServletOutputStream;
+import com.googlecode.webutilities.filters.GZIPCompressionServletResponseWrapper;
+
 import static com.googlecode.webutilities.common.Constants.*;
 
 /**
@@ -36,22 +39,23 @@ public class GZIPCompressionFilterTestServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		ServletOutputStream out = response.getOutputStream();
-		response.setContentType("text/plain");		
+		response.setContentType("text/plain");
 
-		@SuppressWarnings("unchecked")
-		Enumeration<String> e = ((HttpServletRequest) request)
-				.getHeaders(HTTP_ACCEPT_ENCODING_HEADER);
-		while (e.hasMoreElements()) {
-			String name = (String) e.nextElement();
-			out.print(name);
-			if (name.indexOf(HTTP_ACCEPT_ENCODING_HEADER_GZIP_VALUE) != -1) {
-				response.addHeader("Content-Encoding", HTTP_ACCEPT_ENCODING_HEADER_GZIP_VALUE);
-				out.print(" - gzip supported -- able to compress");
-			} else {
-				out.print(" - gzip not supported");
+		if (out instanceof GZIPCompressionServletOutputStream
+				&& response instanceof GZIPCompressionServletResponseWrapper) {
+			@SuppressWarnings("unchecked")
+			Enumeration<String> e = ((HttpServletRequest) request)
+					.getHeaders(HTTP_ACCEPT_ENCODING_HEADER);
+			while (e.hasMoreElements()) {
+				String name = (String) e.nextElement();
+				out.print(name);
+				if (name.indexOf(HTTP_ACCEPT_ENCODING_HEADER_GZIP_VALUE) != -1) {					
+					out.print(" - gzip supported -- able to compress");
+				}
 			}
+		} else {
+			out.print("gzip not supported");
 		}
 		out.close();
 	}
-
 }

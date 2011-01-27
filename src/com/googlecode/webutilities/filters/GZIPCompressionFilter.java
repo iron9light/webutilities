@@ -104,7 +104,7 @@ public class GZIPCompressionFilter implements Filter {
         	String uri=((HttpServletRequest)request).getRequestURI();
         	logger.log(Level.INFO,"requestURI = " + ((HttpServletRequest)request).getRequestURI());
         	String userAgent = ((HttpServletRequest)request).getHeader(HTTP_USER_AGENT_HEADER);
-        	if (!(isPathIgnored(uri) || isUserAgentIgnored(userAgent))){
+        	if (isPathIgnored(uri) || isUserAgentIgnored(userAgent)){
         		 supportCompression = false;
         	} else {                  
 	            @SuppressWarnings("unchecked")
@@ -170,7 +170,7 @@ public class GZIPCompressionFilter implements Filter {
      * @return
      */
     public boolean isUserAgentIgnored(String userAgent) {
-        return userAgent == null || (ignoreUserAgentsPattern!=null && userAgent.matches(ignoreUserAgentsPattern));
+        return userAgent != null && ignoreUserAgentsPattern!=null && userAgent.matches(ignoreUserAgentsPattern);
     }
 
 }
