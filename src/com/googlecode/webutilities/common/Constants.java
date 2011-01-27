@@ -42,7 +42,13 @@ public final class Constants {
 
     public static final long DEFAULT_EXPIRES_MINUTES = 7 * 24 * 60; //7 days
 
-    public static final long DEFAULT_COMPRESSION_SIZE_THRESHOLD = 128 * 1024; //128KB
+    public static final int DEFAULT_COMPRESSION_SIZE_THRESHOLD = 128 * 1024; //128KB
+    
+    public static final String HTTP_ACCEPT_ENCODING_HEADER="Accept-Encoding";
+    
+    public static final String HTTP_ACCEPT_ENCODING_HEADER_GZIP_VALUE="gzip|deflate";
+    
+    public static final String HTTP_USER_AGENT_HEADER="User-Agent";
 
     private Constants() {
     } //non instantiable
