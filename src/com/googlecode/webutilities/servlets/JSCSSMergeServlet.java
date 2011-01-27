@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  
  */
-package com.googlecode.webutilities;
+package com.googlecode.webutilities.servlets;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.googlecode.webutilities.common.Constants.*;
-import com.googlecode.webutilities.common.Utils;
+
+import com.googlecode.webutilities.util.Utils;
 
 /**
  * The <code>JSCSSMergeServet</code> is the Http Servlet to combine multiple JS or CSS static resources in one HTTP request.

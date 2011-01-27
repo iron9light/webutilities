@@ -1,4 +1,4 @@
-package com.googlecode.webutilities.test.common;
+package com.googlecode.webutilities.test.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

@@ -7,13 +7,13 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import com.googlecode.webutilities.test.common.TestUtils;
-import com.googlecode.webutilities.yuimin.YuiMinTag;
+import com.googlecode.webutilities.tags.YuiMinTag;
+import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.tag.NestedTag;
 import com.mockrunner.tag.TagTestModule;
 
-public class YUIMinTagTestCase extends TestCase {
+public class YUIMinTagTest extends TestCase {
 
     private WebMockObjectFactory webMockObjectFactory = new WebMockObjectFactory();
 
@@ -25,9 +25,9 @@ public class YUIMinTagTestCase extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger logger = Logger.getLogger(YUIMinTagTestCase.class.getName());
+    private static final Logger logger = Logger.getLogger(YUIMinTagTest.class.getName());
 
-    public YUIMinTagTestCase() throws Exception {
+    public YUIMinTagTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(YuiMinTag.class.getSimpleName() + "Test.properties"));
     }
 

@@ -7,13 +7,13 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import com.googlecode.webutilities.JSCSSMergeServlet;
-import com.googlecode.webutilities.test.common.TestUtils;
-import com.googlecode.webutilities.yuimin.YUIMinFilter;
+import com.googlecode.webutilities.filters.YUIMinFilter;
+import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
+import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 
-public class YUIMinFilterTestCase extends TestCase {
+public class YUIMinFilterTest extends TestCase {
 
     private JSCSSMergeServlet jscssMergeServlet = new JSCSSMergeServlet();
 
@@ -27,11 +27,11 @@ public class YUIMinFilterTestCase extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger logger = Logger.getLogger(YUIMinFilterTestCase.class.getName());
+    private static final Logger logger = Logger.getLogger(YUIMinFilterTest.class.getName());
 
     public static final String TEST_CONTEXT_PATH = "/webutilities";
 
-    public YUIMinFilterTestCase() throws Exception {
+    public YUIMinFilterTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(YUIMinFilter.class.getSimpleName() + "Test.properties"));
     }
 

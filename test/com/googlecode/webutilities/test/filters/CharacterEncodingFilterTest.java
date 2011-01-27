@@ -7,13 +7,13 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import com.googlecode.webutilities.CharacterEncodingFilter;
-import com.googlecode.webutilities.JSCSSMergeServlet;
-import com.googlecode.webutilities.common.Utils;
+import com.googlecode.webutilities.filters.CharacterEncodingFilter;
+import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
+import com.googlecode.webutilities.util.Utils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 
-public class CharacterEncodingFilterTestCase extends TestCase {
+public class CharacterEncodingFilterTest extends TestCase {
 
     private JSCSSMergeServlet jscssMergeServlet = new JSCSSMergeServlet();
 
@@ -29,11 +29,11 @@ public class CharacterEncodingFilterTestCase extends TestCase {
 
     private boolean force = false;
 
-    private static final Logger logger = Logger.getLogger(CharacterEncodingFilterTestCase.class.getName());
+    private static final Logger logger = Logger.getLogger(CharacterEncodingFilterTest.class.getName());
 
     public static final String TEST_CONTEXT_PATH = "/webutilities";
 
-    public CharacterEncodingFilterTestCase() throws Exception {
+    public CharacterEncodingFilterTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(CharacterEncodingFilter.class.getSimpleName() + "Test.properties"));
     }
 

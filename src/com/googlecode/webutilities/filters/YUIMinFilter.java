@@ -15,7 +15,7 @@
  *  
  */
 
-package com.googlecode.webutilities.yuimin;
+package com.googlecode.webutilities.filters;
 
 import static com.googlecode.webutilities.common.Constants.*;
 
@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import com.googlecode.webutilities.common.Utils;
+import com.googlecode.webutilities.util.Utils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 

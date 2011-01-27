@@ -1,4 +1,4 @@
-package com.googlecode.webutilities.common;
+package com.googlecode.webutilities.util;
 
 import static com.googlecode.webutilities.common.Constants.*;
 /**

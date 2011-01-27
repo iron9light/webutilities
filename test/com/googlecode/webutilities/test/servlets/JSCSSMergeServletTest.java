@@ -8,13 +8,13 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import com.googlecode.webutilities.JSCSSMergeServlet;
-import com.googlecode.webutilities.common.Utils;
-import com.googlecode.webutilities.test.common.TestUtils;
+import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
+import com.googlecode.webutilities.test.util.TestUtils;
+import com.googlecode.webutilities.util.Utils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 
-public class JSCSSMergeServletTestCase extends TestCase {
+public class JSCSSMergeServletTest extends TestCase {
 
     private JSCSSMergeServlet jscssMergeServlet = new JSCSSMergeServlet();
 
@@ -30,11 +30,11 @@ public class JSCSSMergeServletTestCase extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger logger = Logger.getLogger(JSCSSMergeServletTestCase.class.getName());
+    private static final Logger logger = Logger.getLogger(JSCSSMergeServletTest.class.getName());
 
     public static final String TEST_CONTEXT_PATH = "/webutilities";
 
-    public JSCSSMergeServletTestCase() throws Exception {
+    public JSCSSMergeServletTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(JSCSSMergeServlet.class.getSimpleName() + "Test.properties"));
     }
 

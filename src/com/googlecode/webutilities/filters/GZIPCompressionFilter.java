@@ -35,7 +35,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.googlecode.webutilities.common.Utils;
+import com.googlecode.webutilities.util.Utils;
 
 /**
  * Servlet Filter implementation class GZIPCompressionFilter

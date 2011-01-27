@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package com.googlecode.webutilities;
+package com.googlecode.webutilities.filters;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -28,7 +28,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.googlecode.webutilities.common.Utils;
+import com.googlecode.webutilities.util.Utils;
 
 
 /**

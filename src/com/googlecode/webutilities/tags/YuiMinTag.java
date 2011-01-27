@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  
  */
-package com.googlecode.webutilities.yuimin;
+package com.googlecode.webutilities.tags;
 
 import static com.googlecode.webutilities.common.Constants.*;
 
