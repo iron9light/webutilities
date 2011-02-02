@@ -10,7 +10,7 @@
 	<tag>
 	    <description>Use this tag to Minify your inline JS or CSS</description>
 	    <name>minify</name>
-	    <tag-class>com.googlecode.webutilities.yuimin.YuiMinTag</tag-class>
+	    <tag-class>com.googlecode.webutilities.tags.YuiMinTag</tag-class>
 	    <body-content>JSP</body-content>
 	    <attribute>
 			<name>type</name>

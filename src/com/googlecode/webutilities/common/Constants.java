@@ -44,11 +44,23 @@ public final class Constants {
 
     public static final int DEFAULT_COMPRESSION_SIZE_THRESHOLD = 128 * 1024; //128KB
     
-    public static final String HTTP_ACCEPT_ENCODING_HEADER="Accept-Encoding";
+    public static final String HTTP_VARY_HEADER = "Vary";
     
-    public static final String HTTP_ACCEPT_ENCODING_HEADER_GZIP_VALUE="gzip|deflate";
+    public static final String HTTP_ACCEPT_ENCODING_HEADER = "Accept-Encoding";
     
-    public static final String HTTP_USER_AGENT_HEADER="User-Agent";
+    public static final String HTTP_CONTENT_ENCODING_HEADER = "Content-Encoding";
+    
+    public static final String CONTENT_ENCODING_GZIP = "gzip";
+
+    public static final String CONTENT_ENCODING_DEFAULT = "identity";
+    
+    public static final String CONTENT_ENCODING_DEFLATE = "deflate";
+    
+    public static final String CONTENT_ENCODING_COMPRESS = "compress";
+    
+    public static final String HTTP_ACCEPT_ENCODING_HEADER_VALUES_PATTERN = ",?.*\\s*\\b(" + CONTENT_ENCODING_GZIP + ")\\b,?\\s*.*"; //currently only gzip
+    
+    public static final String HTTP_USER_AGENT_HEADER = "User-Agent";
 
     private Constants() {
     } //non instantiable

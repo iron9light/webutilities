@@ -98,6 +98,7 @@ import com.googlecode.webutilities.util.Utils;
  *
  * @author rpatil
  * @version 1.0
+ * @since 0.0.4
  */
 
 public class CharacterEncodingFilter implements Filter {

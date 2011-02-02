@@ -43,15 +43,10 @@ public class GZIPCompressionFilterTestServlet extends HttpServlet {
 
 		if (out instanceof GZIPCompressionServletOutputStream
 				&& response instanceof GZIPCompressionServletResponseWrapper) {
-			@SuppressWarnings("unchecked")
-			Enumeration<String> e = ((HttpServletRequest) request)
-					.getHeaders(HTTP_ACCEPT_ENCODING_HEADER);
-			while (e.hasMoreElements()) {
-				String name = (String) e.nextElement();
-				out.print(name);
-				if (name.indexOf(HTTP_ACCEPT_ENCODING_HEADER_GZIP_VALUE) != -1) {					
+			String headerValue = ((HttpServletRequest) request)
+					.getHeader(HTTP_ACCEPT_ENCODING_HEADER);
+			if (headerValue != null && headerValue.indexOf(CONTENT_ENCODING_GZIP) != -1) {
 					out.print(" - gzip supported -- able to compress");
-				}
 			}
 		} else {
 			out.print("gzip not supported");

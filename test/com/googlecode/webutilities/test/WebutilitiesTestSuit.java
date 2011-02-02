@@ -1,6 +1,9 @@
 package com.googlecode.webutilities.test;
 
+import com.googlecode.webutilities.filters.GZIPCompressionFilter;
 import com.googlecode.webutilities.test.filters.CharacterEncodingFilterTest;
+import com.googlecode.webutilities.test.filters.GZIPCompressionFilterTest;
+import com.googlecode.webutilities.test.filters.GZIPCompressionFilterTest1;
 import com.googlecode.webutilities.test.filters.YUIMinFilterTest;
 import com.googlecode.webutilities.test.servlets.JSCSSMergeServletTest;
 import com.googlecode.webutilities.test.tags.YUIMinTagTest;
@@ -21,6 +24,7 @@ public class WebutilitiesTestSuit extends TestSuite {
         suite.addTestSuite(YUIMinFilterTest.class);
         suite.addTestSuite(YUIMinTagTest.class);
         suite.addTestSuite(CharacterEncodingFilterTest.class);
+        suite.addTestSuite(GZIPCompressionFilterTest1.class);
 
 
         return suite;

@@ -44,7 +44,7 @@ public class GZIPCompressionFilterTest extends BasicServletTestCaseAdapter {
 		doGet();
 		logger.log(Level.INFO,getOutput());
 		logger.log(Level.INFO,getWebMockObjectFactory().getMockResponse().getHeader("Content-Encoding"));
-		assertEquals("gzip|deflate - gzip supported -- able to compress", getOutput());		
+		assertEquals("gzip - gzip supported -- able to compress", getOutput());		
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public class GZIPCompressionFilterTest extends BasicServletTestCaseAdapter {
 		setDoChain(true);
 		doGet();
 		logger.log(Level.INFO,getWebMockObjectFactory().getMockResponse().getHeader("Content-Encoding"));		
-		assertEquals("gzip|deflate",getWebMockObjectFactory().getMockResponse().getHeader("Content-Encoding"));		
+		assertEquals("gzip",getWebMockObjectFactory().getMockResponse().getHeader("Content-Encoding"));		
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class GZIPCompressionFilterTest extends BasicServletTestCaseAdapter {
 	
 	private void commonSetUpRequest(){
 		getWebMockObjectFactory().getMockRequest().setRequestURI("/gzipcompression/request/uri");
-		getWebMockObjectFactory().getMockRequest().addHeader("Accept-Encoding","gzip|deflate");			
+		getWebMockObjectFactory().getMockRequest().addHeader("Accept-Encoding","gzip, deflate");			
 	}
 		
 

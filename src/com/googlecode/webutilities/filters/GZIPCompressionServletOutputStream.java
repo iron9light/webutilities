@@ -218,7 +218,8 @@ public class GZIPCompressionServletOutputStream extends ServletOutputStream {
         logger.log(Level.INFO,"writeToGZip, len = " + len);
         if (gzipStream == null) {
            	logger.log(Level.INFO,"new GZIPOutputStream");
-            response.addHeader("Content-Encoding", HTTP_ACCEPT_ENCODING_HEADER_GZIP_VALUE);
+            response.addHeader(HTTP_CONTENT_ENCODING_HEADER, CONTENT_ENCODING_GZIP);
+            ((HttpServletResponse)response).addHeader(HTTP_VARY_HEADER, HTTP_ACCEPT_ENCODING_HEADER);
             gzipStream = new GZIPOutputStream(output);
         }
         gzipStream.write(b, off, len);

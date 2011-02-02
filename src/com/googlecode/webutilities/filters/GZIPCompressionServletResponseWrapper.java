@@ -112,6 +112,7 @@ public class GZIPCompressionServletResponseWrapper extends HttpServletResponseWr
 	 * Finish a response.
 	 */
 	public void finishResponse() {
+		if(!origResponse.isCommitted())
 		try {
 			if (writer != null) {
 				writer.close();

@@ -61,7 +61,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  * ...
  * &lt;filter&gt;
  * 	&lt;filter-name&gt;yuiMinFilter&lt;/filter-name&gt;</b>
- * 	&lt;filter-class&gt;<b>com.googlecode.webutilities.yuimin.YUIMinFilter</b>&lt;/filter-class&gt;
+ * 	&lt;filter-class&gt;<b>com.googlecode.webutilities.filters.YUIMinFilter</b>&lt;/filter-class&gt;
  * 	&lt;!-- All the init params are optional and are equivalent to YUICompressor command line options --&gt;
  * 	&lt;init-param&gt;
  * 		&lt;param-name&gt;lineBreak&lt;/param-name&gt;
@@ -190,6 +190,7 @@ public class YUIMinFilter implements Filter {
 
             CharResponseWrapper wrapper = new CharResponseWrapper(rs);
             //Let the response be generated
+            
             chain.doFilter(req, wrapper);//!FIXME if we get minified data from cache then we don't need to call this. But we are calling this to set resp headers.
 
             if (useCache) {
