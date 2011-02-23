@@ -127,9 +127,9 @@ public class CompressedServletOutputStream extends ServletOutputStream {
 
     @Override
     public void flush() throws IOException {
-        if (useBuffer) {
-            buffer.flush();
-        }
+//        if (useBuffer) {
+//            buffer.flush();
+//        }
     }
 
     @Override

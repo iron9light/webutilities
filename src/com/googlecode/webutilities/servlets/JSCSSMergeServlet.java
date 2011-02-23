@@ -219,8 +219,9 @@ public class JSCSSMergeServlet extends HttpServlet {
         if (!useCache) {
             out = resp.getWriter();
         }
-
-        for (String fullPath : findResourcesToMerge(req)) {
+        List<String> resourcesToMerge = findResourcesToMerge(req);
+        int resourcesNotFound = 0;
+        for (String fullPath : resourcesToMerge) {
             logger.info("Processing resource : " + fullPath);
             InputStream is = null;
             try {
@@ -230,6 +231,8 @@ public class JSCSSMergeServlet extends HttpServlet {
                     while ((c = is.read()) != -1) {
                         out.write(c);
                     }
+                }else{
+                    resourcesNotFound++;
                 }
             } catch (Exception e) {
                 logger.warning("Error while reading resource : " + fullPath);
@@ -237,9 +240,13 @@ public class JSCSSMergeServlet extends HttpServlet {
             } finally {
                 if (is != null) {
                     is.close();
+                    out.flush();
                 }
-                out.flush();
             }
+        }
+        if(resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()){ //all resources not found
+            resp.sendError(404);
+            return;
         }
         if (out != null) {
         	try{
