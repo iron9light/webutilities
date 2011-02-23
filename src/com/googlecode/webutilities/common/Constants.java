@@ -43,23 +43,31 @@ public final class Constants {
     public static final long DEFAULT_EXPIRES_MINUTES = 7 * 24 * 60; //7 days
 
     public static final int DEFAULT_COMPRESSION_SIZE_THRESHOLD = 128 * 1024; //128KB
-    
+
     public static final String HTTP_VARY_HEADER = "Vary";
-    
+
     public static final String HTTP_ACCEPT_ENCODING_HEADER = "Accept-Encoding";
-    
+
     public static final String HTTP_CONTENT_ENCODING_HEADER = "Content-Encoding";
-    
+
+    public static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
+
+    public static final String HTTP_CONTENT_LENGTH_HEADER = "Content-Length";
+
+    public static final String HTTP_CONTENT_TYPE_HEADER = "Content-Type";
+
+    public static final String HTTP_ETAG_HEADER = "ETag";
+
     public static final String CONTENT_ENCODING_GZIP = "gzip";
 
-    public static final String CONTENT_ENCODING_DEFAULT = "identity";
-    
-    public static final String CONTENT_ENCODING_DEFLATE = "deflate";
-    
     public static final String CONTENT_ENCODING_COMPRESS = "compress";
-    
-    public static final String HTTP_ACCEPT_ENCODING_HEADER_VALUES_PATTERN = ",?.*\\s*\\b(" + CONTENT_ENCODING_GZIP + ")\\b,?\\s*.*"; //currently only gzip
-    
+
+    public static final String CONTENT_ENCODING_DEFLATE = "deflate";
+
+    public static final String CONTENT_ENCODING_IDENTITY = "identity";
+
+    public static final String HTTP_ACCEPT_ENCODING_HEADER_VALUES_PATTERN = ",?.*\\s*\\b(" + CONTENT_ENCODING_GZIP + ")\\b,?\\s*.*"; //currently only compression
+
     public static final String HTTP_USER_AGENT_HEADER = "User-Agent";
 
     private Constants() {

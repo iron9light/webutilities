@@ -32,7 +32,7 @@
                deprecation="off"
                debug="on"
                source="1.5"
-                   target="1.5">
+                   target="1.5" includeantruntime="true">
                 <classpath refid="compile.classpath"/>
         </javac>
     </target>
@@ -45,7 +45,7 @@
                deprecation="off"
                debug="on"
                source="1.5"
-                   target="1.5">
+                   target="1.5" includeantruntime="true">
             <classpath refid="compile.classpath">
             </classpath>
         </javac>
