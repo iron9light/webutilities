@@ -63,7 +63,6 @@ import com.googlecode.webutilities.util.Utils;
  * 		&lt;param-name&gt;force&lt;/param-name&gt;
  * 		&lt;param-value&gt;true&lt;/param-value&gt; &lt;!-- true if you wanted to force encoding  --&gt;
  * 	&lt;/init-param&gt;
- * &lt;/filter&gt;
  * 	&lt;init-param&gt;
  * 		&lt;param-name&gt;ignoreURLPattern&lt;/param-name&gt;
  * 		&lt;param-value&gt;.*\.(png|jpg)&lt;/param-value&gt; &lt;!-- regular expression to be matched against URL to skip setting encoding on --&gt;
