@@ -3,10 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
     version="2.0">
-    <description>YUIMin tag library by rpatil</description>
-  	<tlib-version>1.0</tlib-version>
-	<short-name>ymin</short-name>
-	<uri>http://webutilities.googlecode.com/taglib/yuimin</uri>
+    <description>WebUtilities tag library by rpatil</description>
+  	<tlib-version>1.1</tlib-version>
+	<short-name>wu</short-name>
+	<uri>http://webutilities.googlecode.com/taglib/wu</uri>
 	<tag>
 	    <description>Use this tag to Minify your inline JS or CSS</description>
 	    <name>minify</name>
