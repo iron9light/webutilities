@@ -50,6 +50,7 @@ public class CompressedServletOutputStream extends ServletOutputStream {
     private OutputStream getCompressed() throws IOException {
         if (compressed == null) {
             compressed = encodedStreamsFactory.getCompressedStream(uncompressedStream);
+            compressedResponseWrapper.useCompression();
         }
         return compressed.getCompressedOutputStream();
     }
