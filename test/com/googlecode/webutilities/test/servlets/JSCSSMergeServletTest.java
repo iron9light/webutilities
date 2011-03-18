@@ -169,7 +169,6 @@ public class JSCSSMergeServletTest extends TestCase {
 
     }
 
-
     private void post() {
         this.currentTestNumber++;
     }

@@ -1,5 +1,7 @@
 package com.googlecode.webutilities.util;
 
+import java.io.File;
+
 import static com.googlecode.webutilities.common.Constants.*;
 /**
  * Common Utilities provider class
@@ -90,6 +92,32 @@ public final class Utils {
         }
         return null;//"plain/text";
     }
+    //!TODO might have problems, need to test or replace with something better
+    public static String buildProperPath(String parentPath, String relativePathFromParent){
+        if (relativePathFromParent == null) return null;
+
+        if(relativePathFromParent.startsWith("./")){
+            relativePathFromParent = relativePathFromParent.replaceFirst("(./)+","");
+        }
+
+        String path = "";
+
+        if (relativePathFromParent.startsWith("/")) { //absolute
+            path = relativePathFromParent;
+        } else if(relativePathFromParent.startsWith("../")){
+            while(relativePathFromParent.startsWith("../")){
+                relativePathFromParent = relativePathFromParent.replaceFirst("../","");
+                if(relativePathFromParent.startsWith("./")) {relativePathFromParent = relativePathFromParent.replaceFirst("./","");}
+                parentPath = parentPath == null || parentPath.trim().equals("/") ? "/" : new File(parentPath).getParent();
+            }
+            path = parentPath + File.separator + relativePathFromParent;
+        }else{
+            path = parentPath + File.separator + relativePathFromParent;
+        }
+
+        return path.replaceAll("//","/").replaceAll("(\\./)+","");
+    }
+
 
     private Utils() {
     } //non instantiable

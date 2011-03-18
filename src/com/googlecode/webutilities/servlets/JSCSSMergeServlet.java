@@ -16,13 +16,11 @@
  */
 package com.googlecode.webutilities.servlets;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -227,9 +225,26 @@ public class JSCSSMergeServlet extends HttpServlet {
             try {
                 is = super.getServletContext().getResourceAsStream(fullPath);
                 if (is != null) {
-                    int c;
-                    while ((c = is.read()) != -1) {
-                        out.write(c);
+                    if(fullPath.endsWith(EXT_CSS)){ //Need to deal with images url in CSS
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+                        String line;
+                        Pattern  pattern = Pattern.compile("[uU][rR][lL]\\s*\\(\\s*['\"]?([^('|\")]*)['\"]?\\s*\\)");
+                        while((line = bufferedReader.readLine()) != null){
+                            Matcher matcher = pattern.matcher(line);
+                            while(matcher.find()){
+                                String relativePath = matcher.group(1);
+                                if(relativePath.matches("[^(http|ftp|////)].*")){ //ignore paths starting with these
+                                    //!TODO can be improved?
+                                    line = line.replaceAll(relativePath, req.getContextPath() + Utils.buildProperPath(new File(fullPath).getParent(), relativePath));
+                                }
+                            }
+                            out.write(line+"\n");
+                        }
+                    }else{
+                        int c;
+                        while ((c = is.read()) != -1) {
+                            out.write(c);
+                        }
                     }
                 }else{
                     resourcesNotFound++;
@@ -297,31 +312,9 @@ public class JSCSSMergeServlet extends HttpServlet {
         String currentPath = "/"; //default
 
         for (String filePath : resourcesPath) {
+
+            String path = Utils.buildProperPath(currentPath, filePath) + extension;
             if (filePath == null) continue;
-
-            if(filePath.startsWith("./")){
-                filePath = filePath.replaceFirst("./","");
-            }
-            
-            if(filePath.contains("/./")){
-                filePath = filePath.replaceAll("/./","");
-            }
-
-            String path = "";
-
-            if (filePath.startsWith("/")) { //absolute
-                path = filePath + extension;
-            } else if(filePath.startsWith("../")){
-                while(filePath.startsWith("../")){
-                    filePath = filePath.replaceFirst("../","");
-                    currentPath = new File(currentPath).getParent();
-                }
-                path = currentPath + File.separator + filePath + extension;
-            }else{
-                path = currentPath + File.separator + filePath + extension;
-            }
-
-            path = path.replaceAll("//","/");
 
             currentPath = new File(path).getParent();
 
@@ -335,5 +328,31 @@ public class JSCSSMergeServlet extends HttpServlet {
         return resources;
     }
 
+
+
+    public static void main(String[] args) {
+        String s = "";
+               s += "background-image : url (\"http://a.png\");";
+               s += "background-image : url (\"ftp://b.png\");";
+                s += "background-image : url (\"//c.png\");";
+                s += "background-image : url (\"/d.png\");";
+                s += "background-image : url (\"./././.././././e.png\");";
+                s += "background-image : url (./../.././../f.png)";
+                s += "background-image : url ('g.png')";
+
+        Pattern  pattern = Pattern.compile(":url\\(['\"]?([^('|\")]*)['\"]?\\)");
+        s = s.replaceAll(" ","");
+        Matcher matcher = pattern.matcher(s);
+
+        while(matcher.find()){
+            String path = matcher.group(1);
+            if(path.matches("[^(http|ftp|////)].*")){
+                s = s.replaceAll(path,Utils.buildProperPath("/root/css/osx", path));
+            }
+
+        }
+        System.out.println(s);
+
+    }
 
 }
