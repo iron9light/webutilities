@@ -48,8 +48,12 @@ public class CompressedServletOutputStream extends ServletOutputStream {
     }
 
     private OutputStream getCompressed() throws IOException {
+    	if(useBuffer || cancelled){
+    		return uncompressedStream;
+    	}
         if (compressed == null) {
             compressed = encodedStreamsFactory.getCompressedStream(uncompressedStream);
+            //we are switching to compression here, write compression headers
             compressedResponseWrapper.useCompression();
         }
         return compressed.getCompressedOutputStream();
@@ -138,7 +142,7 @@ public class CompressedServletOutputStream extends ServletOutputStream {
         if (!closed) {
             compressedResponseWrapper.flushBuffer();
             closed = true;
-            if (useBuffer) { //mean we wrote everything to buffer so far
+            if (useBuffer || cancelled) { //mean we wrote everything to buffer so far or compressed was cancelled
                 //We did not use compressed stream (content less than threshold)
                 flushBufferToStream(uncompressedStream);
                 compressedResponseWrapper.noCompression();
@@ -160,6 +164,9 @@ public class CompressedServletOutputStream extends ServletOutputStream {
     }
 
     void cancelCompression() throws IOException {
+    	if(useBuffer){
+    		flushBufferToStream(uncompressedStream);
+    	}
         cancelled = true;
     }
 
