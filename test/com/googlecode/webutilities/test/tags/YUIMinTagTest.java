@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import com.googlecode.webutilities.tags.YuiMinTag;
+import com.googlecode.webutilities.tags.YUIMinTag;
 import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.tag.NestedTag;
@@ -58,7 +58,7 @@ public class YUIMinTagTest extends TestCase {
             }
         }
 
-        yuiMinTag = tagTestModule.createNestedTag(YuiMinTag.class, attributeMap);
+        yuiMinTag = tagTestModule.createNestedTag(YUIMinTag.class, attributeMap);
 
     }
 
