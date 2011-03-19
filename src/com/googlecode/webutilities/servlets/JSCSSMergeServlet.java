@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Rajendra Patil 
+ * Copyright 2010-2011 Rajendra Patil
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
  */
 package com.googlecode.webutilities.servlets;
 
@@ -23,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -134,11 +134,11 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     public static final String INIT_PARAM_EXPIRES_MINUTES = "expiresMinutes";
 
+    public static final String INIT_PARAM_CACHE_CONTROL = "cacheControl";
+
     private long expiresMinutes = DEFAULT_EXPIRES_MINUTES; //default value 7 days
 
-    private boolean useCache = true; //default true
-
-    private Map<String, String> cache = Collections.synchronizedMap(new LinkedHashMap<String, String>());
+    private String cacheControl = DEFAULT_CACHE_CONTROL; //default
 
     private static final Logger logger = Logger.getLogger(JSCSSMergeServlet.class.getName());
 
@@ -146,11 +146,11 @@ public class JSCSSMergeServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         this.expiresMinutes = Utils.readLong(config.getInitParameter(INIT_PARAM_EXPIRES_MINUTES), this.expiresMinutes);
-        this.useCache = Utils.readBoolean(config.getInitParameter(INIT_PARAM_USE_CACHE), this.useCache);
+        this.cacheControl = config.getInitParameter(INIT_PARAM_CACHE_CONTROL) != null ? config.getInitParameter(INIT_PARAM_CACHE_CONTROL) : this.cacheControl ;
         logger.info("Servlet initialized: " +
                 "{" +
                 "   " + INIT_PARAM_EXPIRES_MINUTES + ":" + this.expiresMinutes + "" +
-                "   " + INIT_PARAM_USE_CACHE + ":" + this.useCache + "" +
+                "   " + INIT_PARAM_CACHE_CONTROL + ":" + this.cacheControl + "" +
                 "}");
     }
 
@@ -161,17 +161,28 @@ public class JSCSSMergeServlet extends HttpServlet {
      */
     private void setResponseMimeAndHeaders(String extension, HttpServletResponse resp) {
         String mime = Utils.selectMimeForExtension(extension);
-        logger.info("Setting MIME to " + mime);
-        resp.setContentType(mime);
+        if(mime != null){
+            logger.info("Setting MIME to " + mime);
+            resp.setContentType(mime);
+        }
         resp.addDateHeader(HEADER_EXPIRES, new Date().getTime() + expiresMinutes * 60 * 1000);
         resp.addDateHeader(HEADER_LAST_MODIFIED, new Date().getTime());
+        resp.addHeader(HTTP_CACHE_CONTROL_HEADER, this.cacheControl);
         logger.info("Added expires and last-modified headers");
     }
 
-
-    private void expireCache() {
-        logger.info("Expiring Cache");
-        this.cache.clear();
+    public static boolean isAnyResourceModifiedSince(List<String> resources, long sinceTime, ServletContext servletContext){
+        for (String resourcePath : resources) {
+            logger.info("Checking for modification : " + resourcePath);
+            resourcePath = servletContext.getRealPath(resourcePath);
+            if(resourcePath == null) continue;
+            File resource =  new File(resourcePath);
+            long lastModified = resource.lastModified();
+            if(lastModified > sinceTime){
+                return true;
+            }
+        }
+        return false;
     }
 
     /* (non-Javadoc)
@@ -189,35 +200,9 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         this.setResponseMimeAndHeaders(extension, resp);
 
-        if (req.getParameter(PARAM_EXPIRE_CACHE) != null) {
-            this.expireCache();
-        }
+        Writer out = resp.getWriter();
 
-        boolean useCache = this.useCache && req.getParameter(PARAM_SKIP_CACHE) == null && req.getParameter(PARAM_DEBUG) == null;
-
-        if (useCache) {
-            logger.info("Using cache for : " + url);
-            String fromCache = cache.get(url);
-            if (fromCache != null) {
-                logger.info("Cache hit");
-                Writer writer = resp.getWriter();
-                writer.write(fromCache);
-                writer.flush();
-                writer.close();
-                return;
-            } else {
-                logger.info("Cache miss");
-            }
-        }
-
-        url = url.replace(req.getContextPath(), "");
-
-        Writer out = new StringWriter();
-
-        if (!useCache) {
-            out = resp.getWriter();
-        }
-        List<String> resourcesToMerge = findResourcesToMerge(req);
+        List<String> resourcesToMerge = JSCSSMergeServlet.findResourcesToMerge(req);
         int resourcesNotFound = 0;
         for (String fullPath : resourcesToMerge) {
             logger.info("Processing resource : " + fullPath);
@@ -270,11 +255,6 @@ public class JSCSSMergeServlet extends HttpServlet {
 				// ignore
 			}
         }
-        if (useCache) {
-            logger.info("Updating cache for : " + url);
-            cache.put(url, out.toString());
-            resp.getWriter().write(out.toString());
-        }
     }
 
     /**
@@ -293,7 +273,7 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @return Set of resources to be processed
      */
 
-    private List<String> findResourcesToMerge(HttpServletRequest request) {
+    public static List<String> findResourcesToMerge(HttpServletRequest request) {
 
         String contextPath = request.getContextPath();
 

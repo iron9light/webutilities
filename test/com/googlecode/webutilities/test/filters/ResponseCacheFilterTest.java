@@ -1,8 +1,25 @@
+/*
+ * Copyright 2010-2011 Rajendra Patil
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.googlecode.webutilities.test.filters;
 
-import com.googlecode.webutilities.filters.GZIPCompressionFilter;
+import com.googlecode.webutilities.filters.ResponseCacheFilter;
+import com.googlecode.webutilities.filters.YUIMinFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
-import com.googlecode.webutilities.util.Utils;
+import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import junit.framework.TestCase;
@@ -10,13 +27,11 @@ import junit.framework.TestCase;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import static com.googlecode.webutilities.common.Constants.*;
-
-public class GZIPCompressionFilterTest1 extends TestCase {
+public class ResponseCacheFilterTest extends TestCase {
 
     private JSCSSMergeServlet jscssMergeServlet = new JSCSSMergeServlet();
 
-    private GZIPCompressionFilter gzipCompressionFilter = new GZIPCompressionFilter();
+    private ResponseCacheFilter responseCacheFilter = new ResponseCacheFilter();
 
     private WebMockObjectFactory webMockObjectFactory = new WebMockObjectFactory();
 
@@ -26,12 +41,10 @@ public class GZIPCompressionFilterTest1 extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger logger = Logger.getLogger(GZIPCompressionFilterTest1.class.getName());
+    private static final Logger logger = Logger.getLogger(ResponseCacheFilterTest.class.getName());
 
-    public static final String TEST_CONTEXT_PATH = "/webutilities";
-
-    public GZIPCompressionFilterTest1() throws Exception {
-        properties.load(this.getClass().getResourceAsStream(GZIPCompressionFilter.class.getSimpleName() + "Test1.properties"));
+    public ResponseCacheFilterTest() throws Exception {
+        properties.load(this.getClass().getResourceAsStream(ResponseCacheFilterTest.class.getSimpleName() + ".properties"));
     }
 
     private void setUpInitParams() {
@@ -43,8 +56,6 @@ public class GZIPCompressionFilterTest1 extends TestCase {
                 webMockObjectFactory.getMockFilterConfig().setInitParameter(keyAndValue[0], keyAndValue[1]);
             }
         }
-
-        webMockObjectFactory.getMockServletConfig().setInitParameter(INIT_PARAM_USE_CACHE, "false"); //never use servlet cache
 
     }
 
@@ -61,7 +72,8 @@ public class GZIPCompressionFilterTest1 extends TestCase {
 
     private void setUpRequest() {
         String requestURI = properties.getProperty(this.currentTestNumber + ".test.request.uri");
-        webMockObjectFactory.getMockRequest().setContextPath(TEST_CONTEXT_PATH);
+        String contextPath = properties.getProperty(this.currentTestNumber + ".test.request.contextPath");
+        webMockObjectFactory.getMockRequest().setContextPath(contextPath);
         if (requestURI != null && !requestURI.trim().equals("")) {
             String[] uriAndQuery = requestURI.split("\\?");
             webMockObjectFactory.getMockRequest().setRequestURI(uriAndQuery[0]);
@@ -74,19 +86,13 @@ public class GZIPCompressionFilterTest1 extends TestCase {
 
             }
         }
-        String userAgent = properties.getProperty(this.currentTestNumber + ".test.request.userAgent");
-        if (userAgent != null && !userAgent.trim().equals("")) {
-            webMockObjectFactory.getMockRequest().addHeader(HTTP_USER_AGENT_HEADER, userAgent);
-        }
-        String accept = properties.getProperty(this.currentTestNumber + ".test.request.accept");
-        if (accept != null && !accept.trim().equals("")) {
-            webMockObjectFactory.getMockRequest().addHeader(HTTP_ACCEPT_ENCODING_HEADER, accept);
-        }
     }
 
-    private String getExpectedContentEncoding() {
+    private String getExpectedOutput() throws Exception {
 
-        return properties.getProperty(this.currentTestNumber + ".test.expected");
+        String expectedResource = properties.getProperty(this.currentTestNumber + ".test.expected");
+        if (expectedResource == null || expectedResource.trim().equals("")) return null;
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource));
 
     }
 
@@ -101,7 +107,7 @@ public class GZIPCompressionFilterTest1 extends TestCase {
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
-        servletTestModule.addFilter(gzipCompressionFilter, true);
+        servletTestModule.addFilter(responseCacheFilter, true);
 
         servletTestModule.setDoChain(true);
 
@@ -109,19 +115,18 @@ public class GZIPCompressionFilterTest1 extends TestCase {
 
         this.setUpRequest();
 
+
     }
 
     public void testFilterUsingDifferentScenarios() throws Exception {
 
         while (true) {
-
             this.pre();
 
             String testCase = properties.getProperty(this.currentTestNumber + ".test.name");
 
             if (testCase == null || testCase.trim().equals("")) {
-                break;
-                //return; // no more test cases in properties file.
+                return; // no more test cases in properties file.
             }
 
             logger.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
@@ -132,27 +137,20 @@ public class GZIPCompressionFilterTest1 extends TestCase {
 
             servletTestModule.doFilter();
 
-            String actualResponseEncoding = webMockObjectFactory.getMockResponse().getHeader(HTTP_CONTENT_ENCODING_HEADER);
+            String actualOutput = servletTestModule.getOutput();
 
-            String actualVary = webMockObjectFactory.getMockResponse().getHeader(HTTP_VARY_HEADER);
+            assertNotNull(actualOutput);
 
-            String expectedEncoding = this.getExpectedContentEncoding();
+            String expectedOutput = this.getExpectedOutput();
 
-            if (expectedEncoding == null || expectedEncoding.trim().equalsIgnoreCase("null")) {
-                assertNull("Actual Encoding from response should be null", actualResponseEncoding);
-            } else {
-                assertNotNull("Actual Encoding expected was " + expectedEncoding + " but found null.", actualResponseEncoding);
-
-                assertEquals(expectedEncoding.trim(), actualResponseEncoding.trim());
-
-                assertEquals(actualVary.trim(), HTTP_ACCEPT_ENCODING_HEADER);
-            }
+            assertEquals(expectedOutput.trim(), actualOutput.trim());
 
             this.post();
 
         }
 
     }
+
 
     private void post() {
         this.currentTestNumber++;

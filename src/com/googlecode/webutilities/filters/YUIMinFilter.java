@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Rajendra Patil 
+ * Copyright 2010-2011 Rajendra Patil
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,22 +12,15 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
  */
 
 package com.googlecode.webutilities.filters;
 
 import static com.googlecode.webutilities.common.Constants.*;
 
-import java.io.CharArrayWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -38,8 +31,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.googlecode.webutilities.common.ServletResponseWrapper;
 import com.googlecode.webutilities.util.Utils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
@@ -146,20 +139,14 @@ public class YUIMinFilter implements Filter {
 
     private boolean disableOptimizations = false;
 
-    private boolean useCache = true;
+    private static final String PROCESSED_ATTR = YUIMinFilter.class.getName() + ".MINIFIED";
 
-    private Map<String, String> cache = Collections.synchronizedMap(new LinkedHashMap<String, String>());
 
     private static final Logger logger = Logger.getLogger(YUIMinFilter.class.getName());
 
     @Override
     public void destroy() {
         this.config = null;
-    }
-
-    private void expireCache() {
-        logger.info("Expiring cache.");
-        this.cache.clear();
     }
 
     @Override
@@ -174,40 +161,20 @@ public class YUIMinFilter implements Filter {
 
         logger.info("Filtering URI: " + url);
 
-        if (req.getParameter(PARAM_EXPIRE_CACHE) != null) {
-            this.expireCache();
-        }
+        boolean alreadyProcessed = req.getAttribute(PROCESSED_ATTR) != null;
 
-        if (config != null && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
+        if (!alreadyProcessed && config != null && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
 
-            boolean useCache = this.useCache && req.getParameter(PARAM_SKIP_CACHE) == null && req.getParameter(PARAM_DEBUG) == null;
+            req.setAttribute(PROCESSED_ATTR,true);
 
-            Writer out = new StringWriter();
-
-            if (!useCache) {
-                out = resp.getWriter();
-            }
-
-            CharResponseWrapper wrapper = new CharResponseWrapper(rs);
+            ServletResponseWrapper wrapper = new ServletResponseWrapper(rs);
             //Let the response be generated
-            
-            chain.doFilter(req, wrapper);//!FIXME if we get minified data from cache then we don't need to call this. But we are calling this to set resp headers.
 
-            if (useCache) {
-                logger.info("Using cache for : " + url);
-                String fromCache = cache.get(url);
-                if (fromCache != null) {
-                    logger.info("Cache hit");
-                    Writer writer = resp.getWriter();
-                    writer.write(fromCache);
-                    writer.flush();
-                    writer.close();
-                    return;
-                } else {
-                    logger.info("Cache miss");
-                }
-            }
-            StringReader sr = new StringReader(new String(wrapper.toString().getBytes(), this.charset));
+            chain.doFilter(req, wrapper);
+
+            StringReader sr = new StringReader(new String(wrapper.getBytes(), this.charset));
+
+            Writer out = resp.getWriter();
             //work on generated response
             if (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_JS) || wrapper.getContentType().equals(MIME_JSON)))) {
                 JavaScriptCompressor compressor = new JavaScriptCompressor(sr, null);
@@ -219,14 +186,10 @@ public class YUIMinFilter implements Filter {
                 compressor.compress(out, this.lineBreak);
             } else {
                 logger.info("Not Compressing anything.");
-                out.write(wrapper.toString());
+                out.write(wrapper.getContents());
             }
-            if (useCache) {
-                cache.put(url, out.toString());
-                resp.getWriter().write(out.toString());
-            }
+
             out.flush();
-            out.close();
         } else {
             chain.doFilter(req, resp);
         }
@@ -242,7 +205,6 @@ public class YUIMinFilter implements Filter {
         this.noMunge = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_NO_MUNGE), this.noMunge);
         this.preserveSemi = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_PRESERVE_SEMI), this.preserveSemi);
         this.disableOptimizations = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
-        this.useCache = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_USE_CACHE), this.useCache);
 
         logger.info("Filter initialized with: " +
                 "{" +
@@ -250,27 +212,9 @@ public class YUIMinFilter implements Filter {
                 "   " + INIT_PARAM_NO_MUNGE + ":" + noMunge + "," +
                 "   " + INIT_PARAM_PRESERVE_SEMI + ":" + preserveSemi + "," +
                 "   " + INIT_PARAM_DISABLE_OPTIMIZATIONS + ":" + disableOptimizations + "," +
-                "   " + INIT_PARAM_USE_CACHE + ":" + useCache + "," +
                 "}");
 
     }
 
 }
 
-class CharResponseWrapper extends HttpServletResponseWrapper {
-
-    private CharArrayWriter output;
-
-    public String toString() {
-        return output.toString();
-    }
-
-    public CharResponseWrapper(HttpServletResponse response) {
-        super(response);
-        output = new CharArrayWriter();
-    }
-
-    public PrintWriter getWriter() {
-        return new PrintWriter(output);
-    }
-}

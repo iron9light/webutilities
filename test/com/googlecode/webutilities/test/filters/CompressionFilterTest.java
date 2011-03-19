@@ -1,7 +1,22 @@
+/*
+ * Copyright 2010-2011 Rajendra Patil
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.googlecode.webutilities.test.filters;
 
 import com.googlecode.webutilities.filters.CompressionFilter;
-import com.googlecode.webutilities.filters.GZIPCompressionFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
@@ -28,10 +43,8 @@ public class CompressionFilterTest extends TestCase {
 
     private static final Logger logger = Logger.getLogger(CompressionFilterTest.class.getName());
 
-    public static final String TEST_CONTEXT_PATH = "/webutilities";
-
     public CompressionFilterTest() throws Exception {
-        properties.load(this.getClass().getResourceAsStream(CompressionFilter.class.getSimpleName() + "Test.properties"));
+        properties.load(this.getClass().getResourceAsStream(CompressionFilterTest.class.getSimpleName() + ".properties"));
     }
 
     private void setUpInitParams() {
@@ -43,8 +56,6 @@ public class CompressionFilterTest extends TestCase {
                 webMockObjectFactory.getMockFilterConfig().setInitParameter(keyAndValue[0], keyAndValue[1]);
             }
         }
-
-        webMockObjectFactory.getMockServletConfig().setInitParameter(INIT_PARAM_USE_CACHE, "false"); //never use servlet cache
 
     }
 
@@ -61,7 +72,8 @@ public class CompressionFilterTest extends TestCase {
 
     private void setUpRequest() {
         String requestURI = properties.getProperty(this.currentTestNumber + ".test.request.uri");
-        webMockObjectFactory.getMockRequest().setContextPath(TEST_CONTEXT_PATH);
+        String contextPath = properties.getProperty(this.currentTestNumber + ".test.request.contextPath");
+        webMockObjectFactory.getMockRequest().setContextPath(contextPath);
         if (requestURI != null && !requestURI.trim().equals("")) {
             String[] uriAndQuery = requestURI.split("\\?");
             webMockObjectFactory.getMockRequest().setRequestURI(uriAndQuery[0]);
