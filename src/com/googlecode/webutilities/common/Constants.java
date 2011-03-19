@@ -82,8 +82,6 @@ public final class Constants {
 
     public static final String CONTENT_ENCODING_IDENTITY = "identity";
 
-    public static final String HTTP_ACCEPT_ENCODING_HEADER_VALUES_PATTERN = ",?.*\\s*\\b(" + CONTENT_ENCODING_GZIP + ")\\b,?\\s*.*"; //currently only compression
-
     public static final String HTTP_USER_AGENT_HEADER = "User-Agent";
 
     private Constants() {

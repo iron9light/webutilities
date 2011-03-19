@@ -88,22 +88,6 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  *  <b>disableOptimizations</b> - equivalent to YUICompressor --disable-optimizations. Disable all micro optimizations. Default false.
  *  <b>useCache</b> - to cache the earlier minified contents and serve from cache. Default true.
  * </pre>
- * <h3>Notes on Cache</h3>
- * <p>If you have not set useCache parameter to false then cache will be used and contents will be always served from cache if found.
- * Sometimes you may not want to use cache or you may want to evict the cache then using URL parameters you can do that.
- * </p>
- * <h4>URL Parameters to skip or evict the cache</h4>
- * <pre>
- * <b>_skipcache_</b> - The JS or CSS request URL if contains this parameters the cache will not be used for it.
- * <b>_dbg_</b> - same as above _skipcache_ parameters.
- * <b>_expirecache_</b> - The cache will be cleaned completely. All existing cached contents will be cleaned.
- * </pre>
- * <pre>
- * <b>Eg.</b>
- * &lt;link rel="StyleSheet" href="/myapp/css/common.css<b>?_dbg=1</b>"/&gt;
- * or
- * &lt;script language="JavaScript" src="/myapp/js/prototype.js<b>?_expirecache_=1</b>"&gt;&lt;/script&gt;
- * </pre>
  * <h3>Dependency</h3>
  * <p>The <code>YUIMinFilter</code> depends on servlet-api and YUICompressor jar to be in the classpath.</p>
  * <p><b>servlet-api.jar</b> - Must be already present in your webapp classpath</p>

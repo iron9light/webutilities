@@ -27,6 +27,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Common Simple Servlet Response Wrapper using ServletResponseOutputStream
+ * @see ServletResponseOutputStream
+ *
+ * @author rpatil
+ * @version 1.0
+ */
+
 public class ServletResponseWrapper extends HttpServletResponseWrapper {
 	
 	private ServletResponseOutputStream stream;

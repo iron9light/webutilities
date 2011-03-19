@@ -20,6 +20,12 @@ import javax.servlet.ServletOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Common Simple Servlet Response stream using ByteArrayOutputStream
+ *
+ * @author rpatil
+ * @version 1.0
+ */
 public class ServletResponseOutputStream extends ServletOutputStream {
 
 	private ByteArrayOutputStream byteArrayOutputStream;

@@ -36,9 +36,11 @@ import java.util.logging.Logger;
 import static com.googlecode.webutilities.common.Constants.*;
 
 /**
- * Servlet Filter implementation class CompressionFilter
+ * Servlet Filter implementation class CompressionFilter to handle compressed requests
+ * and also respond with compressed contents supporting gzip, compress or
+ * deflate compression encoding.
  *
- * @version 1.0
+ * @author rpatil
  * @since 0.0.4
  */
 public class CompressionFilter implements Filter {
