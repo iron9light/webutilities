@@ -40,15 +40,35 @@ public class ServletResponseWrapper extends HttpServletResponseWrapper {
 	private ServletResponseOutputStream stream;
 	private Map<String,Object> headers = new HashMap<String,Object>();
 	private Set<Cookie> cookies = new HashSet<Cookie>();
-	private int statusCode;
-	private String statusMsg;
+	private String contentType;
+	private int status;
 	boolean getWriterCalled = false;
 	boolean getStreamCalled = false;
-	
+
     @Override
 	public void addCookie(Cookie cookie) {
 		super.addCookie(cookie);
 		cookies.add(cookie);
+	}
+    @Override
+	public void setStatus(int sc, String sm) {
+		super.setStatus(sc, sm);
+		this.status = sc;
+	}
+	@Override
+	public void setStatus(int sc) {
+		super.setStatus(sc);
+		this.status = sc;
+	}
+	@Override
+	public void sendError(int sc) throws IOException {
+		super.sendError(sc);
+		this.status = sc;
+	}
+	@Override
+	public void sendError(int sc, String msg) throws IOException {
+		super.sendError(sc, msg);
+		this.status = sc;
 	}
 	@Override
 	public void addDateHeader(String name, long date) {
@@ -81,42 +101,24 @@ public class ServletResponseWrapper extends HttpServletResponseWrapper {
 		headers.put(name, value);
 	}
 	@Override
-	public void setStatus(int sc, String sm) {
-		super.setStatus(sc, sm);
-		this.statusCode = sc;
-		this.statusMsg = sm;
+	public String getContentType() {
+		return contentType;
 	}
 	@Override
-	public void setStatus(int sc) {
-		super.setStatus(sc);
-		this.statusCode = sc;
+	public void setContentType(String type) {
+		super.setContentType(type);
+		this.contentType = type;
 	}
-	
+	@Override
+	public boolean containsHeader(String name) {
+		return headers.containsKey(name);
+	}
 	public Map<String, Object> getHeaders() {
 		return headers;
-	}
-	public void setHeaders(Map<String, Object> headers) {
-		this.headers = headers;
 	}
 	public Set<Cookie> getCookies() {
 		return cookies;
 	}
-	public void setCookies(Set<Cookie> cookies) {
-		this.cookies = cookies;
-	}
-	public int getStatusCode() {
-		return statusCode;
-	}
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
-	}
-	public String getStatusMsg() {
-		return statusMsg;
-	}
-	public void setStatusMsg(String statusMsg) {
-		this.statusMsg = statusMsg;
-	}
-	
 	@Override
 	public ServletOutputStream getOutputStream() throws IOException {
 		if(getWriterCalled){
@@ -133,6 +135,10 @@ public class ServletResponseWrapper extends HttpServletResponseWrapper {
 		}
 		getWriterCalled = true;
 		return new PrintWriter(stream);
+	}
+	
+	public int getStatus() {
+		return status;
 	}
 	
 	public String getContents() {

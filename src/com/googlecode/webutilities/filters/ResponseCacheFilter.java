@@ -16,12 +16,12 @@
 
 package com.googlecode.webutilities.filters;
 
-import com.googlecode.webutilities.common.Constants;
-import com.googlecode.webutilities.common.ServletResponseWrapper;
-import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -33,6 +33,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.googlecode.webutilities.common.Constants;
+import com.googlecode.webutilities.common.ServletResponseWrapper;
+import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 
 /**
  * The <code>ResponseCacheFilter</code> is implemented as Servlet Filter to enable caching of STATIC resources (JS, CSS, static HTML files)
@@ -113,6 +117,7 @@ public class ResponseCacheFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
+        HttpServletResponse httpServletResponse = (HttpServletResponse)servletResponse;
 
         String url = httpServletRequest.getRequestURI();
 
@@ -145,13 +150,16 @@ public class ResponseCacheFilter implements Filter {
 
         if(cacheFound){
             logger.info("Returning Cached response.");
-            fillResponseFromCache((HttpServletResponse)servletResponse, cacheObject.getServletResponseWrapper());
+            fillResponseFromCache(httpServletResponse, cacheObject.getServletResponseWrapper());
         }else{
             logger.info("Cache not found or invalidated");
-            ServletResponseWrapper wrapper = new ServletResponseWrapper((HttpServletResponse)servletResponse);
+            ServletResponseWrapper wrapper = new ServletResponseWrapper(httpServletResponse);
             filterChain.doFilter(servletRequest, wrapper);
             cache.put(url, new CacheObject(new Date().getTime(), wrapper));
-            servletResponse.getOutputStream().write(wrapper.getBytes());
+            httpServletResponse.setCharacterEncoding(wrapper.getCharacterEncoding());
+            httpServletResponse.setContentType(wrapper.getContentType());
+            httpServletResponse.getOutputStream().write(wrapper.getBytes());
+            httpServletResponse.setStatus(wrapper.getStatus());
         }
 
     }
@@ -170,14 +178,10 @@ public class ResponseCacheFilter implements Filter {
     			actual.addHeader(headerName, value.toString());
     		}
     	}
-    	if(cache.getStatusMsg() != null){
-    		actual.setStatus(cache.getStatusCode(), cache.getStatusMsg());
-    	}else{
-    		actual.setStatus(cache.getStatusCode());
-    	}
     	actual.setCharacterEncoding(cache.getCharacterEncoding());
     	actual.setContentType(cache.getContentType());
     	actual.getOutputStream().write(cache.getBytes());
+    	actual.setStatus(cache.getStatus());
     }
     
     @Override
