@@ -36,7 +36,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.common.ServletResponseWrapper;
+import com.googlecode.webutilities.filters.common.AbstractFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
+import com.googlecode.webutilities.util.Utils;
 
 /**
  * The <code>ResponseCacheFilter</code> is implemented as Servlet Filter to enable caching of STATIC resources (JS, CSS, static HTML files)
@@ -79,13 +81,13 @@ import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
  * @version 1.0
  */
 
-public class ResponseCacheFilter implements Filter {
-
-    private FilterConfig config;
+public class ResponseCacheFilter extends AbstractFilter {
 
     private class CacheObject{
 
         private long time;
+
+        //private long accessCount = 0;
 
         ServletResponseWrapper servletResponseWrapper;
 
@@ -102,15 +104,47 @@ public class ResponseCacheFilter implements Filter {
             return servletResponseWrapper;
         }
 
+        /*public void increaseAccessCount(){
+            accessCount++;
+        }
+
+        public long getAccessCount(){
+            return this.accessCount;
+        }*/
+
     }
 
     private Map<String, CacheObject> cache = Collections.synchronizedMap(new LinkedHashMap<String, CacheObject>());
 
+    private int reloadTime = 0;
+
+    private int resetTime = 0;
+
+    private long lastResetTime;
+
     private static final Logger logger = Logger.getLogger(ResponseCacheFilter.class.getName());
+
+    private static final String INIT_PARAM_RELOAD_TIME = "reloadTime";
+
+    private static final String INIT_PARAM_RESET_TIME = "resetTime";
+
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        this.config = filterConfig;
+        super.init(filterConfig);
+
+        this.reloadTime = Utils.readInt(filterConfig.getInitParameter(INIT_PARAM_RELOAD_TIME),reloadTime);
+        
+        this.resetTime = Utils.readInt(filterConfig.getInitParameter(INIT_PARAM_RESET_TIME),resetTime);
+
+        lastResetTime = new Date().getTime();
+
+        logger.info("Cache Filter initialized with: " +
+                "{" +
+                INIT_PARAM_RELOAD_TIME +":"+ reloadTime + "," +
+                INIT_PARAM_RESET_TIME + ":" + resetTime + "," +
+                "}");
+
     }
 
     @Override
@@ -121,29 +155,54 @@ public class ResponseCacheFilter implements Filter {
 
         String url = httpServletRequest.getRequestURI();
 
-        boolean expireCache = httpServletRequest.getParameter(Constants.PARAM_EXPIRE_CACHE) != null;
+        if(!isURLAccepted(url) || !isUserAgentAccepted(httpServletRequest.getHeader(Constants.HTTP_USER_AGENT_HEADER))){
+            logger.info("Skipping Cache filter for: " + url);
+            logger.info("URL or UserAgent not accepted");
+            filterChain.doFilter(servletRequest,servletResponse);
+            return;
+        }
+
+
+        long now = new Date().getTime();
+
+        CacheObject cacheObject = cache.get(url);
+
+        boolean expireCache = httpServletRequest.getParameter(Constants.PARAM_EXPIRE_CACHE) != null || 
+                (cacheObject != null &&  reloadTime > 0 && (now - cacheObject.getTime())/1000 > reloadTime);
 
         if(expireCache){
+            logger.info("Removing Cache for: " + url + " due to URL parameter.");
+            cache.remove(url);
+        }
+ 
+        boolean resetCache = httpServletRequest.getParameter(Constants.PARAM_RESET_CACHE) != null ||
+                resetTime > 0 && (now - lastResetTime)/1000 > resetTime;
+
+        if(resetCache){
+            logger.info("Resetting whole Cache for due to URL parameter.");
             cache.clear();
+            lastResetTime = now;
         }
 
         boolean skipCache = httpServletRequest.getParameter(Constants.PARAM_DEBUG) != null || httpServletRequest.getParameter(Constants.PARAM_SKIP_CACHE) != null;
 
-        if(skipCache || expireCache){
+        if(skipCache){
             filterChain.doFilter(servletRequest, servletResponse);
+            logger.info("Skipping Cache for: " + url + " due to URL parameter.");
             return;
         }
 
         boolean cacheFound = false;
-        CacheObject cacheObject = cache.get(url);
+
         if(cacheObject != null && cacheObject.getServletResponseWrapper() != null){
             List<String> requestedResources = JSCSSMergeServlet.findResourcesToMerge(httpServletRequest);
-            if(requestedResources != null && JSCSSMergeServlet.isAnyResourceModifiedSince(requestedResources, cacheObject.getTime(), config.getServletContext())){
+            if(requestedResources != null && JSCSSMergeServlet.isAnyResourceModifiedSince(requestedResources, cacheObject.getTime(), filterConfig.getServletContext())){
                 logger.info("Some resources have been modified since last cache: " + url);
                 cache.remove(url);
                 cacheFound = false;
             }else{
                 logger.info("Found valid cached response.");
+                //cacheObject.increaseAccessCount();
                 cacheFound = true;
             }
         }
@@ -155,7 +214,17 @@ public class ResponseCacheFilter implements Filter {
             logger.info("Cache not found or invalidated");
             ServletResponseWrapper wrapper = new ServletResponseWrapper(httpServletResponse);
             filterChain.doFilter(servletRequest, wrapper);
-            cache.put(url, new CacheObject(new Date().getTime(), wrapper));
+
+            if(isMIMEAccepted(wrapper.getContentType()) && !expireCache && !resetCache){
+                cache.put(url, new CacheObject(now, wrapper));
+                logger.info("Cache added for: " + url);
+            }else{
+                logger.info("Cache NOT added for: " + url);
+                logger.info("is MIME not accepted: " + isMIMEAccepted(wrapper.getContentType()));
+                logger.info("is expireCache: " + expireCache);
+                logger.info("is resetCache: " + resetCache); 
+            }
+
             httpServletResponse.setCharacterEncoding(wrapper.getCharacterEncoding());
             httpServletResponse.setContentType(wrapper.getContentType());
             httpServletResponse.getOutputStream().write(wrapper.getBytes());
@@ -183,11 +252,7 @@ public class ResponseCacheFilter implements Filter {
     	actual.getOutputStream().write(cache.getBytes());
     	actual.setStatus(cache.getStatus());
     }
-    
-    @Override
-    public void destroy() {
-       this.config = null;
-    }
+   
 }
 
 

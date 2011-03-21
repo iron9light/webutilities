@@ -145,13 +145,19 @@ public class CharacterEncodingFilterTest extends TestCase {
 
             String actualResponseEncoding = webMockObjectFactory.getMockResponse().getCharacterEncoding();
 
-            String expectedEncoding = this.getExpectedEncoding();
+            String expectedEncodings = this.getExpectedEncoding();
 
-            if (force) {
-                assertEquals(expectedEncoding.trim(), actualResponseEncoding.trim());
+            if(expectedEncodings != null){ //request:response -> UTF-8:ISO-8859-1 - requ
+                String[] expectedReqEncResEnc = expectedEncodings.split(":");
+                if(force){
+                    if(expectedReqEncResEnc.length > 1){
+                        assertEquals(expectedReqEncResEnc[1], actualResponseEncoding);
+                    }else{
+                        assertEquals(expectedReqEncResEnc[0], actualResponseEncoding);
+                    }
+                }
+                assertEquals(expectedReqEncResEnc[0], actualRequestEncoding);
             }
-
-            assertEquals(expectedEncoding, actualRequestEncoding);
 
             this.post();
 

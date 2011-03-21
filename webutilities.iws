@@ -14,15 +14,30 @@
     <option name="historyRevisionsNumber" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="1a4088d3-cf9f-4278-9289-5f388737d2a4" name="Default" comment="T">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.properties" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTestCase.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/webutilities/CharacterEncodingFilter.java" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/CharacterEncodingFilter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTestCase.java" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTestCase.java" />
+    <list default="true" readonly="true" id="1a4088d3-cf9f-4278-9289-5f388737d2a4" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/common" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/common/AbstractFilter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/servlets/JSCSSMergeServletTest.properties" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/servlets/JSCSSMergeServletTest.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/CompressionFilter.java" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/CompressionFilter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/webutilities/servlets/JSCSSMergeServlet.java" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/servlets/JSCSSMergeServlet.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.properties" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.java" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webutilities.ipr" afterPath="$PROJECT_DIR$/webutilities.ipr" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.properties" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/compression/CompressedHttpServletResponseWrapper.java" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/compression/CompressedHttpServletResponseWrapper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/YUIMinFilter.java" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/YUIMinFilter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/CharacterEncodingFilter.java" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/CharacterEncodingFilter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/common/IgnoreAcceptContext.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.java" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/ResponseCacheFilterTest.properties" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/ResponseCacheFilterTest.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/ResponseCacheFilter.java" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/ResponseCacheFilter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webutilities.iws" afterPath="$PROJECT_DIR$/webutilities.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/YUIMinFilterTest.properties" afterPath="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/YUIMinFilterTest.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/googlecode/webutilities/common/Constants.java" afterPath="$PROJECT_DIR$/src/com/googlecode/webutilities/common/Constants.java" />
     </list>
-    <ignored path="$USER_HOME_GRIFFON$/" />
+    <ignored path="build/" />
     <ignored path="$USER_HOME_GRAILS$/" />
+    <ignored path="$USER_HOME_GRIFFON$/" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,12 +91,22 @@
   <component name="FavoritesManager">
     <favorites_list name="webutilities" />
   </component>
+  <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="YUIMinTagTestCase.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTestCase.java">
+      <file leaf-file-name="CompressionFilterTest.properties" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="41" selection-start="1629" selection-end="1629" vertical-scroll-proportion="0.0">
+            <state line="25" column="67" selection-start="980" selection-end="980" vertical-scroll-proportion="0.70652175">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CompressionFilterTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="172" column="78" selection-start="7174" selection-end="7174" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -90,34 +115,70 @@
       <file leaf-file-name="WebutilitiesTestSuit.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/WebutilitiesTestSuit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="48" selection-start="361" selection-end="361" vertical-scroll-proportion="0.0">
+            <state line="44" column="5" selection-start="1507" selection-end="1507" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CharacterEncodingFilterTestCase.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTestCase.java">
+      <file leaf-file-name="JSCSSMergeServletTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/servlets/JSCSSMergeServletTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="128" column="70" selection-start="5032" selection-end="5032" vertical-scroll-proportion="0.0">
+            <state line="133" column="5" selection-start="5297" selection-end="5643" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CharacterEncodingFilter.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/CharacterEncodingFilter.java">
+      <file leaf-file-name="YUIMinFilterTest.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/YUIMinFilterTest.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="134" column="45" selection-start="5443" selection-end="5443" vertical-scroll-proportion="0.0">
+            <state line="31" column="27" selection-start="1159" selection-end="1159" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CharacterEncodingFilterTest.properties" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.properties">
+      <file leaf-file-name="JSCSSMergeServletTest.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/servlets/JSCSSMergeServletTest.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="79" selection-start="862" selection-end="862" vertical-scroll-proportion="0.71374047">
+            <state line="285" column="107" selection-start="12162" selection-end="12162" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="YUIMinTagTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="70" column="48" selection-start="2687" selection-end="2687" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="YUIMinTagTest.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTest.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestUtils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/util/TestUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="64" column="6" selection-start="1772" selection-end="2218" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CharacterEncodingFilterTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="29" column="13" selection-start="1055" selection-end="1055" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -137,24 +198,31 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/css/expected-a-subdir1-c.css" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/css/subdir1/1.css" />
-        <option value="$PROJECT_DIR$/build.xml" />
-        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/JSCSSMergeServlet.java" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/css/subdir1/subdir11/11.css" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/css/expected-a-subdir1-subdir11.css" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/css/expected-2-subdir1-subdir11.css" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/css/expected-a-subdir1-subdir11-min.css" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/JSCSSMergeServletTest.properties" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/JSCSSMergeServletTestCase.java" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/css/expected-2-subdir1-subdir11-min.css" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTest.properties" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTestCase.java" />
-        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/CharacterEncodingFilter.java" />
-        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTestCase.java" />
+        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/common/Constants.java" />
+        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/YUIMinFilter.java" />
+        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/compression/CompressedHttpServletResponseWrapper.java" />
+        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/ResponseCacheFilterTest.java" />
+        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/ResponseCacheFilterTest.properties" />
+        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/servlets/JSCSSMergeServlet.java" />
+        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/servlets/JSCSSMergeServletTest.properties" />
+        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/common/AbstractFilter.java" />
+        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/CharacterEncodingFilter.java" />
+        <option value="$PROJECT_DIR$/src/com/googlecode/webutilities/filters/ResponseCacheFilter.java" />
+        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.java" />
         <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.properties" />
+        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/YUIMinFilterTest.properties" />
+        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/util/TestUtils.java" />
+        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.java" />
+        <option value="$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.properties" />
       </list>
     </option>
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
   </component>
   <component name="ModuleEditorState">
     <option name="LAST_EDITED_MODULE_NAME" />
@@ -193,7 +261,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Favorites" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -242,6 +309,50 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webutilities" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webutilities-trunk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="util" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webutilities" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webutilities-trunk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tags" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -331,29 +442,39 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webutilities" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="filters" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Favorites" />
       <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth1" value="249" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth0" value="237" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth3" value="44" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth2" value="263" />
     <property name="project.structure.proportion" value="0.0" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder1" value="1" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder0" value="0" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder3" value="3" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder2" value="2" />
-    <property name="recentsLimit" value="5" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth2" value="220" />
+    <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth1" value="207" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder4" value="4" />
@@ -368,11 +489,11 @@
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="options.lastSelected" value="project.propSubversion" />
+    <property name="options.lastSelected" value="preferences.applicationServers" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder3" value="3" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder4" value="4" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder1" value="1" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder2" value="2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder0" value="0" />
@@ -394,9 +515,76 @@
       <recent name="$PROJECT_DIR$/test/com/googlecode/webutilities/test/resources/css/subdir1" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.CharacterEncodingFilterTestCase.testFilterUsingDifferentScenarios">
+  <component name="RunManager" selected="JUnit.CompressionFilterTest.testFilterUsingDifferentScenarios">
+    <configuration default="false" name="CompressionFilterTest.testFilterUsingDifferentScenarios" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false">
+        <pattern>
+          <option name="PATTERN" value="com.googlecode.webutilities.test.filters.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <extension name="snapshooter" />
+      <module name="webutilities" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.googlecode.webutilities.test.filters" />
+      <option name="MAIN_CLASS_NAME" value="com.googlecode.webutilities.test.filters.CompressionFilterTest" />
+      <option name="METHOD_NAME" value="testFilterUsingDifferentScenarios" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="56626" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="JSCSSMergeServletTest" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false">
+        <pattern>
+          <option name="PATTERN" value="com.googlecode.webutilities.test.servlets.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <extension name="snapshooter" />
+      <module name="webutilities" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.googlecode.webutilities.test.servlets" />
+      <option name="MAIN_CLASS_NAME" value="com.googlecode.webutilities.test.servlets.JSCSSMergeServletTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
     <configuration default="false" name="WebutilitiesTestSuit" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" />
+      <extension name="coverage" enabled="false" merge="false">
+        <pattern>
+          <option name="PATTERN" value="com.googlecode.webutilities.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <extension name="snapshooter" />
       <module name="webutilities" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -414,109 +602,23 @@
         <value defaultName="moduleWithDependencies" />
       </option>
       <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="34467" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="YUIMinTagTestCase" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" />
-      <extension name="snapshooter" />
-      <module name="webutilities" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.googlecode.webutilities.test.tags" />
-      <option name="MAIN_CLASS_NAME" value="com.googlecode.webutilities.test.tags.YUIMinTagTestCase" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="49584" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="YUIMinTagTestCase.testTagUsingDifferentScenarios" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" />
-      <extension name="snapshooter" />
-      <module name="webutilities" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.googlecode.webutilities.test.tags" />
-      <option name="MAIN_CLASS_NAME" value="com.googlecode.webutilities.test.tags.YUIMinTagTestCase" />
-      <option name="METHOD_NAME" value="testTagUsingDifferentScenarios" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="CharacterEncodingFilterTestCase" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" />
+    <configuration default="false" name="CharacterEncodingFilterTest.testFilterUsingDifferentScenarios" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false">
+        <pattern>
+          <option name="PATTERN" value="com.googlecode.webutilities.test.filters.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <extension name="snapshooter" />
       <module name="webutilities" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="PACKAGE_NAME" value="com.googlecode.webutilities.test.filters" />
-      <option name="MAIN_CLASS_NAME" value="com.googlecode.webutilities.test.filters.CharacterEncodingFilterTestCase" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="47148" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="CharacterEncodingFilterTestCase.testFilterUsingDifferentScenarios" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" />
-      <extension name="snapshooter" />
-      <module name="webutilities" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.googlecode.webutilities.test.filters" />
-      <option name="MAIN_CLASS_NAME" value="com.googlecode.webutilities.test.filters.CharacterEncodingFilterTestCase" />
+      <option name="MAIN_CLASS_NAME" value="com.googlecode.webutilities.test.filters.CharacterEncodingFilterTest" />
       <option name="METHOD_NAME" value="testFilterUsingDifferentScenarios" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
@@ -528,10 +630,58 @@
         <value defaultName="moduleWithDependencies" />
       </option>
       <envs />
-      <patterns />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
+    </configuration>
+    <configuration default="false" name="CharacterEncodingFilterTest" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false">
+        <pattern>
+          <option name="PATTERN" value="com.googlecode.webutilities.test.filters.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <extension name="snapshooter" />
+      <module name="webutilities" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.googlecode.webutilities.test.filters" />
+      <option name="MAIN_CLASS_NAME" value="com.googlecode.webutilities.test.filters.CharacterEncodingFilterTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="37025" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <ConfigurationWrapper RunnerId="Debug" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpRunConfigurationType" factoryName="PHP">
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="FtpUpload" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="ValidateXdebugSetup" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="ValidateXdebugSetup" enabled="true" />
+      </method>
     </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
@@ -542,6 +692,14 @@
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="FlexUnitRunConfigurationType" factoryName="FlexUnit" adl_options="" air_descriptor_path="" air_program_params="" air_publisher_id="" air_root_dir_path="" air_run_mode="AppDescriptor" class_name="" debugger_sdk="Module SDK" html_or_swf_file_path="" main_class_name="" method_name="" module_name="" output_log_level="" package_name="" port="0" run_mode="HtmlOrSwfFile" scope="Class" socket_policy_port="0" url_to_launch="http://">
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
@@ -618,6 +776,15 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
+    <configuration default="true" type="PhpUnitRemoteRunConfigurationType" factoryName="PHPUnit on Server">
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="FtpUpload" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="ValidateXdebugSetup" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <extension name="coverage" enabled="false" merge="false" />
       <extension name="snapshooter" />
@@ -637,7 +804,6 @@
         <value defaultName="moduleWithDependencies" />
       </option>
       <envs />
-      <patterns />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -645,12 +811,74 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.WebutilitiesTestSuit" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.YUIMinTagTestCase" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.YUIMinTagTestCase.testTagUsingDifferentScenarios" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.CharacterEncodingFilterTestCase" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.CharacterEncodingFilterTestCase.testFilterUsingDifferentScenarios" />
+    <configuration default="true" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local">
+      <deployment />
+      <server-settings>
+        <option name="DEPLOY_TOMCAT_MANAGER" value="false" />
+        <option name="BASE_DIRECTORY_NAME" value="" />
+      </server-settings>
+      <predefined_log_file id="TOMCAT_LOCALHOST_LOG_ID" enabled="true" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="Tomcat" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 6">
+      <option name="OPEN_IN_BROWSER" value="false" />
+      <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8080/" />
+      <deployment />
+      <server-settings>
+        <option name="DEPLOY_TOMCAT_MANAGER" value="false" />
+        <option name="BASE_DIRECTORY_NAME" value="Unnamed_webutilities123bb553" />
+      </server-settings>
+      <log_file path="$USER_HOME$/.IntelliJIdea90/system/tomcat/Unnamed_webutilities123bb553/logs/localhost*" checked="true" skipped="true" show_all="false" alias="Tomcat Log" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="42725" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="$USER_HOME$/dev-tools/apache-tomcat-6.0.32/bin/catalina.sh" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value=" run" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="$USER_HOME$/dev-tools/apache-tomcat-6.0.32/bin/catalina.sh" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value=" stop" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="$USER_HOME$/dev-tools/apache-tomcat-6.0.32/bin/catalina.sh" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value=" run" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="$USER_HOME$/dev-tools/apache-tomcat-6.0.32/bin/catalina.sh" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value=" stop" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method />
+    </configuration>
+    <list size="6">
+      <item index="0" class="java.lang.String" itemvalue="Tomcat Server.Tomcat" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.CompressionFilterTest.testFilterUsingDifferentScenarios" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.JSCSSMergeServletTest" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.WebutilitiesTestSuit" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.CharacterEncodingFilterTest.testFilterUsingDifferentScenarios" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.CharacterEncodingFilterTest" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -733,27 +961,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="26" width="1920" height="997" extended-state="0" />
+    <frame x="0" y="26" width="1920" height="997" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3532864" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.6108491" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21390374" sideWeight="0.49178404" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39906102" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3286385" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42488262" sideWeight="0.0" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3490566" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6226415" sideWeight="0.0" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42334905" sideWeight="0.0" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32900944" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21936865" sideWeight="0.3408019" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22566845" sideWeight="0.49178404" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22846442" sideWeight="0.38089624" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.50821596" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3832547" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32900944" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
@@ -770,9 +998,8 @@
     <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="false" />
     <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
-    <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing testing!!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix for chuncked transfer + gzip. In case of chuncked trasnfer encoding, response get commited so adding headers in close doesn't work. Need to add headers early." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -786,6 +1013,8 @@
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
     <MESSAGE value="Testing testing!!" />
+    <MESSAGE value="Testing and fixes." />
+    <MESSAGE value="Fix for chuncked transfer + gzip. In case of chuncked trasnfer encoding, response get commited so adding headers in close doesn't work. Need to add headers early." />
   </component>
   <component name="VssConfiguration">
     <option name="CLIENT_PATH" value="" />
@@ -846,68 +1075,86 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/common/Constants.java">
+    <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/filters/ResponseCacheFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="19" selection-start="196" selection-end="196" vertical-scroll-proportion="0.14634146" />
+        <state line="204" column="18" selection-start="7177" selection-end="7177" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/common/Utils.java">
+    <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/filters/YUIMinFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="19" selection-start="144" selection-end="144" vertical-scroll-proportion="0.14634146" />
+        <state line="105" column="13" selection-start="4636" selection-end="4636" vertical-scroll-proportion="-2.3932347" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/yuimin/YUIMinFilter.java">
+    <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/filters/CharacterEncodingFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="183" column="28" selection-start="7401" selection-end="7401" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/JSCSSMergeServlet.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="320" column="12" selection-start="12532" selection-end="12532" vertical-scroll-proportion="2.2346368" />
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/java-6-sun-1.6.0.22/jre/lib/rt.jar!/java/util/Properties.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="95" selection-start="3433" selection-end="3433" vertical-scroll-proportion="0.15235457" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="59" selection-start="1097" selection-end="1106" vertical-scroll-proportion="0.52671754" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/servlets/JSCSSMergeServletTestCase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="126" column="19" selection-start="5240" selection-end="5240" vertical-scroll-proportion="0.3324937" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTestCase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="41" selection-start="1629" selection-end="1629" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/WebutilitiesTestSuit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="48" selection-start="361" selection-end="361" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/googlecode/webutilities/CharacterEncodingFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="134" column="45" selection-start="5443" selection-end="5443" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTestCase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="70" selection-start="5032" selection-end="5032" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="145" column="62" selection-start="5978" selection-end="5986" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="79" selection-start="862" selection-end="862" vertical-scroll-proportion="0.71374047">
+        <state line="72" column="68" selection-start="2870" selection-end="2870" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/ResponseCacheFilterTest.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/ResponseCacheFilterTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="139" column="65" selection-start="5536" selection-end="5566" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/WebutilitiesTestSuit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="5" selection-start="1507" selection-end="1507" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/servlets/JSCSSMergeServletTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="133" column="5" selection-start="5297" selection-end="5643" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/YUIMinFilterTest.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="27" selection-start="1159" selection-end="1159" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/servlets/JSCSSMergeServletTest.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="285" column="107" selection-start="12162" selection-end="12162" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="48" selection-start="2687" selection-end="2687" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/tags/YUIMinTagTest.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/util/TestUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="64" column="6" selection-start="1772" selection-end="2218" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CharacterEncodingFilterTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="13" selection-start="1055" selection-end="1055" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="172" column="78" selection-start="7174" selection-end="7174" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/googlecode/webutilities/test/filters/CompressionFilterTest.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="67" selection-start="980" selection-end="980" vertical-scroll-proportion="0.70652175">
           <folding />
         </state>
       </provider>

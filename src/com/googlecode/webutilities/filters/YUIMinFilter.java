@@ -32,7 +32,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.common.ServletResponseWrapper;
+import com.googlecode.webutilities.filters.common.AbstractFilter;
 import com.googlecode.webutilities.util.Utils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
@@ -101,9 +103,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  * @author rpatil
  * @version 1.0
  */
-public class YUIMinFilter implements Filter {
-
-    private FilterConfig config;
+public class YUIMinFilter extends AbstractFilter {
 
     private String charset = DEFAULT_CHARSET;
 
@@ -129,11 +129,6 @@ public class YUIMinFilter implements Filter {
     private static final Logger logger = Logger.getLogger(YUIMinFilter.class.getName());
 
     @Override
-    public void destroy() {
-        this.config = null;
-    }
-
-    @Override
     public void doFilter(ServletRequest req, ServletResponse resp,
                          FilterChain chain) throws IOException, ServletException {
 
@@ -147,18 +142,25 @@ public class YUIMinFilter implements Filter {
 
         boolean alreadyProcessed = req.getAttribute(PROCESSED_ATTR) != null;
 
-        if (!alreadyProcessed && config != null && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
+        if (!alreadyProcessed && isURLAccepted (url) && isUserAgentAccepted(rq.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
 
-            req.setAttribute(PROCESSED_ATTR,true);
+            req.setAttribute(PROCESSED_ATTR, Boolean.TRUE);
 
             ServletResponseWrapper wrapper = new ServletResponseWrapper(rs);
             //Let the response be generated
 
             chain.doFilter(req, wrapper);
 
+            Writer out = resp.getWriter();
+
+            if(!isMIMEAccepted(wrapper.getContentType())){
+                out.write(wrapper.getContents());
+                out.flush();
+                return;
+            }
+
             StringReader sr = new StringReader(new String(wrapper.getBytes(), this.charset));
 
-            Writer out = resp.getWriter();
             //work on generated response
             if (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_JS) || wrapper.getContentType().equals(MIME_JSON)))) {
                 JavaScriptCompressor compressor = new JavaScriptCompressor(sr, null);
@@ -182,13 +184,13 @@ public class YUIMinFilter implements Filter {
     @Override
     public void init(FilterConfig config) throws ServletException {
 
-        this.config = config;
+        super.init(config);
         //this.charset = ifValidString(this.config.getInitParameter("charset"), this.charset);
-        this.lineBreak = Utils.readInt(this.config.getInitParameter(INIT_PARAM_LINE_BREAK), this.lineBreak);
+        this.lineBreak = Utils.readInt(filterConfig.getInitParameter(INIT_PARAM_LINE_BREAK), this.lineBreak);
 
-        this.noMunge = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_NO_MUNGE), this.noMunge);
-        this.preserveSemi = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_PRESERVE_SEMI), this.preserveSemi);
-        this.disableOptimizations = Utils.readBoolean(this.config.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
+        this.noMunge = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_NO_MUNGE), this.noMunge);
+        this.preserveSemi = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_PRESERVE_SEMI), this.preserveSemi);
+        this.disableOptimizations = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
 
         logger.info("Filter initialized with: " +
                 "{" +

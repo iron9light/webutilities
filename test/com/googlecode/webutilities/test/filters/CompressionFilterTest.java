@@ -18,10 +18,13 @@ package com.googlecode.webutilities.test.filters;
 
 import com.googlecode.webutilities.filters.CompressionFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
+import com.googlecode.webutilities.test.util.TestUtils;
+import com.googlecode.webutilities.util.Utils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import junit.framework.TestCase;
 
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -102,6 +105,14 @@ public class CompressionFilterTest extends TestCase {
 
     }
 
+    private String getExpectedOutput() throws Exception {
+
+        String expectedResource = properties.getProperty(this.currentTestNumber + ".test.expected.output");
+        if (expectedResource == null || expectedResource.trim().equals("")) return null;
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource));
+
+    }
+
     private void pre() throws Exception {
 
 
@@ -158,6 +169,8 @@ public class CompressionFilterTest extends TestCase {
                 assertEquals(expectedEncoding.trim(), actualResponseEncoding.trim());
 
                 assertEquals(actualVary.trim(), HTTP_ACCEPT_ENCODING_HEADER);
+
+                assertEquals(getExpectedOutput(),servletTestModule.getOutput());
             }
 
             this.post();

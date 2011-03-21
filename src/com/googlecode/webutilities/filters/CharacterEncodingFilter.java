@@ -18,7 +18,6 @@ package com.googlecode.webutilities.filters;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -27,6 +26,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.googlecode.webutilities.common.Constants;
+import com.googlecode.webutilities.filters.common.AbstractFilter;
 import com.googlecode.webutilities.util.Utils;
 
 
@@ -99,29 +100,28 @@ import com.googlecode.webutilities.util.Utils;
  * @since 0.0.4
  */
 
-public class CharacterEncodingFilter implements Filter {
-
-    private FilterConfig filterConfig;
+public class CharacterEncodingFilter extends AbstractFilter {
 
     private String encoding;
 
     private Boolean force = false;
 
-    private String ignoreURLPattern;
+    private static final String INIT_PARAM_ENCODING = "encoding";
+
+    private static final String INIT_PARAM_FORCE = "force";
 
     private static final Logger logger = Logger.getLogger(CharacterEncodingFilter.class.getName());
 
     public void init(FilterConfig config) throws ServletException {
-        this.filterConfig = config;
+        super.init(config);
+        
+        this.encoding = filterConfig.getInitParameter(INIT_PARAM_ENCODING);
+        this.force = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_FORCE), this.force);
 
-        this.encoding = filterConfig.getInitParameter("encoding");
-        this.force = Utils.readBoolean(filterConfig.getInitParameter("force"), this.force);
-        this.ignoreURLPattern = filterConfig.getInitParameter("ignoreURLPattern");
         logger.info("Filter initialized with: " +
                 "{" +
-                "   encoding:" + encoding + "," +
-                "   force:" + force + "," +
-                "   ignoreURLPattern:" + ignoreURLPattern + "" +
+                INIT_PARAM_ENCODING +":"+ encoding + "," +
+                INIT_PARAM_FORCE + ":" + force + "," +
                 "}");
     }
 
@@ -129,25 +129,25 @@ public class CharacterEncodingFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         String url = req.getRequestURI();
-        if ((ignoreURLPattern == null || !url.matches(ignoreURLPattern)) && (force || request.getCharacterEncoding() == null)) {
+        if (isURLAccepted(url) && isUserAgentAccepted (req.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (force || request.getCharacterEncoding() == null)) {
             if (encoding != null) {
                 request.setCharacterEncoding(encoding);
                 logger.info("Applied request encoding : " + encoding);
-                if (force) {
-                    try {
-                        resp.setCharacterEncoding(encoding);
-                        logger.info("Applied response encoding : " + encoding);
-                    } catch (Exception e) {
-                        logger.severe("Failed to set response encoding : " + encoding);
-                        //failed to set encoding may be you have Servlet <= 2.3 (which doesn't have response.setCharacterEncoding)
-                    }
-                }
             }
         }
-        chain.doFilter(request, response);
+
+        chain.doFilter(req, resp);
+
+        if (encoding != null && force && isMIMEAccepted(response.getContentType())) {
+             try {
+                resp.setCharacterEncoding(encoding);
+                logger.info("Applied response encoding : " + encoding);
+            } catch (Exception e) {
+                logger.severe("Failed to set response encoding : " + encoding);
+                //failed to set encoding may be you have Servlet <= 2.3 (which doesn't have response.setCharacterEncoding)
+            }
+        }
+
     }
 
-    public void destroy() {
-        this.filterConfig = null;
-    }
 }

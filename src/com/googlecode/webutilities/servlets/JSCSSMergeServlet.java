@@ -136,9 +136,13 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     public static final String INIT_PARAM_CACHE_CONTROL = "cacheControl";
 
+    public static final String INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS = "autoCorrectUrlsInCSS";
+
     private long expiresMinutes = DEFAULT_EXPIRES_MINUTES; //default value 7 days
 
     private String cacheControl = DEFAULT_CACHE_CONTROL; //default
+
+    private boolean autoCorrectUrlsInCSS = true; //default  
 
     private static final Logger logger = Logger.getLogger(JSCSSMergeServlet.class.getName());
 
@@ -147,10 +151,12 @@ public class JSCSSMergeServlet extends HttpServlet {
         super.init(config);
         this.expiresMinutes = Utils.readLong(config.getInitParameter(INIT_PARAM_EXPIRES_MINUTES), this.expiresMinutes);
         this.cacheControl = config.getInitParameter(INIT_PARAM_CACHE_CONTROL) != null ? config.getInitParameter(INIT_PARAM_CACHE_CONTROL) : this.cacheControl ;
+        this.autoCorrectUrlsInCSS = Utils.readBoolean(config.getInitParameter(INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS),this.autoCorrectUrlsInCSS);
         logger.info("Servlet initialized: " +
                 "{" +
                 "   " + INIT_PARAM_EXPIRES_MINUTES + ":" + this.expiresMinutes + "" +
                 "   " + INIT_PARAM_CACHE_CONTROL + ":" + this.cacheControl + "" +
+                "   " + INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS + ":" + this.autoCorrectUrlsInCSS + "" +
                 "}");
     }
 
@@ -210,7 +216,7 @@ public class JSCSSMergeServlet extends HttpServlet {
             try {
                 is = super.getServletContext().getResourceAsStream(fullPath);
                 if (is != null) {
-                    if(fullPath.endsWith(EXT_CSS)){ //Need to deal with images url in CSS
+                    if(fullPath.endsWith(EXT_CSS) && autoCorrectUrlsInCSS){ //Need to deal with images url in CSS
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
                         String line;
                         Pattern  pattern = Pattern.compile("[uU][rR][lL]\\s*\\(\\s*['\"]?([^('|\")]*)['\"]?\\s*\\)");
