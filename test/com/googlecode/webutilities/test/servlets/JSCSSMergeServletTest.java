@@ -129,7 +129,7 @@ public class JSCSSMergeServletTest extends TestCase {
 
         String expectedResource = properties.getProperty(this.currentTestNumber + ".test.expected");
         if (expectedResource == null || expectedResource.trim().equals("")) return null;
-        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource));
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource),webMockObjectFactory.getMockResponse().getCharacterEncoding());
 
     }
 

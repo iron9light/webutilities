@@ -68,7 +68,7 @@ public class YUIMinTagTest extends TestCase {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
                 logger.info("Setting resource : " + resource);
-                yuiMinTag.addTextChild(TestUtils.readContents(this.getClass().getResourceAsStream(resource)));
+                yuiMinTag.addTextChild(TestUtils.readContents(this.getClass().getResourceAsStream(resource),webMockObjectFactory.getMockResponse().getCharacterEncoding()));
             }
         }
     }
@@ -77,7 +77,7 @@ public class YUIMinTagTest extends TestCase {
 
         String expectedResource = properties.getProperty(this.currentTestNumber + ".test.expected");
         if (expectedResource == null || expectedResource.trim().equals("")) return null;
-        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource));
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource),webMockObjectFactory.getMockResponse().getCharacterEncoding());
 
     }
 

@@ -24,6 +24,7 @@ import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import junit.framework.TestCase;
 
+import javax.servlet.Filter;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -92,7 +93,7 @@ public class ResponseCacheFilterTest extends TestCase {
 
         String expectedResource = properties.getProperty(this.currentTestNumber + ".test.expected");
         if (expectedResource == null || expectedResource.trim().equals("")) return null;
-        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource));
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource),webMockObjectFactory.getMockResponse().getCharacterEncoding());
 
     }
 
@@ -107,7 +108,7 @@ public class ResponseCacheFilterTest extends TestCase {
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
-        servletTestModule.addFilter(responseCacheFilter, true);
+        servletTestModule.addFilter((Filter) responseCacheFilter, true);
 
         servletTestModule.setDoChain(true);
 

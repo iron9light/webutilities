@@ -51,16 +51,18 @@ public final class TestUtils {
     private TestUtils() {
     }
 
-    public static String readContents(InputStream inputStream) throws Exception {
+    public static String readContents(InputStream inputStream, String encoding) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line).append("\n");
+        //String line = null;
+        int c;
+        while ((c = reader.read()) != -1) {
+            //stringBuilder.append(line).append("\n");
+            stringBuilder.append((char)c);
         }
         inputStream.close();
-        return stringBuilder.toString();
+        return new String(stringBuilder.toString().getBytes(),encoding);
 
     }
 

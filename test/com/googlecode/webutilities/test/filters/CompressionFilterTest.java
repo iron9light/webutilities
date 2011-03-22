@@ -24,6 +24,7 @@ import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import junit.framework.TestCase;
 
+import javax.servlet.Filter;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -34,7 +35,7 @@ public class CompressionFilterTest extends TestCase {
 
     private JSCSSMergeServlet jscssMergeServlet = new JSCSSMergeServlet();
 
-    private CompressionFilter gzipCompressionFilter = new CompressionFilter();
+    private CompressionFilter compressionFilter = new CompressionFilter();
 
     private WebMockObjectFactory webMockObjectFactory = new WebMockObjectFactory();
 
@@ -109,7 +110,7 @@ public class CompressionFilterTest extends TestCase {
 
         String expectedResource = properties.getProperty(this.currentTestNumber + ".test.expected.output");
         if (expectedResource == null || expectedResource.trim().equals("")) return null;
-        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource));
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource),webMockObjectFactory.getMockResponse().getCharacterEncoding());
 
     }
 
@@ -124,7 +125,7 @@ public class CompressionFilterTest extends TestCase {
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
-        servletTestModule.addFilter(gzipCompressionFilter, true);
+        servletTestModule.addFilter((Filter) compressionFilter, true);
 
         servletTestModule.setDoChain(true);
 
@@ -167,9 +168,7 @@ public class CompressionFilterTest extends TestCase {
                 assertNotNull("Actual Encoding expected was " + expectedEncoding + " but found null.", actualResponseEncoding);
 
                 assertEquals(expectedEncoding.trim(), actualResponseEncoding.trim());
-
                 assertEquals(actualVary.trim(), HTTP_ACCEPT_ENCODING_HEADER);
-
                 assertEquals(getExpectedOutput(),servletTestModule.getOutput());
             }
 

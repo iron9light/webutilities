@@ -27,6 +27,8 @@ import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 
+import javax.servlet.Filter;
+
 public class YUIMinFilterTest extends TestCase {
 
     private JSCSSMergeServlet jscssMergeServlet = new JSCSSMergeServlet();
@@ -92,7 +94,7 @@ public class YUIMinFilterTest extends TestCase {
 
         String expectedResource = properties.getProperty(this.currentTestNumber + ".test.expected");
         if (expectedResource == null || expectedResource.trim().equals("")) return null;
-        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource));
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource),webMockObjectFactory.getMockResponse().getCharacterEncoding());
 
     }
 
@@ -107,7 +109,7 @@ public class YUIMinFilterTest extends TestCase {
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
-        servletTestModule.addFilter(yuiMinFilter, true);
+        servletTestModule.addFilter((Filter) yuiMinFilter, true);
         servletTestModule.setDoChain(true);
 
         this.setUpResources();
