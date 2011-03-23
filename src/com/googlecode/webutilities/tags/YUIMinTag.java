@@ -15,8 +15,6 @@
  */
 package com.googlecode.webutilities.tags;
 
-import static com.googlecode.webutilities.common.Constants.*;
-
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
@@ -25,7 +23,11 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.logging.Logger;
+
+import static com.googlecode.webutilities.common.Constants.*;
 
 /**
  * The <code>YUIMinTag</code> is the JSP custom tag to expose the YUICompressor functionality in the JSP.
@@ -76,8 +78,8 @@ import java.util.logging.Logger;
  * <p><b>jsp-api.jar</b> - Must be already present in your webapp classpath</p>
  * <p><b>yuicompressor-x.y.z.jar</b> - Download and put appropriate version of this jar in your classpath (in WEB-INF/lib)</p>
  * <p/>
- * <h3>Limitations</h3>
- * <p>Current version of <code>YUIMinTag</code> <b>does not support charset</b> option. </p>
+ *
+ * Visit http://code.google.com/p/webutilities/wiki/YUIMinTag for more details.
  *
  * @author rpatil
  * @version 1.0
@@ -86,7 +88,7 @@ public class YUIMinTag extends BodyTagSupport {
 
     private static final long serialVersionUID = 1L;
 
-    //private String charset = "UTF-8";
+    private String charset = DEFAULT_CHARSET;
 
     private int lineBreak = -1;
 
@@ -104,9 +106,15 @@ public class YUIMinTag extends BodyTagSupport {
         this.type = type;
     }
 
-//	public void setCharset(String charset) {
-//		this.charset = charset;
-//	}
+	public void setCharset(String charset) {
+        this.charset = charset;
+
+        if(!Charset.isSupported(this.charset)){
+            logger.info("Charset " + this.charset + " not supported. Using default : " + DEFAULT_CHARSET);
+            this.charset = DEFAULT_CHARSET;
+        }
+
+	}
 
     public void setLineBreak(int lineBreak) {
         this.lineBreak = lineBreak;
@@ -127,7 +135,14 @@ public class YUIMinTag extends BodyTagSupport {
     @Override
     public int doAfterBody() throws JspException {
         BodyContent content = getBodyContent();
-        StringReader stringReader = new StringReader(content.getString());
+        String stringContent;
+        try{
+            stringContent = new String(content.getString().getBytes(),charset);
+        }catch (UnsupportedEncodingException ex){
+            stringContent = content.getString();
+            logger.warning("Failed to parse contents using charset: " + charset);
+        }
+        StringReader stringReader = new StringReader(stringContent);
         JspWriter jspWriter = content.getEnclosingWriter();
         try {
             if (TYPE_JS.equals(type.toLowerCase())) {

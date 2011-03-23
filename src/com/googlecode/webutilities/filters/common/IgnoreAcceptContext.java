@@ -16,13 +16,34 @@
 
 package com.googlecode.webutilities.filters.common;
 
-public interface IgnoreAcceptContext{
+/**
+ * Interface to provide an API for filters to check if given req/res has to be ignore or processed.
+ * <p/>
+ * AbstractFilter implements it with the help of six init parameters.
+ *
+ * @see AbstractFilter for the implementation
+ */
+public interface IgnoreAcceptContext {
 
+    /**
+     * @param URL - request URL string without query parameters
+     * @return isAccepted - true if given URL has to be processed
+     */
     public boolean isURLAccepted(String URL);
 
-    public boolean isMIMEAccepted(String URL);
+    /**
+     * @param mime - contentType of the chained response
+     * @return isAccepted - true if it is to be processed by this filter
+     */
 
-    public boolean isUserAgentAccepted(String URL);
+    public boolean isMIMEAccepted(String mime);
+
+    /**
+     * @param userAgent - requesting user agent string
+     * @return isAccepted - true if request by given user agent has to be processed/filtered.
+     */
+
+    public boolean isUserAgentAccepted(String userAgent);
 
 
 }

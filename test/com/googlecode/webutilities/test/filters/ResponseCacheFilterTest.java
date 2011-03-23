@@ -17,14 +17,12 @@
 package com.googlecode.webutilities.test.filters;
 
 import com.googlecode.webutilities.filters.ResponseCacheFilter;
-import com.googlecode.webutilities.filters.YUIMinFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import junit.framework.TestCase;
 
-import javax.servlet.Filter;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -108,7 +106,7 @@ public class ResponseCacheFilterTest extends TestCase {
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
-        servletTestModule.addFilter((Filter) responseCacheFilter, true);
+        servletTestModule.addFilter(responseCacheFilter, true);
 
         servletTestModule.setDoChain(true);
 

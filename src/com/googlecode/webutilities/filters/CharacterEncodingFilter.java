@@ -15,20 +15,15 @@
  */
 package com.googlecode.webutilities.filters;
 
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
 import com.googlecode.webutilities.util.Utils;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 
 /**
@@ -89,15 +84,19 @@ import com.googlecode.webutilities.util.Utils;
  * <pre>
  *  <b>encoding</b> - name of the encoding that you wanted to set. e.g. UTF-8
  *  <b>force</b> - true or false. If true this encoding will be forced and overwrite already set encoding for both request and response.
- *  <b>ignoreURLPattern</b> - regular expression. e.g. .*\.(jpg|png|gif). This will make encoding not to be set on matching resources.
+ *  And all common the six filtering criteria parameters for better customization.
+ *  <b>ignoreURLPattern</b> - regular expression. e.g. <code>.*\.(jpg|png|gif)</code>.
+ *  <b>acceptURLPattern</b> - regular expression. e.g. <code>.*\.(css|js|html)</code>.
+ *  <b>ignoreMIMEPattern</b> - regular expression. e.g. <code>images/.*|video/.*</code>.
+ *  <b>acceptMIMEPattern</b> - regular expression. e.g. <code>text/css|text/html</code>.
+ *  <b>ignoreUAPattern</b> - regular expression for user agent. e.g. <code>MSIE|KHTML</code>.
+ *  <b>acceptUAPattern</b> - regular expression. e.g. <code>WebKit|Opera</code>.
  * </pre>
- * <h3>Dependency</h3>
- * <p>The <code>characterEncodingFilter</code> depends on servlet-api to be in the classpath.</p>
- * <p><b>servlet-api.jar</b> - Must be already present in your webapp classpath</p>
+ * <p/>
+ * Visit http://code.google.com/p/webutilities/wiki/CharacterEncodingFilter for more details.
  *
  * @author rpatil
  * @version 1.0
- * @since 0.0.4
  */
 
 public class CharacterEncodingFilter extends AbstractFilter {
@@ -114,13 +113,13 @@ public class CharacterEncodingFilter extends AbstractFilter {
 
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
-        
+
         this.encoding = filterConfig.getInitParameter(INIT_PARAM_ENCODING);
         this.force = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_FORCE), this.force);
 
         logger.info("Filter initialized with: " +
                 "{" +
-                INIT_PARAM_ENCODING +":"+ encoding + "," +
+                INIT_PARAM_ENCODING + ":" + encoding + "," +
                 INIT_PARAM_FORCE + ":" + force + "," +
                 "}");
     }
@@ -129,7 +128,7 @@ public class CharacterEncodingFilter extends AbstractFilter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         String url = req.getRequestURI();
-        if (isURLAccepted(url) && isUserAgentAccepted (req.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (force || request.getCharacterEncoding() == null)) {
+        if (isURLAccepted(url) && isUserAgentAccepted(req.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (force || request.getCharacterEncoding() == null)) {
             if (encoding != null) {
                 request.setCharacterEncoding(encoding);
                 logger.info("Applied request encoding : " + encoding);
@@ -139,7 +138,7 @@ public class CharacterEncodingFilter extends AbstractFilter {
         chain.doFilter(req, resp);
 
         if (encoding != null && force && isMIMEAccepted(response.getContentType())) {
-             try {
+            try {
                 resp.setCharacterEncoding(encoding);
                 logger.info("Applied response encoding : " + encoding);
             } catch (Exception e) {

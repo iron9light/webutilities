@@ -16,29 +16,19 @@
 
 package com.googlecode.webutilities.filters;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.common.ServletResponseWrapper;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 import com.googlecode.webutilities.util.Utils;
+
+import javax.servlet.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * The <code>ResponseCacheFilter</code> is implemented as Servlet Filter to enable caching of STATIC resources (JS, CSS, static HTML files)
@@ -75,7 +65,8 @@ import com.googlecode.webutilities.util.Utils;
  * <p>
  * And you are all done!
  * </p>
- * <h3>Init Parameters</h3>
+ *
+ * Visit http://code.google.com/p/webutilities/wiki/ResponseCacheFilter for more details.
  *
  * @author rpatil
  * @version 1.0

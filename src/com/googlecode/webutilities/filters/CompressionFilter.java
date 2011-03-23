@@ -24,11 +24,7 @@ import com.googlecode.webutilities.filters.compression.CompressedHttpServletResp
 import com.googlecode.webutilities.filters.compression.EncodedStreamsFactory;
 import com.googlecode.webutilities.util.Utils;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -40,6 +36,8 @@ import static com.googlecode.webutilities.common.Constants.*;
  * Servlet Filter implementation class CompressionFilter to handle compressed requests
  * and also respond with compressed contents supporting gzip, compress or
  * deflate compression encoding.
+ *
+ * Visit http://code.google.com/p/webutilities/wiki/CompressionFilter for more details.
  *
  * @author rpatil
  * @since 0.0.4

@@ -15,11 +15,7 @@
  */
 package com.googlecode.webutilities.servlets;
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.googlecode.webutilities.util.Utils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -27,10 +23,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.googlecode.webutilities.common.Constants.*;
-
-import com.googlecode.webutilities.util.Utils;
 
 /**
  * The <code>JSCSSMergeServet</code> is the Http Servlet to combine multiple JS or CSS static resources in one HTTP request.
@@ -124,6 +125,10 @@ import com.googlecode.webutilities.util.Utils;
  * The multiple JS or CSS files <b>can be combined together in one request if they are in same parent path</b>. eg. <code><b>/myapp/js/a.js</b></code>, <code><b>/myapp/js/b.js</b></code> and <code><b>/myapp/js/c.js</b></code>
  * can be combined together as <code><b>/myapp/js/a,b,c.js</b></code>. If they are not in common path then they can not be combined in one request. Same applies for CSS too.
  * </p>
+ *
+ * Visit http://code.google.com/p/webutilities/wiki/JSCSSMergeServlet for more details.
+ * Also visit http://code.google.com/p/webutilities/wiki/AddExpiresHeader for details about how to use for setting
+ * expires/Cache control header.
  *
  * @author rpatil
  * @version 2.0

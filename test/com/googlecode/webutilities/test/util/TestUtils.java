@@ -16,11 +16,7 @@
 
 package com.googlecode.webutilities.test.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -121,8 +117,12 @@ public final class TestUtils {
 
     public static boolean compressedContentEquals(String left, String right) throws IOException {
         int ch, pos = 0;
-        if((left == null && right == null) || left.equals(right)) return true;
 
+        if(left == null && right == null){
+            return true;
+        }
+
+        assert left != null;
         ByteArrayInputStream streamLeft = new ByteArrayInputStream(left.getBytes());
         ByteArrayInputStream streamRight = new ByteArrayInputStream(right.getBytes());
 

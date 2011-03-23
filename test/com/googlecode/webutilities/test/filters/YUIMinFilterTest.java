@@ -16,18 +16,15 @@
 
 package com.googlecode.webutilities.test.filters;
 
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import junit.framework.TestCase;
-
 import com.googlecode.webutilities.filters.YUIMinFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
+import junit.framework.TestCase;
 
-import javax.servlet.Filter;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 public class YUIMinFilterTest extends TestCase {
 
@@ -109,7 +106,7 @@ public class YUIMinFilterTest extends TestCase {
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
-        servletTestModule.addFilter((Filter) yuiMinFilter, true);
+        servletTestModule.addFilter(yuiMinFilter, true);
         servletTestModule.setDoChain(true);
 
         this.setUpResources();

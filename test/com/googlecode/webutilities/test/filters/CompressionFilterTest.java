@@ -19,13 +19,10 @@ package com.googlecode.webutilities.test.filters;
 import com.googlecode.webutilities.filters.CompressionFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 import com.googlecode.webutilities.test.util.TestUtils;
-import com.googlecode.webutilities.util.Utils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import junit.framework.TestCase;
 
-import javax.servlet.Filter;
-import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -125,7 +122,7 @@ public class CompressionFilterTest extends TestCase {
 
         servletTestModule.setServlet(jscssMergeServlet, true);
 
-        servletTestModule.addFilter((Filter) compressionFilter, true);
+        servletTestModule.addFilter(compressionFilter, true);
 
         servletTestModule.setDoChain(true);
 
@@ -172,12 +169,12 @@ public class CompressionFilterTest extends TestCase {
 
                 String expected = getExpectedOutput();
                 String actual = servletTestModule.getOutput();
-                if(expected != null){ //!NEED TO REMOVE AND ADD .output in test cases
+                if(expected != null){ //!NEED TO REMOVE AND ADD .output in test cases - to test deflate also
                     if(expectedEncoding.equalsIgnoreCase("gzip")){
-                        assertTrue(" Contents not matching for test: " + currentTestNumber, TestUtils.compressedContentEquals(expected,actual));
+                        assertTrue("Contents not matching for test: " + currentTestNumber, TestUtils.compressedContentEquals(expected,actual));
                     }else if(!expectedEncoding.equalsIgnoreCase("compress")){
-                        //WE ARE NOT ABLE TO TEST COMPRESS ENCODING
-                        //IT DIFFERS IN HEADER. FILENAME AND FOOTER when compared with one created from zip command
+                        //WE ARE NOT ABLE TO TEST COMPRESS ENCODING AT THIS TIME :(
+                        //IT DIFFERS IN HEADER, FILENAME AND FOOTER when compared with one created from zip command
                         assertEquals(expected, actual);
                     }
                 }
