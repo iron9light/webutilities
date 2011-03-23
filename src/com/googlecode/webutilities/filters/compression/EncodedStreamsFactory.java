@@ -106,11 +106,25 @@ class ZIPEncodedStreamsFactory extends EncodedStreamsFactory {
         return new CompressedOutput() {
             private final ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 
+            boolean entryAdded = false;
+
             public OutputStream getCompressedOutputStream() {
+                if(!entryAdded){
+                    try{
+                        ZipEntry entry = new ZipEntry("ZipOutputStream");
+                        zipOutputStream.putNextEntry(entry);
+                        entryAdded = true;
+                    }catch (IOException ioe){
+                        //ignore
+                    }
+                }
                 return zipOutputStream;
             }
 
             public void finish() throws IOException {
+                if(entryAdded){
+                    zipOutputStream.closeEntry();
+                }
                 zipOutputStream.finish();
             }
         };

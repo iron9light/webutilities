@@ -16,7 +16,7 @@
 
 package com.googlecode.webutilities.test.util;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,21 +108,35 @@ public final class TestUtils {
     }
 
     public static boolean contentEquals(InputStream streamLeft, InputStream streamRight) throws IOException {
-        if (!(streamLeft instanceof BufferedInputStream)) {
-            streamLeft = new BufferedInputStream(streamLeft);
-        }
-        if (!(streamRight instanceof BufferedInputStream)) {
-            streamRight = new BufferedInputStream(streamRight);
-        }
-        int ch = streamLeft.read();
-        while (-1 != ch) {
+        int ch;
+        while ((ch = streamLeft.read()) != -1) {
             int ch2 = streamRight.read();
             if (ch != ch2) {
                 return false;
             }
-            ch = streamLeft.read();
         }
+        int ch2 = streamRight.read();
+        return (ch2 == -1);
+    }
 
+    public static boolean compressedContentEquals(String left, String right) throws IOException {
+        int ch, pos = 0;
+        if((left == null && right == null) || left.equals(right)) return true;
+
+        ByteArrayInputStream streamLeft = new ByteArrayInputStream(left.getBytes());
+        ByteArrayInputStream streamRight = new ByteArrayInputStream(right.getBytes());
+
+        while ((ch = streamLeft.read()) != -1) {
+            int ch2 = streamRight.read();
+            if (ch != ch2) {
+                if(pos == 9){ //Ignore OS byte in GZIP header
+                    System.out.println("Ignoring OS bit.... " + ch + "!=" + ch2);
+                    continue;
+                }
+                return false;
+            }
+            pos++;
+        }
         int ch2 = streamRight.read();
         return (ch2 == -1);
     }
