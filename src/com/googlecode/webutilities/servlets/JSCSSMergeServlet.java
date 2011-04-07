@@ -15,7 +15,17 @@
  */
 package com.googlecode.webutilities.servlets;
 
-import com.googlecode.webutilities.util.Utils;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Writer;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -23,13 +33,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import com.googlecode.webutilities.util.Utils;
 
 import static com.googlecode.webutilities.common.Constants.*;
 
@@ -143,11 +148,15 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     public static final String INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS = "autoCorrectUrlsInCSS";
 
+    public static final String INIT_PARAM_TURN_OFF_E_TAG = "turnOffETag";
+
     private long expiresMinutes = DEFAULT_EXPIRES_MINUTES; //default value 7 days
 
     private String cacheControl = DEFAULT_CACHE_CONTROL; //default
 
-    private boolean autoCorrectUrlsInCSS = true; //default  
+    private boolean autoCorrectUrlsInCSS = true; //default
+
+    private boolean turnOfETag = false; //default enable eTag
 
     private static final Logger logger = Logger.getLogger(JSCSSMergeServlet.class.getName());
 
@@ -157,43 +166,37 @@ public class JSCSSMergeServlet extends HttpServlet {
         this.expiresMinutes = Utils.readLong(config.getInitParameter(INIT_PARAM_EXPIRES_MINUTES), this.expiresMinutes);
         this.cacheControl = config.getInitParameter(INIT_PARAM_CACHE_CONTROL) != null ? config.getInitParameter(INIT_PARAM_CACHE_CONTROL) : this.cacheControl ;
         this.autoCorrectUrlsInCSS = Utils.readBoolean(config.getInitParameter(INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS),this.autoCorrectUrlsInCSS);
+        this.turnOfETag = Utils.readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_E_TAG),this.turnOfETag);
         logger.info("Servlet initialized: " +
                 "{" +
                 "   " + INIT_PARAM_EXPIRES_MINUTES + ":" + this.expiresMinutes + "" +
                 "   " + INIT_PARAM_CACHE_CONTROL + ":" + this.cacheControl + "" +
                 "   " + INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS + ":" + this.autoCorrectUrlsInCSS + "" +
+                "   " + INIT_PARAM_TURN_OFF_E_TAG + ":" + this.turnOfETag + "" +
                 "}");
     }
 
     /**
      *
-     * @param extension - .css or .js etc. (lower case)
+     * @param extensionOrFile - .css or .js etc. (lower case) or the absolute path of the file in case of image files
      * @param resp - response object
      */
-    private void setResponseMimeAndHeaders(String extension, HttpServletResponse resp) {
-        String mime = Utils.selectMimeForExtension(extension);
+    private void setResponseMimeAndHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
+        String mime = Utils.selectMimeForExtension(extensionOrFile);
         if(mime != null){
             logger.info("Setting MIME to " + mime);
             resp.setContentType(mime);
         }
-        resp.addDateHeader(HEADER_EXPIRES, new Date().getTime() + expiresMinutes * 60 * 1000);
-        resp.addDateHeader(HEADER_LAST_MODIFIED, new Date().getTime());
+        long lastModifiedFor = Utils.getLastModifiedFor(resourcesToMerge, this.getServletContext());
+        resp.addDateHeader(HEADER_EXPIRES, lastModifiedFor + expiresMinutes * 60 * 1000);
         resp.addHeader(HTTP_CACHE_CONTROL_HEADER, this.cacheControl);
-        logger.info("Added expires and last-modified headers");
-    }
-
-    public static boolean isAnyResourceModifiedSince(List<String> resources, long sinceTime, ServletContext servletContext){
-        for (String resourcePath : resources) {
-            logger.info("Checking for modification : " + resourcePath);
-            resourcePath = servletContext.getRealPath(resourcePath);
-            if(resourcePath == null) continue;
-            File resource =  new File(resourcePath);
-            long lastModified = resource.lastModified();
-            if(lastModified > sinceTime){
-                return true;
-            }
+        resp.addDateHeader(HEADER_LAST_MODIFIED, lastModifiedFor);
+        if(hashForETag != null && !this.turnOfETag){
+        	resp.addHeader(HTTP_ETAG_HEADER, hashForETag);
         }
-        return false;
+        resp.addDateHeader(HEADER_LAST_MODIFIED, lastModifiedFor);
+        resp.addHeader(HEADER_X_OPTIMIZED_BY, X_OPTIMIZED_BY_VALUE);
+        logger.info("Added expires, last-modified & ETag headers");
     }
 
     /* (non-Javadoc)
@@ -207,19 +210,38 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         logger.info("doGetCalled : " + url);
 
-        String extension = Utils.detectExtension(url);
-
-        this.setResponseMimeAndHeaders(extension, resp);
-
         Writer out = resp.getWriter();
-
-        List<String> resourcesToMerge = JSCSSMergeServlet.findResourcesToMerge(req);
+        ServletContext context = this.getServletContext();
+        List<String> resourcesToMerge = Utils.findResourcesToMerge(req);
+        String extensionOrFile = Utils.detectExtension(url);
+        if(extensionOrFile == null){
+            extensionOrFile = resourcesToMerge.get(0);
+        }
+        //If-None-match
+        String requestETag = req.getHeader(HTTP_IF_NONE_MATCH_HEADER);
+        if(!this.turnOfETag && !Utils.isAnyResourceETagModified(resourcesToMerge, requestETag, context)){
+        	this.sendNotModified(resp);
+    		return;
+        }
+        //If-Modified-Since
+        String ifModifiedSince = req.getHeader(HTTP_IF_MODIFIED_SINCE);
+        if(ifModifiedSince != null){
+            Date date = Utils.readDateFromHeader(ifModifiedSince);
+            if(date != null){
+                if(!Utils.isAnyResourceModifiedSince(resourcesToMerge, date.getTime(), context)){
+                    this.sendNotModified(resp);
+                    return;
+                }
+            }
+        }
+        String hashForETag = this.turnOfETag ? null : Utils.buildETagForResources(resourcesToMerge, context);
+        this.setResponseMimeAndHeaders(extensionOrFile, resourcesToMerge, hashForETag, resp);
         int resourcesNotFound = 0;
         for (String fullPath : resourcesToMerge) {
             logger.info("Processing resource : " + fullPath);
             InputStream is = null;
             try {
-                is = super.getServletContext().getResourceAsStream(fullPath);
+                is = this.getServletContext().getResourceAsStream(fullPath);
                 if (is != null) {
                     if(fullPath.endsWith(EXT_CSS) && autoCorrectUrlsInCSS){ //Need to deal with images url in CSS
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -261,64 +283,15 @@ public class JSCSSMergeServlet extends HttpServlet {
         }
         if (out != null) {
         	try{
-        		out.close();
+        		resp.setStatus(HttpServletResponse.SC_OK);
+                out.close();
         	}catch (Exception e) {
 				// ignore
 			}
         }
     }
 
-    /**
-     * Split multiple resources with comma eg. if URL is http://server/context/js/a,b,c.js
-     * then a.js, b.js and c.js have to be processed and merged together.
-     * <p/>
-     * b and c can be absolute paths or relative (relative to previous resource) too.
-     * <p/>
-     * eg.
-     * <p/>
-     * http://server/context/js/a,/js/libs/b,/js/yui/c.js - absolutes paths for all OR
-     * http://server/context/js/a,/js/libs/b,../yui/c.js - relative path used for c.js (relative to b) OR
-     * http://server/context/js/a,/js/libs/b,./c.js OR - b & c are in same directory /js/libs
-     *
-     * @param request HttpServletRequest
-     * @return Set of resources to be processed
-     */
-
-    public static List<String> findResourcesToMerge(HttpServletRequest request) {
-
-        String contextPath = request.getContextPath();
-
-        String requestURI = request.getRequestURI(); //w/o hostname, starts with context. eg. /context/path/subpath/a,b,/anotherpath/c.js
-
-        String extension = Utils.detectExtension(requestURI);
-
-        logger.info("Detected extension : " + extension);
-
-        requestURI = requestURI.replace(contextPath, "").replace(extension, "");//remove the context path & ext. will become /path/subpath/a,b,/anotherpath/c
-
-        String[] resourcesPath = requestURI.split(",");
-
-        List<String> resources = new ArrayList<String>();
-
-        String currentPath = "/"; //default
-
-        for (String filePath : resourcesPath) {
-
-            String path = Utils.buildProperPath(currentPath, filePath) + extension;
-            if (filePath == null) continue;
-
-            currentPath = new File(path).getParent();
-
-            logger.info("Adding path: " + path + "(Path for next relative resource will be : " + currentPath + ")");
-
-            if(!resources.contains(path)){
-                resources.add(path);
-            }
-        }
-        logger.info("Found " + resources.size() + " resources to process and merge.");
-        return resources;
-    }
-
+    
 
 
     public static void main(String[] args) {
@@ -344,6 +317,12 @@ public class JSCSSMergeServlet extends HttpServlet {
         }
         System.out.println(s);
 
+    }
+
+    private void sendNotModified(HttpServletResponse httpServletResponse){
+        httpServletResponse.setContentLength(0);
+        httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        logger.info("returning Not Modified (304)");
     }
 
 }

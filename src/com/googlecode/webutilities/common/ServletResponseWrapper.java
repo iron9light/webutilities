@@ -16,16 +16,19 @@
 
 package com.googlecode.webutilities.common;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_TYPE_HEADER;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
  * Common Simple Servlet Response Wrapper using ServletResponseOutputStream
@@ -77,8 +80,12 @@ public class ServletResponseWrapper extends HttpServletResponseWrapper {
 	}
 	@Override
 	public void addHeader(String name, String value) {
-		super.addHeader(name, value);
-		headers.put(name, value);
+		if (HTTP_CONTENT_TYPE_HEADER.equalsIgnoreCase(name)) {
+			this.setContentType(value);
+		}else{
+			super.addHeader(name, value);
+			headers.put(name, value);
+		}
 	}
 	@Override
 	public void addIntHeader(String name, int value) {
@@ -92,8 +99,12 @@ public class ServletResponseWrapper extends HttpServletResponseWrapper {
 	}
 	@Override
 	public void setHeader(String name, String value) {
-		super.setHeader(name, value);
-		headers.put(name, value);
+		if (HTTP_CONTENT_TYPE_HEADER.equalsIgnoreCase(name)) {
+			this.setContentType(value);
+		}else{
+			super.setHeader(name, value);
+			headers.put(name, value);
+		}
 	}
 	@Override
 	public void setIntHeader(String name, int value) {

@@ -16,17 +16,21 @@
 
 package com.googlecode.webutilities.test.filters;
 
+import static com.googlecode.webutilities.common.Constants.HTTP_ACCEPT_ENCODING_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_ENCODING_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_USER_AGENT_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_VARY_HEADER;
+
+import java.util.Properties;
+import java.util.logging.Logger;
+
+import junit.framework.TestCase;
+
 import com.googlecode.webutilities.filters.CompressionFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
-import junit.framework.TestCase;
-
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import static com.googlecode.webutilities.common.Constants.*;
 
 public class CompressionFilterTest extends TestCase {
 

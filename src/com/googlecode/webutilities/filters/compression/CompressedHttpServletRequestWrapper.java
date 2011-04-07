@@ -18,9 +18,9 @@
 
 package com.googlecode.webutilities.filters.compression;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import static com.googlecode.webutilities.common.Constants.HTTP_ACCEPT_ENCODING_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_ENCODING_HEADER;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,8 +29,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 
-import static com.googlecode.webutilities.common.Constants.HTTP_ACCEPT_ENCODING_HEADER;
-import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_ENCODING_HEADER;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 final public class CompressedHttpServletRequestWrapper extends HttpServletRequestWrapper {
 

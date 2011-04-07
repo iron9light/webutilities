@@ -18,9 +18,10 @@
 
 package com.googlecode.webutilities.filters.compression;
 
-import javax.servlet.ServletInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.servlet.ServletInputStream;
 
 final class CompressedServletInputStream extends ServletInputStream {
 

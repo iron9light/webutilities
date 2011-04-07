@@ -18,15 +18,23 @@
 
 package com.googlecode.webutilities.filters.compression;
 
+import static com.googlecode.webutilities.common.Constants.CONTENT_ENCODING_COMPRESS;
+import static com.googlecode.webutilities.common.Constants.CONTENT_ENCODING_DEFLATE;
+import static com.googlecode.webutilities.common.Constants.CONTENT_ENCODING_GZIP;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.*;
-
-import static com.googlecode.webutilities.common.Constants.*;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public abstract class EncodedStreamsFactory {
 

@@ -18,11 +18,15 @@
 
 package com.googlecode.webutilities.filters.compression;
 
-import com.googlecode.webutilities.filters.common.IgnoreAcceptContext;
+import static com.googlecode.webutilities.common.Constants.DEFAULT_COMPRESSION_SIZE_THRESHOLD;
+import static com.googlecode.webutilities.common.Constants.HTTP_ACCEPT_ENCODING_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_CACHE_CONTROL_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_ENCODING_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_LENGTH_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_TYPE_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_ETAG_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_VARY_HEADER;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -30,7 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static com.googlecode.webutilities.common.Constants.*;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+
+import com.googlecode.webutilities.filters.common.IgnoreAcceptContext;
 
 public class CompressedHttpServletResponseWrapper extends HttpServletResponseWrapper {
 

@@ -17,6 +17,9 @@
 package com.googlecode.webutilities.common;
 
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * Common Class to hold the public static constant so that to share across the project
  *
@@ -76,6 +79,10 @@ public final class Constants {
 
     public static final String HTTP_ETAG_HEADER = "ETag";
 
+    public static final String HTTP_IF_NONE_MATCH_HEADER = "If-None-Match";
+
+    public static final String HTTP_IF_MODIFIED_SINCE = "If-Modified-Since";
+
     public static final String CONTENT_ENCODING_GZIP = "gzip";
 
     public static final String CONTENT_ENCODING_COMPRESS = "compress";
@@ -85,6 +92,27 @@ public final class Constants {
     public static final String CONTENT_ENCODING_IDENTITY = "identity";
 
     public static final String HTTP_USER_AGENT_HEADER = "User-Agent";
+
+    //HTTP dates are in one of these format
+    //@see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html
+
+    public static final String DATE_PATTERN_RFC_1123 = "EEE, dd MMM yyyy HH:mm:ss z";
+
+    public static final String DATE_PATTERN_RFC_1036 = "EEEEEEEEE, dd-MMM-yy HH:mm:ss z";
+
+    public static final String DATE_PATTERN_ANSI_C = "EEE MMM d HH:mm:ss yyyy";
+
+    public static final String DATE_PATTERN_HTTP_HEADER ="EEE, dd MMM yyyy HH:mm:ss zzz";
+
+    public static final String HEADER_X_OPTIMIZED_BY = "X-Optimized-By";
+
+    public static final String X_OPTIMIZED_BY_VALUE = "http://webutilities.googlecode.com";
+
+    //HTTP locale - US
+    public final static Locale DEFAULT_LOCALE_US = Locale.US;
+
+    //HTTP timeZone - GMT
+    public final static TimeZone DEFAULT_ZONE_GMT = TimeZone.getTimeZone("GMT");
 
     private Constants() {
     } //non instantiable

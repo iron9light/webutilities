@@ -16,9 +16,10 @@
 
 package com.googlecode.webutilities.common;
 
-import javax.servlet.ServletOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import javax.servlet.ServletOutputStream;
 
 /**
  * Common Simple Servlet Response stream using ByteArrayOutputStream

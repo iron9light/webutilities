@@ -15,19 +15,22 @@
  */
 package com.googlecode.webutilities.tags;
 
-import com.yahoo.platform.yui.compressor.CssCompressor;
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import static com.googlecode.webutilities.common.Constants.DEFAULT_CHARSET;
+import static com.googlecode.webutilities.common.Constants.TYPE_CSS;
+import static com.googlecode.webutilities.common.Constants.TYPE_JS;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTagSupport;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
-import static com.googlecode.webutilities.common.Constants.*;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyContent;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+
+import com.yahoo.platform.yui.compressor.CssCompressor;
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 /**
  * The <code>YUIMinTag</code> is the JSP custom tag to expose the YUICompressor functionality in the JSP.

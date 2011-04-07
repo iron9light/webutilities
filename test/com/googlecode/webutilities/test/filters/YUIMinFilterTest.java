@@ -16,15 +16,16 @@
 
 package com.googlecode.webutilities.test.filters;
 
+import java.util.Properties;
+import java.util.logging.Logger;
+
+import junit.framework.TestCase;
+
 import com.googlecode.webutilities.filters.YUIMinFilter;
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 import com.googlecode.webutilities.test.util.TestUtils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
-import junit.framework.TestCase;
-
-import java.util.Properties;
-import java.util.logging.Logger;
 
 public class YUIMinFilterTest extends TestCase {
 

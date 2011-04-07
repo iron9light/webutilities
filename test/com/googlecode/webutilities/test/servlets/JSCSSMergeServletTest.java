@@ -16,22 +16,24 @@
 
 package com.googlecode.webutilities.test.servlets;
 
+import static com.googlecode.webutilities.common.Constants.HEADER_EXPIRES;
+import static com.googlecode.webutilities.common.Constants.HEADER_LAST_MODIFIED;
+
+import java.io.File;
+import java.util.*;
+import java.util.logging.Logger;
+
+import javax.servlet.Filter;
+import javax.servlet.http.HttpServletResponse;
+
+import com.mockrunner.mock.web.MockHttpServletResponse;
+import junit.framework.TestCase;
+
 import com.googlecode.webutilities.servlets.JSCSSMergeServlet;
 import com.googlecode.webutilities.test.util.TestUtils;
 import com.googlecode.webutilities.util.Utils;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
-import junit.framework.TestCase;
-
-import javax.servlet.Filter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import static com.googlecode.webutilities.common.Constants.HEADER_EXPIRES;
-import static com.googlecode.webutilities.common.Constants.HEADER_LAST_MODIFIED;
 
 public class JSCSSMergeServletTest extends TestCase {
 
@@ -50,6 +52,8 @@ public class JSCSSMergeServletTest extends TestCase {
     private static final Logger logger = Logger.getLogger(JSCSSMergeServletTest.class.getName());
 
     private List<Filter> filters = new ArrayList<Filter>();
+
+    private static final int NO_STATUS_CODE = -99999;
 
     public JSCSSMergeServletTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(JSCSSMergeServletTest.class.getSimpleName() + ".properties"));
@@ -79,6 +83,7 @@ public class JSCSSMergeServletTest extends TestCase {
             for (String resource : resources) {
                 logger.info("Setting resource : " + resource);
                 webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
+                webMockObjectFactory.getMockServletContext().setRealPath(resource, this.getClass().getResource(resource).getPath());
             }
         }
     }
@@ -97,6 +102,21 @@ public class JSCSSMergeServletTest extends TestCase {
                     webMockObjectFactory.getMockRequest().setupAddParameter(nameValue[0], nameValue[1]);
                 }
 
+            }
+        }
+        String headers = properties.getProperty(this.currentTestNumber + ".test.request.headers");
+        if (headers != null && !headers.trim().equals("")) {
+            String[] headersString = headers.split("&");
+            for(String header: headersString){
+                String[] nameValue = header.split("=");
+                if(nameValue.length == 2 && nameValue[1].contains("hashOf")){
+                    String res = nameValue[1].replaceAll(".*hashOf\\s*\\((.*)\\).*","$1");
+                    nameValue[1] = ":"+Utils.simpleHashOf(webMockObjectFactory.getMockServletContext().getRealPath(res));
+                }else if(nameValue.length == 2 && nameValue[1].contains("lastModifiedOf")){
+                    String res = nameValue[1].replaceAll(".*lastModifiedOf\\s*\\((.*)\\)","$1");
+                    nameValue[1] = Utils.forHeaderDate(new File(webMockObjectFactory.getMockServletContext().getRealPath(res)).lastModified());
+                }
+                webMockObjectFactory.getMockRequest().addHeader(nameValue[0], nameValue[1]);
             }
         }
         boolean removePreviousFilters = Utils.readBoolean(properties.getProperty(this.currentTestNumber + ".test.removePreviousFilters"), true);
@@ -122,6 +142,7 @@ public class JSCSSMergeServletTest extends TestCase {
                 }
             }
         }
+
     }
 
     private String getExpectedOutput() throws Exception {
@@ -132,6 +153,28 @@ public class JSCSSMergeServletTest extends TestCase {
 
     }
 
+    private int getExpectedStatus() throws Exception {
+        return Utils.readInt(properties.getProperty(this.currentTestNumber + ".test.expected.status"), NO_STATUS_CODE);
+    }
+    private Map<String,String> getExpectedHeaders() throws Exception {
+        Map<String,String> headersMap = new HashMap<String,String>();
+        String expectedHeaders = properties.getProperty(this.currentTestNumber + ".test.expected.headers");
+        if (expectedHeaders == null || expectedHeaders.trim().equals("")) return headersMap;
+
+        String[] headersString = expectedHeaders.split(",");
+        for(String header: headersString){
+            String[] nameValue = header.split("=");
+            if(nameValue.length == 2 && nameValue[1].contains("hashOf")){
+                String res = nameValue[1].replaceAll(".*hashOf\\s*\\((.*)\\)","$1");
+                nameValue[1] = ":"+Utils.simpleHashOf(webMockObjectFactory.getMockServletContext().getRealPath(res));
+            }else if(nameValue.length == 2 && nameValue[1].contains("lastModifiedOf")){
+                String res = nameValue[1].replaceAll(".*lastModifiedOf\\s*\\((.*)\\)","$1");
+                nameValue[1] = Utils.forHeaderDate(new File(webMockObjectFactory.getMockServletContext().getRealPath(res)).lastModified());
+            }
+            headersMap.put(nameValue[0], nameValue.length == 2 ? nameValue[1] : null);
+        }
+        return headersMap;
+    }
     private void pre() throws java.lang.Exception {
 
 
@@ -152,9 +195,9 @@ public class JSCSSMergeServletTest extends TestCase {
 
     public boolean hasCorrectDateHeaders() {
 
-        Date lastModified = TestUtils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_LAST_MODIFIED));
+        Date lastModified = Utils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_LAST_MODIFIED));
 
-        Date expires = TestUtils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_EXPIRES));
+        Date expires = Utils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_EXPIRES));
 
         if (lastModified == null || expires == null) return false;
 
@@ -183,15 +226,30 @@ public class JSCSSMergeServletTest extends TestCase {
 
             servletTestModule.doGet();
 
-            assertTrue(this.hasCorrectDateHeaders());
+            MockHttpServletResponse response = webMockObjectFactory.getMockResponse();
 
-            String actualOutput = servletTestModule.getOutput();
 
-            assertNotNull(actualOutput);
+            int expectedStatusCode = this.getExpectedStatus();
+            int actualStatusCode = response.getStatusCode();
+            if(expectedStatusCode != NO_STATUS_CODE){
+                assertEquals(expectedStatusCode, actualStatusCode);
+            }
+            Map<String,String> expectedHeaders = this.getExpectedHeaders();
+            for(String name :  expectedHeaders.keySet()){
+                String value = expectedHeaders.get(name);
+                assertEquals(value, response.getHeader(name));
+            }
 
-            String expectedOutput = this.getExpectedOutput();
+            if(actualStatusCode != HttpServletResponse.SC_NOT_MODIFIED){
+                assertTrue(this.hasCorrectDateHeaders());
+                String actualOutput = servletTestModule.getOutput();
 
-            assertEquals(expectedOutput.trim(), actualOutput.trim());
+                assertNotNull(actualOutput);
+
+                String expectedOutput = this.getExpectedOutput();
+
+                assertEquals(expectedOutput.trim(), actualOutput.trim());
+            }
 
             this.post();
 

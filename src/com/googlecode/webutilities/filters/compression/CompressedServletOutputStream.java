@@ -18,10 +18,11 @@
 
 package com.googlecode.webutilities.filters.compression;
 
-import javax.servlet.ServletOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import javax.servlet.ServletOutputStream;
 
 public class CompressedServletOutputStream extends ServletOutputStream {
     private final OutputStream uncompressedStream;

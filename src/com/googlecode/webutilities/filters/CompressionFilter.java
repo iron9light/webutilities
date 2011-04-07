@@ -17,20 +17,28 @@
  */
 package com.googlecode.webutilities.filters;
 
+import static com.googlecode.webutilities.common.Constants.CONTENT_ENCODING_IDENTITY;
+import static com.googlecode.webutilities.common.Constants.DEFAULT_COMPRESSION_SIZE_THRESHOLD;
+import static com.googlecode.webutilities.common.Constants.HTTP_ACCEPT_ENCODING_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_ENCODING_HEADER;
+
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
 import com.googlecode.webutilities.filters.compression.CompressedHttpServletRequestWrapper;
 import com.googlecode.webutilities.filters.compression.CompressedHttpServletResponseWrapper;
 import com.googlecode.webutilities.filters.compression.EncodedStreamsFactory;
 import com.googlecode.webutilities.util.Utils;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import static com.googlecode.webutilities.common.Constants.*;
 
 /**
  * Servlet Filter implementation class CompressionFilter to handle compressed requests

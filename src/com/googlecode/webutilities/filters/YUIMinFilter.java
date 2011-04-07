@@ -16,23 +16,34 @@
 
 package com.googlecode.webutilities.filters;
 
-import com.googlecode.webutilities.common.Constants;
-import com.googlecode.webutilities.common.ServletResponseWrapper;
-import com.googlecode.webutilities.filters.common.AbstractFilter;
-import com.googlecode.webutilities.util.Utils;
-import com.yahoo.platform.yui.compressor.CssCompressor;
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import static com.googlecode.webutilities.common.Constants.DEFAULT_CHARSET;
+import static com.googlecode.webutilities.common.Constants.EXT_CSS;
+import static com.googlecode.webutilities.common.Constants.EXT_JS;
+import static com.googlecode.webutilities.common.Constants.EXT_JSON;
+import static com.googlecode.webutilities.common.Constants.MIME_CSS;
+import static com.googlecode.webutilities.common.Constants.MIME_JS;
+import static com.googlecode.webutilities.common.Constants.MIME_JSON;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
-import static com.googlecode.webutilities.common.Constants.*;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.googlecode.webutilities.common.Constants;
+import com.googlecode.webutilities.common.ServletResponseWrapper;
+import com.googlecode.webutilities.filters.common.AbstractFilter;
+import com.googlecode.webutilities.util.Utils;
+import com.yahoo.platform.yui.compressor.CssCompressor;
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 /**
  * The <code>YUIMinFilter</code> is implemented as Servlet Filter to enable on the fly minification of JS and CSS resources

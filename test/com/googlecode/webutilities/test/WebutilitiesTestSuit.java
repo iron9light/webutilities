@@ -16,14 +16,15 @@
 
 package com.googlecode.webutilities.test;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import com.googlecode.webutilities.test.filters.CharacterEncodingFilterTest;
 import com.googlecode.webutilities.test.filters.CompressionFilterTest;
 import com.googlecode.webutilities.test.filters.ResponseCacheFilterTest;
 import com.googlecode.webutilities.test.filters.YUIMinFilterTest;
 import com.googlecode.webutilities.test.servlets.JSCSSMergeServletTest;
 import com.googlecode.webutilities.test.tags.YUIMinTagTest;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 
 /**

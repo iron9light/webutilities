@@ -15,16 +15,21 @@
  */
 package com.googlecode.webutilities.filters;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
 import com.googlecode.webutilities.util.Utils;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.logging.Logger;
-
 
 /**
  * The <code>CharacterEncodingFilter</code> can be used to specify a character encoding for requests in Servlet 2.3/2.4.
@@ -134,10 +139,14 @@ public class CharacterEncodingFilter extends AbstractFilter {
                 logger.info("Applied request encoding : " + encoding);
             }
         }
-
-        chain.doFilter(req, resp);
-
-        if (encoding != null && force && isMIMEAccepted(response.getContentType())) {
+        String extensionOrFile = Utils.detectExtension(url);
+        if(extensionOrFile == null){
+            List<String> resources = Utils.findResourcesToMerge(req);
+            extensionOrFile = resources.get(0);
+        }
+        String mime = Utils.selectMimeForExtension(extensionOrFile);
+        logger.info("Predicted output mime : " + mime + " for url: " + url);
+        if (encoding != null && force && this.isMIMEAccepted(mime)) {
             try {
                 resp.setCharacterEncoding(encoding);
                 logger.info("Applied response encoding : " + encoding);
@@ -146,7 +155,7 @@ public class CharacterEncodingFilter extends AbstractFilter {
                 //failed to set encoding may be you have Servlet <= 2.3 (which doesn't have response.setCharacterEncoding)
             }
         }
-
+        chain.doFilter(req, resp);
     }
 
 }
