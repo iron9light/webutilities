@@ -179,6 +179,8 @@ public class JSCSSMergeServlet extends HttpServlet {
     /**
      *
      * @param extensionOrFile - .css or .js etc. (lower case) or the absolute path of the file in case of image files
+     * @param resourcesToMerge - from request
+     * @param hashForETag - from request
      * @param resp - response object
      */
     private void setResponseMimeAndHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
@@ -194,7 +196,6 @@ public class JSCSSMergeServlet extends HttpServlet {
         if(hashForETag != null && !this.turnOfETag){
         	resp.addHeader(HTTP_ETAG_HEADER, hashForETag);
         }
-        resp.addDateHeader(HEADER_LAST_MODIFIED, lastModifiedFor);
         resp.addHeader(HEADER_X_OPTIMIZED_BY, X_OPTIMIZED_BY_VALUE);
         logger.info("Added expires, last-modified & ETag headers");
     }
@@ -278,7 +279,7 @@ public class JSCSSMergeServlet extends HttpServlet {
             }
         }
         if(resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()){ //all resources not found
-            resp.sendError(404);
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         if (out != null) {
@@ -289,34 +290,6 @@ public class JSCSSMergeServlet extends HttpServlet {
 				// ignore
 			}
         }
-    }
-
-    
-
-
-    public static void main(String[] args) {
-        String s = "";
-               s += "background-image : url (\"http://a.png\");";
-               s += "background-image : url (\"ftp://b.png\");";
-                s += "background-image : url (\"//c.png\");";
-                s += "background-image : url (\"/d.png\");";
-                s += "background-image : url (\"./././.././././e.png\");";
-                s += "background-image : url (./../.././../f.png)";
-                s += "background-image : url ('g.png')";
-
-        Pattern  pattern = Pattern.compile(":url\\(['\"]?([^('|\")]*)['\"]?\\)");
-        s = s.replaceAll(" ","");
-        Matcher matcher = pattern.matcher(s);
-
-        while(matcher.find()){
-            String path = matcher.group(1);
-            if(path.matches("[^(http|ftp|////)].*")){
-                s = s.replaceAll(path,Utils.buildProperPath("/root/css/osx", path));
-            }
-
-        }
-        System.out.println(s);
-
     }
 
     private void sendNotModified(HttpServletResponse httpServletResponse){

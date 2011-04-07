@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -162,7 +164,7 @@ public final class Utils {
      * @param resourceRealPath - file path, whose has to be calculated
      * @return - hash string as lastmodified#size
      */
-    public static String simpleHashOf(String resourceRealPath) {
+    private static String simpleHashOf(String resourceRealPath) {
         if (resourceRealPath == null) return null;
         File resource = new File(resourceRealPath);
         if (!resource.exists()) return null;
@@ -277,15 +279,27 @@ public final class Utils {
     /**
      * @param resourcesRelativePath - list of resources
      * @param context               - servlet context
-     * @return - String as ETag calculated using simple hash based on size and last modified
+     * @return - String as ETag calculated using simple hash based on size and last modified of all resources
      */
     public static String buildETagForResources(List<String> resourcesRelativePath, ServletContext context) {
         String hashForETag = "";
-        for (String fullPath : resourcesRelativePath) {
-            String hash = Utils.simpleHashOf(context.getRealPath(fullPath));
+        for (String relativePath : resourcesRelativePath) {
+            String hash = Utils.simpleHashOf(context.getRealPath(relativePath));
             hashForETag = hashForETag + (hash != null ? ":" + hash : "");
         }
-        return hashForETag.length() > 0 ? hashForETag : null;
+        return hashForETag.length() > 0 ? hexDigestString(hashForETag.getBytes()) : null;
+    }
+
+    /**
+     *
+     * @param fullPath - full path of a resource
+     * @return - hexDigestedString of a resource as ETag
+     */
+    public static String buildETagForResource(String fullPath){
+        String hashForETag = "";
+        String hash = Utils.simpleHashOf(fullPath);
+        hashForETag = hashForETag + (hash != null ? ":" + hash : "");
+        return hashForETag.length() > 0 ? hexDigestString(hashForETag.getBytes()) : null;
     }
 
     /**
@@ -333,6 +347,24 @@ public final class Utils {
         return simpleDateFormat.format(time);
     }
 
+    public static String hexDigestString(byte[] data){
+        MessageDigest md5Digest = null;
+        try{
+            md5Digest = MessageDigest.getInstance("MD5");
+        }catch (NoSuchAlgorithmException ex){
+            logger.warning("Unable to use MD5 for digesting." + ex);
+        }
+        if(md5Digest != null){
+            data = md5Digest.digest(data);
+        }
+        char[] HEX_CHARS = "0123456789abcdef".toCharArray();
+        char[] hex = new char[2 * data.length];
+        for (int i = 0; i < data.length; ++i){
+            hex[2 * i] = HEX_CHARS[(data[i] & 0xF0) >>> 4];
+            hex[2 * i + 1] = HEX_CHARS[data[i] & 0x0F];
+        }
+        return new String(hex);
+    }
 
     private Utils() {
     } //non instantiable
