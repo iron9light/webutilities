@@ -403,7 +403,7 @@ public class JSCSSMergeServlet extends HttpServlet {
                 String imgRealPath = context.getRealPath(resolvedImgPath);
                 String fingerPrint = Utils.buildETagForResource(resolvedImgPath, context);
                 line = line.replaceAll(refImgPath, contextPath + (fingerPrint != null ? Utils.addFingerPrint(fingerPrint, resolvedImgPath) : resolvedImgPath));
-                Utils.updateReferenceMap(cssFilePath,imgRealPath);
+                Utils.updateReferenceMap(cssRealPath,imgRealPath);
             }
         }
         return line;
