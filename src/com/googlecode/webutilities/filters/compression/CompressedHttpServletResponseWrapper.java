@@ -83,7 +83,7 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
 
     public CompressedHttpServletResponseWrapper(HttpServletResponse httpResponse,
                                          EncodedStreamsFactory encodedStreamsFactory,
-                                         String contentEncoding, int threshold, IgnoreAcceptContext IgnoreAcceptContext) {
+                                         String contentEncoding, int threshold, IgnoreAcceptContext ignoreAcceptContext) {
         super(httpResponse);
         this.httpResponse = httpResponse;
         this.compressedContentEncoding = contentEncoding;
@@ -91,7 +91,7 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
         this.encodedStreamsFactory = encodedStreamsFactory;
         mimeIgnored = false;
         this.threshold = threshold;
-        this.ignoreAcceptContext = IgnoreAcceptContext;
+        this.ignoreAcceptContext = ignoreAcceptContext;
     }
 
     @Override

@@ -29,21 +29,21 @@ public interface IgnoreAcceptContext {
      * @param URL - request URL string without query parameters
      * @return isAccepted - true if given URL has to be processed
      */
-    public boolean isURLAccepted(String URL);
+    boolean isURLAccepted(String URL);
 
     /**
      * @param mime - contentType of the chained response
      * @return isAccepted - true if it is to be processed by this filter
      */
 
-    public boolean isMIMEAccepted(String mime);
+    boolean isMIMEAccepted(String mime);
 
     /**
      * @param userAgent - requesting user agent string
      * @return isAccepted - true if request by given user agent has to be processed/filtered.
      */
 
-    public boolean isUserAgentAccepted(String userAgent);
+    boolean isUserAgentAccepted(String userAgent);
 
 
 }

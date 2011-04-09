@@ -28,12 +28,7 @@ import static com.googlecode.webutilities.common.Constants.HTTP_IF_MODIFIED_SINC
 import static com.googlecode.webutilities.common.Constants.HTTP_IF_NONE_MATCH_HEADER;
 import static com.googlecode.webutilities.common.Constants.X_OPTIMIZED_BY_VALUE;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Writer;
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -239,18 +234,18 @@ public class JSCSSMergeServlet extends HttpServlet {
         //Add appropriate headers
         this.addAppropriateResponseHeaders(extensionOrPath, resourcesToMerge, status.getActualETag(), resp);
 
-        Writer out = resp.getWriter();
-        int resourcesNotFound = this.processResources(req.getContextPath(), out, resourcesToMerge);
+        OutputStream outputStream = resp.getOutputStream();
+        int resourcesNotFound = this.processResources(req.getContextPath(), outputStream, resourcesToMerge);
 
         if(resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()){ //all resources not found
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             logger.warning("All resources are not found. Sending 404.");
             return;
         }
-        if (out != null) {
+        if (outputStream != null) {
         	try{
         		resp.setStatus(HttpServletResponse.SC_OK);
-                out.close();
+                outputStream.close();
         	}catch (Exception e) {
 				// ignore
 			}
@@ -273,8 +268,7 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @return
      */
     private String getURL(HttpServletRequest request){
-        String url = request.getRequestURI();
-        return Utils.removeFingerPrint(url);
+        return Utils.removeFingerPrint(request.getRequestURI());
     }
 
     /**
@@ -286,12 +280,6 @@ public class JSCSSMergeServlet extends HttpServlet {
      */
     private ResourceStatus isNotModified(HttpServletRequest request, HttpServletResponse response, List<String> resourcesToMerge){
         ServletContext context = this.getServletContext();
-        //If-None-match
-        String requestETag = request.getHeader(HTTP_IF_NONE_MATCH_HEADER);
-        String actualETag = this.turnOfETag ? null : Utils.buildETagForResources(resourcesToMerge, context);
-        if(!this.turnOfETag && !Utils.isAnyResourceETagModified(resourcesToMerge, requestETag, actualETag, context)){
-        	return new ResourceStatus(actualETag, true);
-        }
         //If-Modified-Since
         String ifModifiedSince = request.getHeader(HTTP_IF_MODIFIED_SINCE);
         if(ifModifiedSince != null){
@@ -299,9 +287,15 @@ public class JSCSSMergeServlet extends HttpServlet {
             if(date != null){
                 if(!Utils.isAnyResourceModifiedSince(resourcesToMerge, date.getTime(), context)){
                     this.sendNotModified(response);
-                    return new ResourceStatus(actualETag, true);
+                    return new ResourceStatus(null, true);
                 }
             }
+        }
+        //If-None-match
+        String requestETag = request.getHeader(HTTP_IF_NONE_MATCH_HEADER);
+        String actualETag = this.turnOfETag ? null : Utils.buildETagForResources(resourcesToMerge, context);
+        if(!this.turnOfETag && !Utils.isAnyResourceETagModified(resourcesToMerge, requestETag, actualETag, context)){
+        	return new ResourceStatus(actualETag, true);
         }
         return new ResourceStatus(actualETag, false);
     }
@@ -309,12 +303,12 @@ public class JSCSSMergeServlet extends HttpServlet {
     /**
      *
      * @param contextPath HttpServletRequest context path
-     * @param out - PrintWrite
+     * @param outputStream - OutputStream
      * @param resourcesToMerge list of resources to merge
      * @return number of non existing, unprocessed resources
      */
 
-    private int processResources(String contextPath, Writer out, List<String> resourcesToMerge){
+    private int processResources(String contextPath, OutputStream outputStream, List<String> resourcesToMerge){
 
         int resourcesNotFound = 0;
 
@@ -334,12 +328,13 @@ public class JSCSSMergeServlet extends HttpServlet {
                 }
                 if (resourcePath.endsWith(EXT_CSS) && autoCorrectUrlsInCSS) { //Need to deal with images url in CSS
 
-                    this.processCSS(contextPath, resourcePath, is, out);
+                    this.processCSS(contextPath, resourcePath, is, outputStream);
 
                 }else{
+                    byte[] buffer = new byte[128];
                     int c;
-                    while ((c = is.read()) != -1) {
-                        out.write(c);
+                    while ((c = is.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, c);
                     }
                 }
             } catch (IOException e) {
@@ -354,9 +349,9 @@ public class JSCSSMergeServlet extends HttpServlet {
                     logger.warning("Failed to close stream:" + ex);
                 }
                 try{
-                    out.flush();
+                    outputStream.flush();
                 }catch (IOException ex){
-                    logger.severe("Failed to flush out:" + out);
+                    logger.severe("Failed to flush out:" + outputStream);
                 }
             }
 
@@ -369,16 +364,19 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @param cssFilePath
      * @param contextPath
      * @param is
-     * @param out
+     * @param outputStream
      * @throws IOException
      */
-    private void processCSS(String contextPath, String cssFilePath, InputStream is, Writer out) throws IOException{
+    private void processCSS(String contextPath, String cssFilePath, InputStream is, OutputStream outputStream) throws IOException{
         ServletContext context = this.getServletContext();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
         String line;
+        StringBuffer buffer = new StringBuffer();
         while ((line = bufferedReader.readLine()) != null) {
-            line = this.processCSSLine(context, contextPath, cssFilePath, line);
-            out.write(line + "\n");
+            buffer.setLength(0);
+            buffer.append(line);
+            line = this.processCSSLine(context, contextPath, cssFilePath, buffer);
+            outputStream.write((line + "\n").getBytes());
         }
     }
 
@@ -390,46 +388,53 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @param line
      * @return
      */
-    private String processCSSLine(ServletContext context, String contextPath, String cssFilePath, String line){
+    private String processCSSLine(ServletContext context, String contextPath, String cssFilePath, StringBuffer line){
         Matcher matcher = CSS_IMG_URL_PATTERN.matcher(line);
+        String cssRealPath = context.getRealPath(cssFilePath);
         while (matcher.find()) {
             String refImgPath = matcher.group(1);
-            if (!refImgPath.matches("^[a-z0-9\\+\\.\\-]+:.*$")) { //ignore absolute protocol paths
-                String cssRealPath = context.getRealPath(cssFilePath);
+            if (!Utils.isProtocolURL(refImgPath)) { //ignore absolute protocol paths
                 String resolvedImgPath = refImgPath;
                 if(!refImgPath.startsWith("/")){
-                    resolvedImgPath = Utils.buildProperPath(new File(cssFilePath).getParent(), refImgPath);
+                    resolvedImgPath = Utils.buildProperPath(Utils.getParentPath(cssFilePath), refImgPath);
                 }
                 String imgRealPath = context.getRealPath(resolvedImgPath);
                 String fingerPrint = Utils.buildETagForResource(resolvedImgPath, context);
-                line = line.replaceAll(refImgPath, contextPath + (fingerPrint != null ? Utils.addFingerPrint(fingerPrint, resolvedImgPath) : resolvedImgPath));
-                Utils.updateReferenceMap(cssRealPath,imgRealPath);
+                int offset = line.indexOf(refImgPath);
+                line.replace(
+                        offset, //from
+                        offset + refImgPath.length(), //to
+                        contextPath + Utils.addFingerPrint(fingerPrint, resolvedImgPath)
+                );
+
+                Utils.updateReferenceMap(cssRealPath, imgRealPath);
             }
         }
-        return line;
+        return line.toString();
+    }
+
+    /**
+     * Class to store resource ETag and modified status
+     */
+    private class ResourceStatus{
+
+        private String actualETag;
+
+        private boolean notModified = true;
+
+        ResourceStatus(String actualETag, boolean notModified) {
+            this.actualETag = actualETag;
+            this.notModified = notModified;
+        }
+
+        public String getActualETag() {
+            return actualETag;
+        }
+
+        public boolean isNotModified() {
+            return notModified;
+        }
+
     }
 }
 
-/**
- * Class to store resource ETag and modified status
- */
-class ResourceStatus{
-
-    private String actualETag;
-
-    private boolean notModified = true;
-
-    ResourceStatus(String actualETag, boolean notModified) {
-        this.actualETag = actualETag;
-        this.notModified = notModified;
-    }
-
-    public String getActualETag() {
-        return actualETag;
-    }
-
-    public boolean isNotModified() {
-        return notModified;
-    }
-
-}

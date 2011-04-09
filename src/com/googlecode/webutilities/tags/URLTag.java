@@ -69,7 +69,7 @@ public class URLTag extends BodyTagSupport {
 
     public int doEndTag() throws JspException {
 
-        if(value == null || value.toLowerCase().trim().matches("^[a-z0-9\\+\\.\\-]+:.*$")){
+        if(value == null || Utils.isProtocolURL(value.toLowerCase().trim())){
             return gracefully();
         }
 
@@ -84,9 +84,8 @@ public class URLTag extends BodyTagSupport {
 
         //We got the url, now suffix the fingerprint to it, right before .
         String eTag = Utils.buildETagForResources(Utils.findResourcesToMerge(context, value),pageContext.getServletContext());
-        if(eTag != null){
-            value = Utils.addFingerPrint(eTag, value);
-        }
+
+        value = Utils.addFingerPrint(eTag, value);
 
         value = context + "/" + value;
 

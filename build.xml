@@ -87,7 +87,7 @@
             <fileset dir="${build.dir}/classes" includes="**/*.class"/>
         </copy>
         <jar destfile="${build.dir}/${jar.name}" basedir="${build.dir}/jar">
-        	<metainf dir="${meta-inf.dir}"></metainf>
+        	<metainf dir="${meta-inf.dir}"/>
             <manifest>
         		<!--attribute name="Class-Path" value="yuicompressor.jar"/-->
             </manifest>

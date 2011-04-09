@@ -92,7 +92,7 @@ public class ResponseCacheFilter extends AbstractFilter {
 
         //private long accessCount = 0;
 
-        ServletResponseWrapper servletResponseWrapper;
+        private ServletResponseWrapper servletResponseWrapper;
 
         CacheObject(long time, ServletResponseWrapper servletResponseWrapper){
             this.time = time;
@@ -197,13 +197,6 @@ public class ResponseCacheFilter extends AbstractFilter {
         
         List<String> requestedResources = Utils.findResourcesToMerge(httpServletRequest.getContextPath(), url);
         ServletContext context = filterConfig.getServletContext();
-        //If-None-match
-        String requestETag = httpServletRequest.getHeader(HTTP_IF_NONE_MATCH_HEADER);
-        if(!Utils.isAnyResourceETagModified(requestedResources, requestETag, null, context)){
-            cache.remove(url);
-        	this.sendNotModified(httpServletResponse);
-    		return;
-        }
         //If-Modified-Since
         String ifModifiedSince = httpServletRequest.getHeader(HTTP_IF_MODIFIED_SINCE);
         if(ifModifiedSince != null){
@@ -216,6 +209,14 @@ public class ResponseCacheFilter extends AbstractFilter {
                 }
             }
         }
+        //If-None-match
+        String requestETag = httpServletRequest.getHeader(HTTP_IF_NONE_MATCH_HEADER);
+        if(!Utils.isAnyResourceETagModified(requestedResources, requestETag, null, context)){
+            cache.remove(url);
+        	this.sendNotModified(httpServletResponse);
+    		return;
+        }
+
         boolean cacheFound = false;
 
         if(cacheObject != null && cacheObject.getServletResponseWrapper() != null){

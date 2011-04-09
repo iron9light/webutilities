@@ -114,12 +114,12 @@ public final class Constants {
     public static final String X_OPTIMIZED_BY_VALUE = "http://webutilities.googlecode.com";
 
     //HTTP locale - US
-    public final static Locale DEFAULT_LOCALE_US = Locale.US;
+    public static final Locale DEFAULT_LOCALE_US = Locale.US;
 
     //HTTP timeZone - GMT
-    public final static TimeZone DEFAULT_ZONE_GMT = TimeZone.getTimeZone("GMT");
+    public static final TimeZone DEFAULT_ZONE_GMT = TimeZone.getTimeZone("GMT");
 
-    public final static Pattern CSS_IMG_URL_PATTERN = Pattern.compile("[uU][rR][lL]\\s*\\(\\s*['\"]?([^('|\")]*)['\"]?\\s*\\)");
+    public static final Pattern CSS_IMG_URL_PATTERN = Pattern.compile("[uU][rR][lL]\\s*\\(\\s*['\"]?([^('|\")]*)['\"]?\\s*\\)");
 
     //Map that holds Image path -> CSS files path that refers it
     public static final Map<String, List<String>> CSS_IMG_REFERENCES = Collections.synchronizedMap(new HashMap<String, List<String>>());

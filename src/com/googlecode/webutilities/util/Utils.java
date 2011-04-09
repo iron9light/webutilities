@@ -153,6 +153,9 @@ public final class Utils {
     //!TODO might have problems, need to test or replace with something better
     public static String buildProperPath(String parentPath, String relativePathFromParent) {
         if (relativePathFromParent == null) return null;
+        if(parentPath != null){
+            parentPath = parentPath.trim();
+        }
 
         if (relativePathFromParent.startsWith("./")) {
             relativePathFromParent = relativePathFromParent.replaceFirst("(./)+", "");
@@ -168,14 +171,14 @@ public final class Utils {
                 if (relativePathFromParent.startsWith("./")) {
                     relativePathFromParent = relativePathFromParent.replaceFirst("./", "");
                 }
-                parentPath = parentPath == null || parentPath.trim().equals("/") ? "/" : new File(parentPath).getParent();
+                parentPath = (parentPath == null || parentPath.equals("/")) ? "/" : getParentPath(parentPath);
             }
             path = parentPath + File.separator + relativePathFromParent;
         } else {
             path = parentPath + File.separator + relativePathFromParent;
         }
 
-        return path.replaceAll("//", "/").replaceAll("(\\./)+", "");
+        return path.replaceAll("(/|\\./)+", "$1");
     }
 
     /**
@@ -217,7 +220,7 @@ public final class Utils {
             extension = "";
         }
 
-        requestURI = requestURI.replace(contextPath, "").replace(extension, "");//remove the context path & ext. will become /path/subpath/a,b,/anotherpath/c
+        requestURI = requestURI.replace(contextPath,"").replace(extension,"");//remove the context path & ext. will become /path/subpath/a,b,/anotherpath/c
 
         String[] resourcesPath = requestURI.split(",");
 
@@ -230,7 +233,7 @@ public final class Utils {
             String path = Utils.buildProperPath(currentPath, filePath) + extension;
             if (filePath == null) continue;
 
-            currentPath = new File(path).getParent();
+            currentPath = getParentPath(path);
             if (!resources.contains(path)) {
                 resources.add(path);
             }
@@ -341,6 +344,11 @@ public final class Utils {
         return false;
     }
 
+    public static boolean isProtocolURL(String url){
+        if(url == null || url.trim().length() == 0) return false;
+        return url.matches("^[a-z0-9\\+\\.\\-]+:.*$");
+    }
+
     /**
      * @param relativePath - relative path of res
      * @param context      - servlet context
@@ -379,10 +387,10 @@ public final class Utils {
                         Matcher matcher = CSS_IMG_URL_PATTERN.matcher(line);
                         while (matcher.find()) {
                             String refImgPath = matcher.group(1);
-                            if (!refImgPath.matches("^[a-z0-9\\+\\.\\-]+:.*$")) { //ignore absolute protocol paths
+                            if (!Utils.isProtocolURL(refImgPath)) { //ignore absolute protocol paths
                                 String resolvedImgPath = refImgPath;
                                 if (!refImgPath.startsWith("/")) {
-                                    resolvedImgPath = Utils.buildProperPath(new File(realPath).getParent(), refImgPath);
+                                    resolvedImgPath = Utils.buildProperPath(Utils.getParentPath(realPath), refImgPath);
                                 }
 
                                 if(updateReferenceMap(realPath,resolvedImgPath)){
@@ -459,7 +467,7 @@ public final class Utils {
         if (md5Digest != null) {
             data = md5Digest.digest(data);
         }
-        char[] HEX_CHARS = "0123456789abcdef".toCharArray();
+        final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
         char[] hex = new char[2 * data.length];
         for (int i = 0; i < data.length; ++i) {
             hex[2 * i] = HEX_CHARS[(data[i] & 0xF0) >>> 4];
@@ -468,6 +476,12 @@ public final class Utils {
         return new String(hex);
     }
 
+    /**
+     *
+     * @param fingerPrint hex digest
+     * @param url
+     * @return url with fingerprint
+     */
     public static String addFingerPrint(String fingerPrint, String url) {
         if (fingerPrint != null) {
             int li = url.lastIndexOf(".");
@@ -481,10 +495,28 @@ public final class Utils {
      * @return Non Finger Printed URL
      */
     public static String removeFingerPrint(String url) {
-        if (url.matches(".*" + FINGERPRINT_SEPARATOR + "([a-f0-9]+)\\..*")) {
-            return url.replaceAll("(.*)" + FINGERPRINT_SEPARATOR + "[a-f0-9]+(.*)", "$1$2");
+        int from = url.indexOf(FINGERPRINT_SEPARATOR);
+        if(from <= 0) return url;
+        int to = url.lastIndexOf(".");
+        return url.substring(0, from) + url.substring(to);
+    }
+
+    /**
+     * Fast get parent directory
+    // * @param path
+     * @return
+     */
+    public static String getParentPath(String path){
+        if(path == null) return null;
+        path = path.trim();
+        if(path.endsWith("/") && path.length() > 1){
+            path = path.substring(0, path.length() -1 );
         }
-        return url;
+        int lastIndex = path.lastIndexOf("/");
+        if(path.length() > 1 && lastIndex > 0){
+            return path.substring(0, lastIndex);
+        }
+        return "/";
     }
 
     private Utils() {

@@ -45,8 +45,8 @@ public class ServletResponseWrapper extends HttpServletResponseWrapper {
 	private Set<Cookie> cookies = new HashSet<Cookie>();
 	private String contentType;
 	private int status;
-	boolean getWriterCalled = false;
-	boolean getStreamCalled = false;
+	private boolean getWriterCalled = false;
+	private boolean getStreamCalled = false;
 
     @Override
 	public void addCookie(Cookie cookie) {

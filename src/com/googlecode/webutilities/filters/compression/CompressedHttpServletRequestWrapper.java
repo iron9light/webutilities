@@ -33,7 +33,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-final public class CompressedHttpServletRequestWrapper extends HttpServletRequestWrapper {
+public final class CompressedHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
     private final HttpServletRequest request;
     private final EncodedStreamsFactory encodedStreamsFactory;
