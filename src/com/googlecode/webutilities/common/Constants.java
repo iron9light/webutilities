@@ -122,7 +122,7 @@ public final class Constants {
     public static final Pattern CSS_IMG_URL_PATTERN = Pattern.compile("[uU][rR][lL]\\s*\\(\\s*['\"]?([^('|\")]*)['\"]?\\s*\\)");
 
     //Map that holds Image path -> CSS files path that refers it
-    public static final Map<String, List<String>> CSS_IMG_REFERENCES = Collections.synchronizedMap(new HashMap<String, List<String>>());
+    public static final Map<String, List<String>> CSS_IMG_REFERENCES = new HashMap<String, List<String>>();
 
     private Constants() {
     } //non instantiable
