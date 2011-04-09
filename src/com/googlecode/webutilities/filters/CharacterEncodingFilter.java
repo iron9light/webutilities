@@ -141,7 +141,7 @@ public class CharacterEncodingFilter extends AbstractFilter {
         }
         String extensionOrFile = Utils.detectExtension(url);
         if(extensionOrFile == null){
-            List<String> resources = Utils.findResourcesToMerge(req);
+            List<String> resources = Utils.findResourcesToMerge(req.getContextPath(), url);
             extensionOrFile = resources.get(0);
         }
         String mime = Utils.selectMimeForExtension(extensionOrFile);

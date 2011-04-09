@@ -111,7 +111,7 @@ public class JSCSSMergeServletTest extends TestCase {
                 String[] nameValue = header.split("=");
                 if(nameValue.length == 2 && nameValue[1].contains("hashOf")){
                     String res = nameValue[1].replaceAll(".*hashOf\\s*\\((.*)\\).*","$1");
-                    nameValue[1] = Utils.buildETagForResource(webMockObjectFactory.getMockServletContext().getRealPath(res));
+                    nameValue[1] = Utils.buildETagForResource(res, webMockObjectFactory.getMockServletContext());
                 }else if(nameValue.length == 2 && nameValue[1].contains("lastModifiedOf")){
                     String res = nameValue[1].replaceAll(".*lastModifiedOf\\s*\\((.*)\\)","$1");
                     nameValue[1] = Utils.forHeaderDate(new File(webMockObjectFactory.getMockServletContext().getRealPath(res)).lastModified());
@@ -166,7 +166,7 @@ public class JSCSSMergeServletTest extends TestCase {
             String[] nameValue = header.split("=");
             if(nameValue.length == 2 && nameValue[1].contains("hashOf")){
                 String res = nameValue[1].replaceAll(".*hashOf\\s*\\((.*)\\)","$1");
-                nameValue[1] = Utils.buildETagForResource(webMockObjectFactory.getMockServletContext().getRealPath(res));
+                nameValue[1] = Utils.buildETagForResource(res, webMockObjectFactory.getMockServletContext());
             }else if(nameValue.length == 2 && nameValue[1].contains("lastModifiedOf")){
                 String res = nameValue[1].replaceAll(".*lastModifiedOf\\s*\\((.*)\\)","$1");
                 nameValue[1] = Utils.forHeaderDate(new File(webMockObjectFactory.getMockServletContext().getRealPath(res)).lastModified());

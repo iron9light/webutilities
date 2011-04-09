@@ -16,9 +16,25 @@
 
 package com.googlecode.webutilities.util;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import static com.googlecode.webutilities.common.Constants.CSS_IMG_REFERENCES;
+import static com.googlecode.webutilities.common.Constants.CSS_IMG_URL_PATTERN;
+import static com.googlecode.webutilities.common.Constants.DATE_PATTERN_ANSI_C;
+import static com.googlecode.webutilities.common.Constants.DATE_PATTERN_HTTP_HEADER;
+import static com.googlecode.webutilities.common.Constants.DATE_PATTERN_RFC_1036;
+import static com.googlecode.webutilities.common.Constants.DATE_PATTERN_RFC_1123;
+import static com.googlecode.webutilities.common.Constants.DEFAULT_LOCALE_US;
+import static com.googlecode.webutilities.common.Constants.EXT_CSS;
+import static com.googlecode.webutilities.common.Constants.EXT_JS;
+import static com.googlecode.webutilities.common.Constants.EXT_JSON;
+import static com.googlecode.webutilities.common.Constants.MIME_CSS;
+import static com.googlecode.webutilities.common.Constants.MIME_JS;
+import static com.googlecode.webutilities.common.Constants.MIME_JSON;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.security.MessageDigest;
@@ -26,10 +42,12 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 
-import static com.googlecode.webutilities.common.Constants.*;
+import javax.servlet.ServletContext;
 
 /**
  * Common Utilities provider class
@@ -40,6 +58,8 @@ import static com.googlecode.webutilities.common.Constants.*;
 public final class Utils {
 
     private static final Logger logger = Logger.getLogger(Utils.class.getName());
+
+    private static final String FINGERPRINT_SEPARATOR = "_wu_";
 
     /**
      * @param string       string representation of a int which is to be parsed and read from
@@ -185,15 +205,11 @@ public final class Utils {
      * http://server/context/js/a,/js/libs/b,../yui/c.js - relative path used for c.js (relative to b) OR
      * http://server/context/js/a,/js/libs/b,./c.js OR - b & c are in same directory /js/libs
      *
-     * @param request HttpServletRequest
+     * @param contextPath request Context Path
+     * @param requestURI  requestURI
      * @return Set of resources to be processed
      */
-
-    public static List<String> findResourcesToMerge(HttpServletRequest request) {
-
-        String contextPath = request.getContextPath();
-
-        String requestURI = request.getRequestURI(); //w/o hostname, starts with context. eg. /context/path/subpath/a,b,/anotherpath/c.js
+    public static List<String> findResourcesToMerge(String contextPath, String requestURI) {
 
         String extension = Utils.detectExtension(requestURI);
 
@@ -263,14 +279,17 @@ public final class Utils {
     /**
      * @param resources      - list of resources
      * @param requestETag    - request ETag from If-None-Match header
+     * @param actualETag    - current ETag of a resource
      * @param servletContext - servlet context
      * @return true if any resource ETag is modified, false otherwise.
      */
-    public static boolean isAnyResourceETagModified(List<String> resources, String requestETag, ServletContext servletContext) {
-        String hashForETag = Utils.buildETagForResources(resources, servletContext);
-        if (requestETag != null && hashForETag != null) {
+    public static boolean isAnyResourceETagModified(List<String> resources, String requestETag, String actualETag, ServletContext servletContext) {
+        if (actualETag == null && requestETag != null) {
+            actualETag = buildETagForResources(resources, servletContext);
+        }
+        if (requestETag != null && actualETag != null) {
             requestETag = requestETag.replace("-gzip", "");//might have been added by gzip filter
-            return !requestETag.equals(hashForETag);
+            return !requestETag.equals(actualETag);
         }
         return true;
     }
@@ -284,20 +303,103 @@ public final class Utils {
     public static String buildETagForResources(List<String> resourcesRelativePath, ServletContext context) {
         String hashForETag = "";
         for (String relativePath : resourcesRelativePath) {
-            String hash = Utils.simpleHashOf(context.getRealPath(relativePath));
-            hashForETag = hashForETag + (hash != null ? ":" + hash : "");
+            String hash = buildETagForResource(relativePath, context);
+            hashForETag = hashForETag + (hash != null ? hash : "");
         }
-        return hashForETag.length() > 0 ? hexDigestString(hashForETag.getBytes()) : null;
+        return hashForETag.length() > 0 ? (resourcesRelativePath.size() > 2 ? hexDigestString(hashForETag.getBytes()) : hashForETag) : null;
     }
 
     /**
      *
-     * @param fullPath - full path of a resource
-     * @return - hexDigestedString of a resource as ETag
+     * @param cssFilePath
+     * @param imgFilePath
+     * @return
      */
-    public static String buildETagForResource(String fullPath){
-        String hashForETag = "";
-        String hash = Utils.simpleHashOf(fullPath);
+    public static boolean updateReferenceMap(String cssFilePath, String imgFilePath){
+        if (imgFilePath != null) {
+            File imgFile = new File(imgFilePath);
+            List<String> referencesList = CSS_IMG_REFERENCES.get(cssFilePath);
+            if (imgFile.isFile() && imgFile.exists()) {
+                if (referencesList == null) {
+                    referencesList = new LinkedList<String>();
+                    referencesList.add(imgFilePath);
+                    CSS_IMG_REFERENCES.put(cssFilePath, referencesList);
+                }
+                if (!referencesList.contains(imgFilePath)) {
+                    referencesList.add(imgFilePath);
+                }
+                File cssFile = new File(cssFilePath);
+                if (cssFile.lastModified() < imgFile.lastModified()) { //means img got modified after css
+                    //so touch css file
+                    cssFile.setLastModified(new Date().getTime());
+                    return true;
+                }
+            }else if(referencesList != null){
+               referencesList.remove(imgFilePath);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param relativePath - relative path of res
+     * @param context      - servlet context
+     * @return ETag string
+     */
+    public static String buildETagForResource(String relativePath, ServletContext context) {
+        String hashForETag = ":";
+        String realPath = context.getRealPath(relativePath);
+        if (realPath == null) return null;
+        File realFile = new File(realPath);
+        if (!realFile.isFile() || !realFile.exists()) return null;
+        if (realPath.endsWith(EXT_CSS)) { // check if any image references by this css has been modified or not
+            long cssLastModified = realFile.lastModified();
+
+            List<String> referencedImages = CSS_IMG_REFERENCES.get(realPath);
+
+            if (referencedImages != null) {
+                for (String referenceImage : referencedImages) {
+                    File imgFile = new File(referenceImage);
+                    if (imgFile.isFile() && imgFile.exists()) {
+                        if (cssLastModified < imgFile.lastModified()) { //means ref img got modified after css
+                            //so touch css file
+                            realFile.setLastModified(new Date().getTime());
+                            break;
+                        }
+                    }
+                }
+
+            } else {
+
+                BufferedReader bufferedReader;
+                try {
+                    bufferedReader = new BufferedReader(new FileReader(realPath));
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        Matcher matcher = CSS_IMG_URL_PATTERN.matcher(line);
+                        while (matcher.find()) {
+                            String refImgPath = matcher.group(1);
+                            if (!refImgPath.matches("^[a-z0-9\\+\\.\\-]+:.*$")) { //ignore absolute protocol paths
+                                String resolvedImgPath = refImgPath;
+                                if (!refImgPath.startsWith("/")) {
+                                    resolvedImgPath = Utils.buildProperPath(new File(realPath).getParent(), refImgPath);
+                                }
+
+                                if(updateReferenceMap(realPath,resolvedImgPath)){
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                } catch (FileNotFoundException ex) {
+                    logger.warning("File not found." + ex);
+                } catch (IOException ex) {
+                    logger.warning("Failed to read/touch " + realPath + ". ex:" + ex);
+                }
+            }
+        }
+        String hash = Utils.simpleHashOf(realPath);
         hashForETag = hashForETag + (hash != null ? ":" + hash : "");
         return hashForETag.length() > 0 ? hexDigestString(hashForETag.getBytes()) : null;
     }
@@ -347,23 +449,42 @@ public final class Utils {
         return simpleDateFormat.format(time);
     }
 
-    public static String hexDigestString(byte[] data){
+    public static String hexDigestString(byte[] data) {
         MessageDigest md5Digest = null;
-        try{
+        try {
             md5Digest = MessageDigest.getInstance("MD5");
-        }catch (NoSuchAlgorithmException ex){
+        } catch (NoSuchAlgorithmException ex) {
             logger.warning("Unable to use MD5 for digesting." + ex);
         }
-        if(md5Digest != null){
+        if (md5Digest != null) {
             data = md5Digest.digest(data);
         }
         char[] HEX_CHARS = "0123456789abcdef".toCharArray();
         char[] hex = new char[2 * data.length];
-        for (int i = 0; i < data.length; ++i){
+        for (int i = 0; i < data.length; ++i) {
             hex[2 * i] = HEX_CHARS[(data[i] & 0xF0) >>> 4];
             hex[2 * i + 1] = HEX_CHARS[data[i] & 0x0F];
         }
         return new String(hex);
+    }
+
+    public static String addFingerPrint(String fingerPrint, String url) {
+        if (fingerPrint != null) {
+            int li = url.lastIndexOf(".");
+            url = url.substring(0, li) + FINGERPRINT_SEPARATOR + fingerPrint + url.substring(li);
+        }
+        return url;
+    }
+
+    /**
+     * @param url Finger Printed URL
+     * @return Non Finger Printed URL
+     */
+    public static String removeFingerPrint(String url) {
+        if (url.matches(".*" + FINGERPRINT_SEPARATOR + "([a-f0-9]+)\\..*")) {
+            return url.replaceAll("(.*)" + FINGERPRINT_SEPARATOR + "[a-f0-9]+(.*)", "$1$2");
+        }
+        return url;
     }
 
     private Utils() {

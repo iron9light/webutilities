@@ -17,8 +17,13 @@
 package com.googlecode.webutilities.common;
 
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 /**
  * Common Class to hold the public static constant so that to share across the project
@@ -113,6 +118,11 @@ public final class Constants {
 
     //HTTP timeZone - GMT
     public final static TimeZone DEFAULT_ZONE_GMT = TimeZone.getTimeZone("GMT");
+
+    public final static Pattern CSS_IMG_URL_PATTERN = Pattern.compile("[uU][rR][lL]\\s*\\(\\s*['\"]?([^('|\")]*)['\"]?\\s*\\)");
+
+    //Map that holds Image path -> CSS files path that refers it
+    public static final Map<String, List<String>> CSS_IMG_REFERENCES = Collections.synchronizedMap(new HashMap<String, List<String>>());
 
     private Constants() {
     } //non instantiable

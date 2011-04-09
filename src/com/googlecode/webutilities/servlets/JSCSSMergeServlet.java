@@ -15,6 +15,19 @@
  */
 package com.googlecode.webutilities.servlets;
 
+import static com.googlecode.webutilities.common.Constants.CSS_IMG_URL_PATTERN;
+import static com.googlecode.webutilities.common.Constants.DEFAULT_CACHE_CONTROL;
+import static com.googlecode.webutilities.common.Constants.DEFAULT_EXPIRES_MINUTES;
+import static com.googlecode.webutilities.common.Constants.EXT_CSS;
+import static com.googlecode.webutilities.common.Constants.HEADER_EXPIRES;
+import static com.googlecode.webutilities.common.Constants.HEADER_LAST_MODIFIED;
+import static com.googlecode.webutilities.common.Constants.HEADER_X_OPTIMIZED_BY;
+import static com.googlecode.webutilities.common.Constants.HTTP_CACHE_CONTROL_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_ETAG_HEADER;
+import static com.googlecode.webutilities.common.Constants.HTTP_IF_MODIFIED_SINCE;
+import static com.googlecode.webutilities.common.Constants.HTTP_IF_NONE_MATCH_HEADER;
+import static com.googlecode.webutilities.common.Constants.X_OPTIMIZED_BY_VALUE;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +38,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -35,8 +47,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.googlecode.webutilities.util.Utils;
-
-import static com.googlecode.webutilities.common.Constants.*;
 
 /**
  * The <code>JSCSSMergeServet</code> is the Http Servlet to combine multiple JS or CSS static resources in one HTTP request.
@@ -183,7 +193,7 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @param hashForETag - from request
      * @param resp - response object
      */
-    private void setResponseMimeAndHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
+    private void addAppropriateResponseHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
         String mime = Utils.selectMimeForExtension(extensionOrFile);
         if(mime != null){
             logger.info("Setting MIME to " + mime);
@@ -207,79 +217,34 @@ public class JSCSSMergeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String url = req.getRequestURI();
+        String url = this.getURL(req);
 
-        logger.info("doGetCalled : " + url);
+        logger.info("Started processing request : " + url);
 
-        Writer out = resp.getWriter();
-        ServletContext context = this.getServletContext();
-        List<String> resourcesToMerge = Utils.findResourcesToMerge(req);
-        String extensionOrFile = Utils.detectExtension(url);
-        if(extensionOrFile == null){
-            extensionOrFile = resourcesToMerge.get(0);
-        }
-        //If-None-match
-        String requestETag = req.getHeader(HTTP_IF_NONE_MATCH_HEADER);
-        if(!this.turnOfETag && !Utils.isAnyResourceETagModified(resourcesToMerge, requestETag, context)){
-        	this.sendNotModified(resp);
+        List<String> resourcesToMerge = Utils.findResourcesToMerge(req.getContextPath(), url);
+
+        //If not modified, return 304 and stop
+        ResourceStatus status = this.isNotModified(req, resp, resourcesToMerge);
+        if(status.isNotModified()){
+            logger.info("Resources Not Modified. Sending 304.");
+            this.sendNotModified(resp);
     		return;
         }
-        //If-Modified-Since
-        String ifModifiedSince = req.getHeader(HTTP_IF_MODIFIED_SINCE);
-        if(ifModifiedSince != null){
-            Date date = Utils.readDateFromHeader(ifModifiedSince);
-            if(date != null){
-                if(!Utils.isAnyResourceModifiedSince(resourcesToMerge, date.getTime(), context)){
-                    this.sendNotModified(resp);
-                    return;
-                }
-            }
+
+        String extensionOrPath = Utils.detectExtension(url);//in case of non js/css files it null
+        if(extensionOrPath == null){
+            extensionOrPath = resourcesToMerge.get(0);//non grouped i.e. non css/js file, we refer it's path in that case
         }
-        String hashForETag = this.turnOfETag ? null : Utils.buildETagForResources(resourcesToMerge, context);
-        this.setResponseMimeAndHeaders(extensionOrFile, resourcesToMerge, hashForETag, resp);
-        int resourcesNotFound = 0;
-        for (String fullPath : resourcesToMerge) {
-            logger.info("Processing resource : " + fullPath);
-            InputStream is = null;
-            try {
-                is = this.getServletContext().getResourceAsStream(fullPath);
-                if (is != null) {
-                    if(fullPath.endsWith(EXT_CSS) && autoCorrectUrlsInCSS){ //Need to deal with images url in CSS
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-                        String line;
-                        Pattern  pattern = Pattern.compile("[uU][rR][lL]\\s*\\(\\s*['\"]?([^('|\")]*)['\"]?\\s*\\)");
-                        while((line = bufferedReader.readLine()) != null){
-                            Matcher matcher = pattern.matcher(line);
-                            while(matcher.find()){
-                                String relativePath = matcher.group(1);
-                                if(relativePath.matches("[^(http|ftp|////)].*")){ //ignore paths starting with these
-                                    //!TODO can be improved?
-                                    line = line.replaceAll(relativePath, req.getContextPath() + Utils.buildProperPath(new File(fullPath).getParent(), relativePath));
-                                }
-                            }
-                            out.write(line+"\n");
-                        }
-                    }else{
-                        int c;
-                        while ((c = is.read()) != -1) {
-                            out.write(c);
-                        }
-                    }
-                }else{
-                    resourcesNotFound++;
-                }
-            } catch (Exception e) {
-                logger.warning("Error while reading resource : " + fullPath);
-                logger.severe("Exception :" + e);
-            } finally {
-                if (is != null) {
-                    is.close();
-                    out.flush();
-                }
-            }
-        }
+
+        //Add appropriate headers
+        this.addAppropriateResponseHeaders(extensionOrPath, resourcesToMerge, status.getActualETag(), resp);
+
+        Writer out = resp.getWriter();
+        int resourcesNotFound = this.processResources(req.getContextPath(), out, resourcesToMerge);
+
         if(resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()){ //all resources not found
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            logger.warning("All resources are not found. Sending 404.");
             return;
         }
         if (out != null) {
@@ -290,12 +255,181 @@ public class JSCSSMergeServlet extends HttpServlet {
 				// ignore
 			}
         }
+        logger.info("Finished processing Request : " + url);
     }
 
-    private void sendNotModified(HttpServletResponse httpServletResponse){
-        httpServletResponse.setContentLength(0);
-        httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-        logger.info("returning Not Modified (304)");
+    /**
+     *
+     * @param response httpServletResponse
+     */
+    private void sendNotModified(HttpServletResponse response){
+        response.setContentLength(0);
+        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+    }
+
+    /**
+     *
+     * @param request HttpServletRequest
+     * @return
+     */
+    private String getURL(HttpServletRequest request){
+        String url = request.getRequestURI();
+        return Utils.removeFingerPrint(url);
+    }
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @param resourcesToMerge
+     * @return true if not modified based on if-None-Match and If-Modified-Since
+     */
+    private ResourceStatus isNotModified(HttpServletRequest request, HttpServletResponse response, List<String> resourcesToMerge){
+        ServletContext context = this.getServletContext();
+        //If-None-match
+        String requestETag = request.getHeader(HTTP_IF_NONE_MATCH_HEADER);
+        String actualETag = this.turnOfETag ? null : Utils.buildETagForResources(resourcesToMerge, context);
+        if(!this.turnOfETag && !Utils.isAnyResourceETagModified(resourcesToMerge, requestETag, actualETag, context)){
+        	return new ResourceStatus(actualETag, true);
+        }
+        //If-Modified-Since
+        String ifModifiedSince = request.getHeader(HTTP_IF_MODIFIED_SINCE);
+        if(ifModifiedSince != null){
+            Date date = Utils.readDateFromHeader(ifModifiedSince);
+            if(date != null){
+                if(!Utils.isAnyResourceModifiedSince(resourcesToMerge, date.getTime(), context)){
+                    this.sendNotModified(response);
+                    return new ResourceStatus(actualETag, true);
+                }
+            }
+        }
+        return new ResourceStatus(actualETag, false);
+    }
+
+    /**
+     *
+     * @param contextPath HttpServletRequest context path
+     * @param out - PrintWrite
+     * @param resourcesToMerge list of resources to merge
+     * @return number of non existing, unprocessed resources
+     */
+
+    private int processResources(String contextPath, Writer out, List<String> resourcesToMerge){
+
+        int resourcesNotFound = 0;
+
+        ServletContext context = this.getServletContext();
+
+        for (String resourcePath : resourcesToMerge) {
+
+            logger.info("Processing resource : " + resourcePath);
+
+            InputStream is = null;
+
+            try {
+                is = context.getResourceAsStream(resourcePath);
+                if (is == null) {
+                    resourcesNotFound++;
+                    continue;
+                }
+                if (resourcePath.endsWith(EXT_CSS) && autoCorrectUrlsInCSS) { //Need to deal with images url in CSS
+
+                    this.processCSS(contextPath, resourcePath, is, out);
+
+                }else{
+                    int c;
+                    while ((c = is.read()) != -1) {
+                        out.write(c);
+                    }
+                }
+            } catch (IOException e) {
+                logger.warning("Error while reading resource : " + resourcePath);
+                logger.severe("IOException :" + e);
+            }
+
+            if (is != null) {
+                try{
+                    is.close();
+                }catch (IOException ex){
+                    logger.warning("Failed to close stream:" + ex);
+                }
+                try{
+                    out.flush();
+                }catch (IOException ex){
+                    logger.severe("Failed to flush out:" + out);
+                }
+            }
+
+        }
+        return resourcesNotFound;
+    }
+
+    /**
+     *
+     * @param cssFilePath
+     * @param contextPath
+     * @param is
+     * @param out
+     * @throws IOException
+     */
+    private void processCSS(String contextPath, String cssFilePath, InputStream is, Writer out) throws IOException{
+        ServletContext context = this.getServletContext();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            line = this.processCSSLine(context, contextPath, cssFilePath, line);
+            out.write(line + "\n");
+        }
+    }
+
+    /**
+     *
+     * @param context
+     * @param contextPath
+     * @param cssFilePath
+     * @param line
+     * @return
+     */
+    private String processCSSLine(ServletContext context, String contextPath, String cssFilePath, String line){
+        Matcher matcher = CSS_IMG_URL_PATTERN.matcher(line);
+        while (matcher.find()) {
+            String refImgPath = matcher.group(1);
+            if (!refImgPath.matches("^[a-z0-9\\+\\.\\-]+:.*$")) { //ignore absolute protocol paths
+                String cssRealPath = context.getRealPath(cssFilePath);
+                String resolvedImgPath = refImgPath;
+                if(!refImgPath.startsWith("/")){
+                    resolvedImgPath = Utils.buildProperPath(new File(cssFilePath).getParent(), refImgPath);
+                }
+                String imgRealPath = context.getRealPath(resolvedImgPath);
+                String fingerPrint = Utils.buildETagForResource(resolvedImgPath, context);
+                line = line.replaceAll(refImgPath, contextPath + (fingerPrint != null ? Utils.addFingerPrint(fingerPrint, resolvedImgPath) : resolvedImgPath));
+                Utils.updateReferenceMap(cssFilePath,imgRealPath);
+            }
+        }
+        return line;
+    }
+}
+
+/**
+ * Class to store resource ETag and modified status
+ */
+class ResourceStatus{
+
+    private String actualETag;
+
+    private boolean notModified = true;
+
+    ResourceStatus(String actualETag, boolean notModified) {
+        this.actualETag = actualETag;
+        this.notModified = notModified;
+    }
+
+    public String getActualETag() {
+        return actualETag;
+    }
+
+    public boolean isNotModified() {
+        return notModified;
     }
 
 }

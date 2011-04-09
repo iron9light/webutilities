@@ -195,11 +195,11 @@ public class ResponseCacheFilter extends AbstractFilter {
             return;
         }
         
-        List<String> requestedResources = Utils.findResourcesToMerge(httpServletRequest);
+        List<String> requestedResources = Utils.findResourcesToMerge(httpServletRequest.getContextPath(), url);
         ServletContext context = filterConfig.getServletContext();
         //If-None-match
         String requestETag = httpServletRequest.getHeader(HTTP_IF_NONE_MATCH_HEADER);
-        if(!Utils.isAnyResourceETagModified(requestedResources, requestETag, context)){
+        if(!Utils.isAnyResourceETagModified(requestedResources, requestETag, null, context)){
             cache.remove(url);
         	this.sendNotModified(httpServletResponse);
     		return;

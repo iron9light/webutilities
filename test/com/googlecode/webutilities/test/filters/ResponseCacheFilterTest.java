@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import com.googlecode.webutilities.test.servlets.JSCSSMergeServletTest;
 import com.googlecode.webutilities.util.Utils;
 import com.mockrunner.mock.web.MockHttpServletResponse;
 import junit.framework.TestCase;
@@ -95,7 +94,7 @@ public class ResponseCacheFilterTest extends TestCase {
             String[] nameValue = header.split("=");
             if(nameValue.length == 2 && nameValue[1].contains("hashOf")){
                 String res = nameValue[1].replaceAll(".*hashOf\\s*\\((.*)\\)","$1");
-                nameValue[1] = Utils.buildETagForResource(webMockObjectFactory.getMockServletContext().getRealPath(res));
+                nameValue[1] = Utils.buildETagForResource(res, webMockObjectFactory.getMockServletContext());
             }else if(nameValue.length == 2 && nameValue[1].contains("lastModifiedOf")){
                 String res = nameValue[1].replaceAll(".*lastModifiedOf\\s*\\((.*)\\)","$1");
                 nameValue[1] = Utils.forHeaderDate(new File(webMockObjectFactory.getMockServletContext().getRealPath(res)).lastModified());
@@ -128,7 +127,7 @@ public class ResponseCacheFilterTest extends TestCase {
                 String[] nameValue = header.split("=");
                 if(nameValue.length == 2 && nameValue[1].contains("hashOf")){
                     String res = nameValue[1].replaceAll(".*hashOf\\s*\\((.*)\\).*","$1");
-                    nameValue[1] = Utils.buildETagForResource(webMockObjectFactory.getMockServletContext().getRealPath(res));
+                    nameValue[1] = Utils.buildETagForResource(res, webMockObjectFactory.getMockServletContext());
                 }else if(nameValue.length == 2 && nameValue[1].contains("lastModifiedOf")){
                     String res = nameValue[1].replaceAll(".*lastModifiedOf\\s*\\((.*)\\)","$1");
                     nameValue[1] = Utils.forHeaderDate(new File(webMockObjectFactory.getMockServletContext().getRealPath(res)).lastModified());
