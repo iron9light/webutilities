@@ -43,7 +43,7 @@ public class CharacterEncodingFilterTest extends TestCase {
 
     private boolean force = false;
 
-    private static final Logger logger = Logger.getLogger(CharacterEncodingFilterTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CharacterEncodingFilterTest.class.getName());
 
     public CharacterEncodingFilterTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(CharacterEncodingFilterTest.class.getSimpleName() + ".properties"));
@@ -69,7 +69,7 @@ public class CharacterEncodingFilterTest extends TestCase {
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                logger.info("Setting resource : " + resource);
+                LOGGER.info("Setting resource : " + resource);
                 webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
             }
         }
@@ -133,7 +133,7 @@ public class CharacterEncodingFilterTest extends TestCase {
                 //return; // no more test cases in properties file.
             }
 
-            logger.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
+            LOGGER.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");

@@ -78,7 +78,7 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
     /**
      * Logger
      */
-    private static final Logger logger = Logger.getLogger(CompressedHttpServletResponseWrapper.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CompressedHttpServletResponseWrapper.class.getName());
 
 
     public CompressedHttpServletResponseWrapper(HttpServletResponse httpResponse,
@@ -125,7 +125,7 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
         if (HTTP_CACHE_CONTROL_HEADER.equalsIgnoreCase(name)) {
             httpResponse.addHeader(HTTP_CACHE_CONTROL_HEADER, value);
             if (value.contains("no-transform")) {
-                logger.finest("No compression: due to no-transform");
+                LOGGER.finest("No compression: due to no-transform");
                 noTransformSet = true;
                 cancelCompression();
             }
@@ -176,7 +176,7 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
         if (HTTP_CACHE_CONTROL_HEADER.equalsIgnoreCase(name)) {
             httpResponse.setHeader(HTTP_CACHE_CONTROL_HEADER, value);
             if (value.contains("no-transform")) {
-                logger.finest("No compression: due to no-transform directive");
+                LOGGER.finest("No compression: due to no-transform directive");
                 noTransformSet = true;
                 cancelCompression();
             }
@@ -201,9 +201,10 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
     private void cancelCompression() {
         if (compressingStream != null) {
             try {
+                LOGGER.finest("Cancelling compression.");
                 compressingStream.cancelCompression();
             } catch (IOException ioe) {
-                logger.finest("Error while cancelling compression" + ioe);
+                LOGGER.severe("Error while cancelling compression" + ioe);
             }
         }
     }
@@ -279,11 +280,11 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
     private void setContentLength(long contentLength) {
         if (compressing) {
             // do nothing -- caller-supplied content length is not meaningful
-            //logger.logDebug("Ignoring application-specified content length since response is compressed");
+            //LOGGER.logDebug("Ignoring application-specified content length since response is compressed");
         } else {
             savedContentLength = contentLength;
             savedContentLengthSet = true;
-            //logger.logDebug("Saving application-specified content length for later: " + contentLength);
+            //LOGGER.logDebug("Saving application-specified content length for later: " + contentLength);
             if (compressingStream != null && compressingStream.isCancelled()) {
                 httpResponse.setHeader(HTTP_CONTENT_LENGTH_HEADER, String.valueOf(contentLength));
             }
@@ -333,7 +334,7 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
     }
 
     void useCompression() {
-        logger.finest("Switching to compression");
+        LOGGER.finest("Switching to compression");
         compressing = true;
         setCompressionResponseHeaders();
     }
@@ -373,15 +374,15 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
 
     private boolean mustNotCompress() {
         if (mimeIgnored) {
-            logger.finest("No Compression: Mime is ignored");
+            LOGGER.finest("No Compression: Mime is ignored");
             return true;
         }
         if (savedContentLengthSet && savedContentLength < (long) threshold) {
-            logger.info("No Compression: Already set content length (" + savedContentLength + ") less than threshold (" + threshold + ")");
+            LOGGER.finest("No Compression: Already set content length (" + savedContentLength + ") less than threshold (" + threshold + ")");
             return true;
         }
         if (noTransformSet) {
-            logger.finest("No Compression: no-transform is set");
+            LOGGER.finest("No Compression: no-transform is set");
             return true;
         }
         return alreadyCompressedEncoding(savedContentEncoding);

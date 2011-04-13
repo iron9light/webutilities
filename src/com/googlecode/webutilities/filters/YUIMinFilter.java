@@ -136,7 +136,7 @@ public class YUIMinFilter extends AbstractFilter {
     private static final String PROCESSED_ATTR = YUIMinFilter.class.getName() + ".MINIFIED";
 
 
-    private static final Logger logger = Logger.getLogger(YUIMinFilter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(YUIMinFilter.class.getName());
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp,
@@ -148,7 +148,7 @@ public class YUIMinFilter extends AbstractFilter {
 
         String url = rq.getRequestURI(), lowerUrl = url.toLowerCase();
 
-        logger.info("Filtering URI: " + url);
+        LOGGER.fine("Filtering URI: " + url);
 
         boolean alreadyProcessed = req.getAttribute(PROCESSED_ATTR) != null;
 
@@ -162,10 +162,11 @@ public class YUIMinFilter extends AbstractFilter {
             chain.doFilter(req, wrapper);
 
             Writer out = resp.getWriter();
-
-            if(!isMIMEAccepted(wrapper.getContentType())){
+            String mime = wrapper.getContentType();
+            if(!isMIMEAccepted(mime)){
                 out.write(wrapper.getContents());
                 out.flush();
+                LOGGER.finest("Not minifying. Mime (" + mime + ") not allowed.");
                 return;
             }
 
@@ -174,19 +175,20 @@ public class YUIMinFilter extends AbstractFilter {
             //work on generated response
             if (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_JS) || wrapper.getContentType().equals(MIME_JSON)))) {
                 JavaScriptCompressor compressor = new JavaScriptCompressor(sr, null);
-                logger.info("Compressing JS/JSON type");
+                LOGGER.finest("Compressing JS/JSON type");
                 compressor.compress(out, this.lineBreak, !this.noMunge, false, this.preserveSemi, this.disableOptimizations);
             } else if (lowerUrl.endsWith(EXT_CSS) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_CSS)))) {
                 CssCompressor compressor = new CssCompressor(sr);
-                logger.info("Compressing CSS type");
+                LOGGER.finest("Compressing CSS type");
                 compressor.compress(out, this.lineBreak);
             } else {
-                logger.info("Not Compressing anything.");
+                LOGGER.finest("Not Compressing anything.");
                 out.write(wrapper.getContents());
             }
 
             out.flush();
         } else {
+            LOGGER.finest("Not minifying. URL/UserAgent not allowed.");
             chain.doFilter(req, resp);
         }
     }
@@ -199,7 +201,7 @@ public class YUIMinFilter extends AbstractFilter {
         this.charset = this.filterConfig.getInitParameter(INIT_PARAM_CHARSET) == null ? this.charset : this.filterConfig.getInitParameter(INIT_PARAM_CHARSET);
 
         if(!Charset.isSupported(this.charset)){
-            logger.info("Charset " + charset + " not supported. Using default: " + DEFAULT_CHARSET);
+            LOGGER.config("Charset " + charset + " not supported. Using default: " + DEFAULT_CHARSET);
             this.charset = DEFAULT_CHARSET;
         }
 
@@ -211,7 +213,7 @@ public class YUIMinFilter extends AbstractFilter {
 
         this.disableOptimizations = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
 
-        logger.info("Filter initialized with: " +
+        LOGGER.config("Filter initialized with: " +
                 "{" +
                 "   " + INIT_PARAM_LINE_BREAK + ":" + lineBreak + "," +
                 "   " + INIT_PARAM_NO_MUNGE + ":" + noMunge + "," +

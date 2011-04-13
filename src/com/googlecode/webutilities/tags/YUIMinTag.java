@@ -103,7 +103,7 @@ public class YUIMinTag extends BodyTagSupport {
 
     private String type;
 
-    private static final Logger logger = Logger.getLogger(YUIMinTag.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(YUIMinTag.class.getName());
 
     public void setType(String type) {
         this.type = type;
@@ -113,7 +113,7 @@ public class YUIMinTag extends BodyTagSupport {
         this.charset = charset;
 
         if(!Charset.isSupported(this.charset)){
-            logger.info("Charset " + this.charset + " not supported. Using default : " + DEFAULT_CHARSET);
+            LOGGER.warning("Charset " + this.charset + " not supported. Using default : " + DEFAULT_CHARSET);
             this.charset = DEFAULT_CHARSET;
         }
 
@@ -143,22 +143,22 @@ public class YUIMinTag extends BodyTagSupport {
             stringContent = new String(content.getString().getBytes(),charset);
         }catch (UnsupportedEncodingException ex){
             stringContent = content.getString();
-            logger.warning("Failed to parse contents using charset: " + charset);
+            LOGGER.warning("Failed to parse contents using charset: " + charset);
         }
         StringReader stringReader = new StringReader(stringContent);
         JspWriter jspWriter = content.getEnclosingWriter();
         try {
             if (TYPE_JS.equals(type.toLowerCase())) {
                 JavaScriptCompressor compressor = new JavaScriptCompressor(stringReader, null);
-                logger.info("Compressing " + TYPE_JS);
+                LOGGER.finest("Compressing " + TYPE_JS);
                 compressor.compress(jspWriter, this.lineBreak, !this.noMunge, false, this.preserveSemi, this.disableOptimizations);
             } else if (TYPE_CSS.equals(type.toLowerCase())) {
                 CssCompressor compressor = new CssCompressor(stringReader);
-                logger.info("Compressing " + TYPE_CSS);
+                LOGGER.finest("Compressing " + TYPE_CSS);
                 compressor.compress(jspWriter, this.lineBreak);
             }
         } catch (Exception e) {
-            logger.severe("Exception in YUIMinTag: " + e);
+            LOGGER.severe("Exception in YUIMinTag: " + e);
             return EVAL_BODY_INCLUDE;
         }
         return SKIP_BODY;

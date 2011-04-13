@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 public final class TestUtils {
 
-    private static final Logger logger = Logger.getLogger(TestUtils.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TestUtils.class.getName());
 
     private TestUtils() {
     }
@@ -74,7 +74,7 @@ public final class TestUtils {
             int ch2 = streamRight.read();
             if (ch != ch2) {
                 if(pos == 9){ //Ignore OS byte in GZIP header
-                	logger.info("Ignoring OS bit.... " + ch + "!=" + ch2);
+                	LOGGER.info("Ignoring OS bit.... " + ch + "!=" + ch2);
                     continue;
                 }
                 return false;

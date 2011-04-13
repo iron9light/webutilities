@@ -163,7 +163,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     private boolean turnOfETag = false; //default enable eTag
 
-    private static final Logger logger = Logger.getLogger(JSCSSMergeServlet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JSCSSMergeServlet.class.getName());
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -172,7 +172,7 @@ public class JSCSSMergeServlet extends HttpServlet {
         this.cacheControl = config.getInitParameter(INIT_PARAM_CACHE_CONTROL) != null ? config.getInitParameter(INIT_PARAM_CACHE_CONTROL) : this.cacheControl ;
         this.autoCorrectUrlsInCSS = Utils.readBoolean(config.getInitParameter(INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS),this.autoCorrectUrlsInCSS);
         this.turnOfETag = Utils.readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_E_TAG),this.turnOfETag);
-        logger.info("Servlet initialized: " +
+        LOGGER.config("Servlet initialized: " +
                 "{" +
                 "   " + INIT_PARAM_EXPIRES_MINUTES + ":" + this.expiresMinutes + "" +
                 "   " + INIT_PARAM_CACHE_CONTROL + ":" + this.cacheControl + "" +
@@ -191,7 +191,7 @@ public class JSCSSMergeServlet extends HttpServlet {
     private void addAppropriateResponseHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
         String mime = Utils.selectMimeForExtension(extensionOrFile);
         if(mime != null){
-            logger.info("Setting MIME to " + mime);
+            LOGGER.finest("Setting MIME to " + mime);
             resp.setContentType(mime);
         }
         long lastModifiedFor = Utils.getLastModifiedFor(resourcesToMerge, this.getServletContext());
@@ -202,7 +202,7 @@ public class JSCSSMergeServlet extends HttpServlet {
         	resp.addHeader(HTTP_ETAG_HEADER, hashForETag);
         }
         resp.addHeader(HEADER_X_OPTIMIZED_BY, X_OPTIMIZED_BY_VALUE);
-        logger.info("Added expires, last-modified & ETag headers");
+        LOGGER.finest("Added expires, last-modified & ETag headers");
     }
 
     /* (non-Javadoc)
@@ -214,14 +214,14 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         String url = this.getURL(req);
 
-        logger.info("Started processing request : " + url);
+        LOGGER.fine("Started processing request : " + url);
 
         List<String> resourcesToMerge = Utils.findResourcesToMerge(req.getContextPath(), url);
 
         //If not modified, return 304 and stop
         ResourceStatus status = this.isNotModified(req, resp, resourcesToMerge);
         if(status.isNotModified()){
-            logger.info("Resources Not Modified. Sending 304.");
+            LOGGER.finest("Resources Not Modified. Sending 304.");
             this.sendNotModified(resp);
     		return;
         }
@@ -239,7 +239,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         if(resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()){ //all resources not found
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-            logger.warning("All resources are not found. Sending 404.");
+            LOGGER.warning("All resources are not found. Sending 404.");
             return;
         }
         if (outputStream != null) {
@@ -250,7 +250,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 				// ignore
 			}
         }
-        logger.info("Finished processing Request : " + url);
+        LOGGER.fine("Finished processing Request : " + url);
     }
 
     /**
@@ -316,7 +316,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         for (String resourcePath : resourcesToMerge) {
 
-            logger.info("Processing resource : " + resourcePath);
+            LOGGER.finest("Processing resource : " + resourcePath);
 
             InputStream is = null;
 
@@ -338,20 +338,20 @@ public class JSCSSMergeServlet extends HttpServlet {
                     }
                 }
             } catch (IOException e) {
-                logger.warning("Error while reading resource : " + resourcePath);
-                logger.severe("IOException :" + e);
+                LOGGER.severe("Error while reading resource : " + resourcePath);
+                LOGGER.severe("IOException :" + e);
             }
 
             if (is != null) {
                 try{
                     is.close();
                 }catch (IOException ex){
-                    logger.warning("Failed to close stream:" + ex);
+                    LOGGER.warning("Failed to close stream:" + ex);
                 }
                 try{
                     outputStream.flush();
                 }catch (IOException ex){
-                    logger.severe("Failed to flush out:" + outputStream);
+                    LOGGER.severe("Failed to flush out:" + outputStream);
                 }
             }
 

@@ -125,7 +125,7 @@ public class ResponseCacheFilter extends AbstractFilter {
 
     private long lastResetTime;
 
-    private static final Logger logger = Logger.getLogger(ResponseCacheFilter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ResponseCacheFilter.class.getName());
 
     private static final String INIT_PARAM_RELOAD_TIME = "reloadTime";
 
@@ -142,9 +142,9 @@ public class ResponseCacheFilter extends AbstractFilter {
 
         lastResetTime = new Date().getTime();
 
-        logger.info("Cache Filter initialized with: " +
+        LOGGER.config("Cache Filter initialized with: " +
                 "{" +
-                INIT_PARAM_RELOAD_TIME +":"+ reloadTime + "," +
+                INIT_PARAM_RELOAD_TIME + ":" + reloadTime + "," +
                 INIT_PARAM_RESET_TIME + ":" + resetTime + "," +
                 "}");
 
@@ -159,8 +159,8 @@ public class ResponseCacheFilter extends AbstractFilter {
         String url = httpServletRequest.getRequestURI();
 
         if(!isURLAccepted(url) || !isUserAgentAccepted(httpServletRequest.getHeader(Constants.HTTP_USER_AGENT_HEADER))){
-            logger.info("Skipping Cache filter for: " + url);
-            logger.info("URL or UserAgent not accepted");
+            LOGGER.fine("Skipping Cache filter for: " + url);
+            LOGGER.fine("URL or UserAgent not accepted");
             filterChain.doFilter(servletRequest,servletResponse);
             return;
         }
@@ -174,7 +174,7 @@ public class ResponseCacheFilter extends AbstractFilter {
                 (cacheObject != null &&  reloadTime > 0 && (now - cacheObject.getTime())/1000 > reloadTime);
 
         if(expireCache){
-            logger.info("Removing Cache for: " + url + " due to URL parameter.");
+            LOGGER.finest("Removing Cache for: " + url + " due to URL parameter.");
             cache.remove(url);
         }
 
@@ -182,7 +182,7 @@ public class ResponseCacheFilter extends AbstractFilter {
                 resetTime > 0 && (now - lastResetTime)/1000 > resetTime;
 
         if(resetCache){
-            logger.info("Resetting whole Cache for due to URL parameter.");
+            LOGGER.finest("Resetting whole Cache for due to URL parameter.");
             cache.clear();
             lastResetTime = now;
         }
@@ -191,7 +191,7 @@ public class ResponseCacheFilter extends AbstractFilter {
 
         if(skipCache){
             filterChain.doFilter(servletRequest, servletResponse);
-            logger.info("Skipping Cache for: " + url + " due to URL parameter.");
+            LOGGER.finest("Skipping Cache for: " + url + " due to URL parameter.");
             return;
         }
         
@@ -221,32 +221,32 @@ public class ResponseCacheFilter extends AbstractFilter {
 
         if(cacheObject != null && cacheObject.getServletResponseWrapper() != null){
             if(requestedResources != null && Utils.isAnyResourceModifiedSince(requestedResources, cacheObject.getTime(), context)){
-                logger.info("Some resources have been modified since last cache: " + url);
+                LOGGER.finest("Some resources have been modified since last cache: " + url);
                 cache.remove(url);
                 cacheFound = false;
             }else{
-                logger.info("Found valid cached response.");
+                LOGGER.finest("Found valid cached response.");
                 //cacheObject.increaseAccessCount();
                 cacheFound = true;
             }
         }
 
         if(cacheFound){
-            logger.info("Returning Cached response.");
+            LOGGER.fine("Returning Cached response.");
             fillResponseFromCache(httpServletResponse, cacheObject.getServletResponseWrapper());
         }else{
-            logger.info("Cache not found or invalidated");
+            LOGGER.finest("Cache not found or invalidated");
             ServletResponseWrapper wrapper = new ServletResponseWrapper(httpServletResponse);
             filterChain.doFilter(servletRequest, wrapper);
 
             if(isMIMEAccepted(wrapper.getContentType()) && !expireCache && !resetCache && wrapper.getStatus() != HttpServletResponse.SC_NOT_MODIFIED){
             	cache.put(url, new CacheObject(Utils.getLastModifiedFor(requestedResources, context), wrapper));
-	            logger.info("Cache added for: " + url);
+	            LOGGER.fine("Cache added for: " + url);
             }else{
-                logger.info("Cache NOT added for: " + url);
-                logger.info("is MIME not accepted: " + isMIMEAccepted(wrapper.getContentType()));
-                logger.info("is expireCache: " + expireCache);
-                logger.info("is resetCache: " + resetCache); 
+                LOGGER.finest("Cache NOT added for: " + url);
+                LOGGER.finest("is MIME not accepted: " + isMIMEAccepted(wrapper.getContentType()));
+                LOGGER.finest("is expireCache: " + expireCache);
+                LOGGER.finest("is resetCache: " + resetCache);
             }
 
             httpServletResponse.setCharacterEncoding(wrapper.getCharacterEncoding());
@@ -280,7 +280,7 @@ public class ResponseCacheFilter extends AbstractFilter {
     private void sendNotModified(HttpServletResponse httpServletResponse){
         httpServletResponse.setContentLength(0);
         httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-        logger.info("returning Not Modified (304)");
+        LOGGER.finest("returning Not Modified (304)");
     }
 }
 

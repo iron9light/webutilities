@@ -46,7 +46,7 @@ public class CompressionFilterTest extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger logger = Logger.getLogger(CompressionFilterTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CompressionFilterTest.class.getName());
 
     public CompressionFilterTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(CompressionFilterTest.class.getSimpleName() + ".properties"));
@@ -69,7 +69,7 @@ public class CompressionFilterTest extends TestCase {
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                logger.info("Setting resource : " + resource);
+                LOGGER.info("Setting resource : " + resource);
                 webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
             }
         }
@@ -149,7 +149,7 @@ public class CompressionFilterTest extends TestCase {
                 //return; // no more test cases in properties file.
             }
 
-            logger.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
+            LOGGER.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");

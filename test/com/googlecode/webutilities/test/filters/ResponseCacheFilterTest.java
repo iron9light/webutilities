@@ -48,7 +48,7 @@ public class ResponseCacheFilterTest extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger logger = Logger.getLogger(ResponseCacheFilterTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ResponseCacheFilterTest.class.getName());
 
     private static final int NO_STATUS_CODE = -99999;
 
@@ -73,7 +73,7 @@ public class ResponseCacheFilterTest extends TestCase {
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                logger.info("Setting resource : " + resource);
+                LOGGER.info("Setting resource : " + resource);
                 webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
                 webMockObjectFactory.getMockServletContext().setRealPath(resource, this.getClass().getResource(resource).getPath());
             }
@@ -178,7 +178,7 @@ public class ResponseCacheFilterTest extends TestCase {
                 return; // no more test cases in properties file.
             }
 
-            logger.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
+            LOGGER.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");

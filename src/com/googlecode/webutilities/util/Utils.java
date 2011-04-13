@@ -57,7 +57,7 @@ import javax.servlet.ServletContext;
  */
 public final class Utils {
 
-    private static final Logger logger = Logger.getLogger(Utils.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
 
     private static final String FINGERPRINT_SEPARATOR = "_wu_";
 
@@ -401,9 +401,9 @@ public final class Utils {
                         }
                     }
                 } catch (FileNotFoundException ex) {
-                    logger.warning("File not found." + ex);
+                    LOGGER.warning("File not found." + ex);
                 } catch (IOException ex) {
-                    logger.warning("Failed to read/touch " + realPath + ". ex:" + ex);
+                    LOGGER.warning("Failed to read/touch " + realPath + ". ex:" + ex);
                 }
             }
         }
@@ -422,7 +422,7 @@ public final class Utils {
         try {
             return simpleDateFormat.parse(headerDateString);
         } catch (Exception e) {
-            logger.warning("Date parsing using HTTP header pattern failed.");
+            LOGGER.warning("Date parsing using HTTP header pattern failed.");
         }
 
         //try another rfc1123
@@ -430,7 +430,7 @@ public final class Utils {
         try {
             return simpleDateFormat.parse(headerDateString);
         } catch (Exception e) {
-            logger.warning("Date parsing using RFC_1123 pattern failed.");
+            LOGGER.warning("Date parsing using RFC_1123 pattern failed.");
         }
 
         //try another rfc1036
@@ -438,7 +438,7 @@ public final class Utils {
         try {
             return simpleDateFormat.parse(headerDateString);
         } catch (Exception e) {
-            logger.warning("Date parsing using RFC_1036 pattern failed.");
+            LOGGER.warning("Date parsing using RFC_1036 pattern failed.");
         }
 
         //try another ansi
@@ -446,7 +446,7 @@ public final class Utils {
         try {
             return simpleDateFormat.parse(headerDateString);
         } catch (Exception e) {
-            logger.warning("Date is not even ANSI C pattern.");
+            LOGGER.warning("Date is not even ANSI C pattern.");
         }
 
         return null;
@@ -462,7 +462,7 @@ public final class Utils {
         try {
             md5Digest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException ex) {
-            logger.warning("Unable to use MD5 for digesting." + ex);
+            LOGGER.warning("Unable to use MD5 for digesting." + ex);
         }
         if (md5Digest != null) {
             data = md5Digest.digest(data);

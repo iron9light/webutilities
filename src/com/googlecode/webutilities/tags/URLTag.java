@@ -24,6 +24,8 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import com.googlecode.webutilities.util.Utils;
 
+import java.util.logging.Logger;
+
 /**
  * Tag to get fingerprinted URL for static resources.
  *
@@ -42,6 +44,8 @@ public class URLTag extends BodyTagSupport {
     private String var;
 
     private int scope = PageContext.PAGE_SCOPE; //default scope
+
+    private static final Logger LOGGER = Logger.getLogger(URLTag.class.getName());
 
     public URLTag() {
         super();
@@ -70,6 +74,7 @@ public class URLTag extends BodyTagSupport {
     public int doEndTag() throws JspException {
 
         if(value == null || Utils.isProtocolURL(value.toLowerCase().trim())){
+            LOGGER.finest("Invalid url : " + value);
             return gracefully();
         }
 
@@ -79,6 +84,7 @@ public class URLTag extends BodyTagSupport {
         }
 
         if ((!context.startsWith("/") || !value.startsWith("/")) && value.endsWith("/")) {
+            LOGGER.warning("Invalid context|value.");
             throw new JspTagException("Invalid context|value");
         }
 
@@ -102,6 +108,7 @@ public class URLTag extends BodyTagSupport {
                 try {
                     pageContext.getOut().print(value);
                 } catch (java.io.IOException ex) {
+                    LOGGER.severe("IO Error:" + ex);
                     throw new JspTagException(ex.toString(), ex);
                 }
             }

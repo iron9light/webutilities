@@ -55,7 +55,7 @@ public class CompressionFilter extends AbstractFilter {
     /**
      * Logger
      */
-    private static final Logger logger = Logger.getLogger(CompressionFilter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CompressionFilter.class.getName());
 
     /**
      * The threshold number of bytes) to compress
@@ -72,6 +72,11 @@ public class CompressionFilter extends AbstractFilter {
      */
     private static final String COMPRESSED_ATTR = CompressionFilter.class.getName() + ".COMPRESSED";
 
+    /**
+     * Threshold
+     */
+    private static final String INIT_PARAM_COMPRESSION_THRESHOLD = "compressionThreshold";
+
     /* (non-Javadoc)
      * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
      */
@@ -79,11 +84,15 @@ public class CompressionFilter extends AbstractFilter {
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
         
-        int compressionMinSize = Utils.readInt(filterConfig.getInitParameter("compressionThreshold"), this.compressionThreshold);
+        int compressionMinSize = Utils.readInt(filterConfig.getInitParameter(INIT_PARAM_COMPRESSION_THRESHOLD), this.compressionThreshold);
         
         if (compressionMinSize > 0) { // priority given to configured value
             this.compressionThreshold = compressionMinSize;
         }
+        LOGGER.config("Filter initialized with: " +
+                "{" +
+                INIT_PARAM_COMPRESSION_THRESHOLD + ":" + this.compressionThreshold +
+                "}");
     }
 
     /* (non-Javadoc)
@@ -111,7 +120,7 @@ public class CompressionFilter extends AbstractFilter {
 
             } catch (IOException ex) {
 
-                logger.finest("Response was already closed: " + ex);
+                LOGGER.severe("Response was already closed: " + ex);
 
             }
 
@@ -128,7 +137,7 @@ public class CompressionFilter extends AbstractFilter {
     private ServletRequest getRequest(ServletRequest request) {
 
         if (!(request instanceof HttpServletRequest)) {
-            logger.finest("No Compression: non http request");
+            LOGGER.finest("No Compression: non http request");
             return request;
         }
 
@@ -137,14 +146,16 @@ public class CompressionFilter extends AbstractFilter {
         String contentEncoding = httpRequest.getHeader(HTTP_CONTENT_ENCODING_HEADER);
 
         if (contentEncoding == null) {
-            logger.finest("No Compression: Request content encoding is: " + contentEncoding);
+            LOGGER.finest("No Compression: Request content encoding is: " + contentEncoding);
             return request;
         }
 
         if (!EncodedStreamsFactory.isRequestContentEncodingSupported(contentEncoding)) {
-            logger.finest("No Compression: unsupported request content encoding: " + contentEncoding);
+            LOGGER.finest("No Compression: unsupported request content encoding: " + contentEncoding);
             return request;
         }
+
+        LOGGER.fine("Decompressing request: content encoding : " + contentEncoding);
 
         return new CompressedHttpServletRequestWrapper(httpRequest, EncodedStreamsFactory.getFactoryForContentEncoding(contentEncoding));
 
@@ -175,12 +186,12 @@ public class CompressionFilter extends AbstractFilter {
 
     private ServletResponse getResponse(ServletRequest request, ServletResponse response) {
         if (response.isCommitted() || request.getAttribute(PROCESSED_ATTR) != null) {
-            logger.finest("No Compression: Response committed or filter has already been applied");
+            LOGGER.finest("No Compression: Response committed or filter has already been applied");
             return response;
         }
 
         if (!(response instanceof HttpServletResponse) || !(request instanceof HttpServletRequest)) {
-            logger.finest("No Compression: non http request/response");
+            LOGGER.finest("No Compression: non http request/response");
             return response;
         }
 
@@ -193,25 +204,25 @@ public class CompressionFilter extends AbstractFilter {
         String contentEncoding = getAppropriateContentEncoding(acceptEncoding);
 
         if (contentEncoding == null) {
-            logger.finest("No Compression: Accept encoding is : " + acceptEncoding);
+            LOGGER.finest("No Compression: Accept encoding is : " + acceptEncoding);
             return response;
         }
 
         String requestURI = httpRequest.getRequestURI();
         if (!isURLAccepted(requestURI)) {
-            logger.finest("No Compression: For path: " + requestURI);
+            LOGGER.finest("No Compression: For path: " + requestURI);
             return response;
         }
 
         String userAgent = httpRequest.getHeader(Constants.HTTP_USER_AGENT_HEADER);
         if (!isUserAgentAccepted(userAgent)) {
-            logger.finest("No Compression: For User-Agent: " + userAgent);
+            LOGGER.finest("No Compression: For User-Agent: " + userAgent);
             return response;
         }
 
         EncodedStreamsFactory encodedStreamsFactory = EncodedStreamsFactory.getFactoryForContentEncoding(contentEncoding);
 
-        logger.finest("Using Compression: For content encoding : " + contentEncoding);
+        LOGGER.fine("Compressing response: content encoding : " + contentEncoding);
 
         return new CompressedHttpServletResponseWrapper(httpResponse, encodedStreamsFactory, contentEncoding, compressionThreshold, this);
     }

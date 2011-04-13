@@ -70,12 +70,12 @@ public abstract class AbstractFilter implements Filter, IgnoreAcceptContext {
     private static final String INIT_PARAM_ACCEPT_UA_PATTERN = "acceptUAPattern";
 
 
-    private static final Logger logger = Logger.getLogger(AbstractFilter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractFilter.class.getName());
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
-        logger.info("Initializing...");
+        LOGGER.config("Initializing...");
 
         this.filterConfig = filterConfig;
 
@@ -91,7 +91,7 @@ public abstract class AbstractFilter implements Filter, IgnoreAcceptContext {
 
         this.acceptUAPattern = filterConfig.getInitParameter(INIT_PARAM_ACCEPT_UA_PATTERN);
 
-        logger.info("Abstract Filter initialized with: " +
+        LOGGER.config("Abstract Filter initialized with: " +
                 "{" +
                 "   " + INIT_PARAM_IGNORE_URL_PATTERN + ":" + ignoreURLPattern + "," +
                 "   " + INIT_PARAM_ACCEPT_URL_PATTERN + ":" + acceptURLPattern + "," +
@@ -128,7 +128,7 @@ public abstract class AbstractFilter implements Filter, IgnoreAcceptContext {
 
     @Override
     public void destroy() {
-        logger.info("destroying...");
+        LOGGER.config("destroying...");
         this.filterConfig = null;
     }
 

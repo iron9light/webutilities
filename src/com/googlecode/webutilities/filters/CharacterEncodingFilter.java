@@ -114,7 +114,7 @@ public class CharacterEncodingFilter extends AbstractFilter {
 
     private static final String INIT_PARAM_FORCE = "force";
 
-    private static final Logger logger = Logger.getLogger(CharacterEncodingFilter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CharacterEncodingFilter.class.getName());
 
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
@@ -122,10 +122,10 @@ public class CharacterEncodingFilter extends AbstractFilter {
         this.encoding = filterConfig.getInitParameter(INIT_PARAM_ENCODING);
         this.force = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_FORCE), this.force);
 
-        logger.info("Filter initialized with: " +
+        LOGGER.config("Filter initialized with: " +
                 "{" +
                 INIT_PARAM_ENCODING + ":" + encoding + "," +
-                INIT_PARAM_FORCE + ":" + force + "," +
+                INIT_PARAM_FORCE + ":" + force +
                 "}");
     }
 
@@ -136,7 +136,7 @@ public class CharacterEncodingFilter extends AbstractFilter {
         if (isURLAccepted(url) && isUserAgentAccepted(req.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (force || request.getCharacterEncoding() == null)) {
             if (encoding != null) {
                 request.setCharacterEncoding(encoding);
-                logger.info("Applied request encoding : " + encoding);
+                LOGGER.fine("Applied request encoding : " + encoding);
             }
         }
         String extensionOrFile = Utils.detectExtension(url);
@@ -145,13 +145,13 @@ public class CharacterEncodingFilter extends AbstractFilter {
             extensionOrFile = resources.get(0);
         }
         String mime = Utils.selectMimeForExtension(extensionOrFile);
-        logger.info("Predicted output mime : " + mime + " for url: " + url);
+        LOGGER.finest("Predicted output mime : " + mime + " for url: " + url);
         if (encoding != null && force && this.isMIMEAccepted(mime)) {
             try {
                 resp.setCharacterEncoding(encoding);
-                logger.info("Applied response encoding : " + encoding);
+                LOGGER.fine("Applied response encoding : " + encoding);
             } catch (Exception e) {
-                logger.severe("Failed to set response encoding : " + encoding);
+                LOGGER.severe("Failed to set response encoding : " + encoding);
                 //failed to set encoding may be you have Servlet <= 2.3 (which doesn't have response.setCharacterEncoding)
             }
         }
