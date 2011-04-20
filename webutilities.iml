@@ -103,7 +103,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jpathwatch-0-94.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/compiler.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
