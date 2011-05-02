@@ -100,14 +100,29 @@ public final class Utils {
 
     public static boolean readBoolean(String string, boolean defaultValue) {
 
-        if (string == null || !string.toLowerCase().matches("true|false")) {
+        if (string == null || !string.toLowerCase().matches("^true|t|on|1|y|false|f|off|0|n$")) {
             return defaultValue;
         } else {
-            return "true".equalsIgnoreCase(string);
+            return string.toLowerCase().matches("^true|t|on|1|y$");
         }
 
     }
 
+    /**
+     * @param string string
+     * @param defaultValue in case string is null or empty
+     * @return String parsed value or the default value
+     */
+
+    public static String readString(String string, String defaultValue) {
+
+        if (string == null || string.equals("")) {
+            return defaultValue;
+        } else {
+            return string;
+        }
+
+    }
 
     /**
      * @param requestURI the URL string
