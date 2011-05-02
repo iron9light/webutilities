@@ -18,8 +18,10 @@ package com.googlecode.webutilities.filters;
 
 import com.google.javascript.jscomp.*;
 import com.google.javascript.jscomp.Compiler;
+import com.google.javascript.jscomp.parsing.Config;
 import com.googlecode.webutilities.common.*;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
+import com.googlecode.webutilities.util.Utils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Enumeration;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.googlecode.webutilities.common.Constants.*;
@@ -41,17 +45,17 @@ public class ClosureCompilerFilter extends AbstractFilter{
 
     private static final Logger LOGGER = Logger.getLogger(ClosureCompilerFilter.class.getName());
 
-    CompilerOptions compilerOptions = new CompilerOptions();
+    CompilerOptions compilerOptions;
 
-    JSSourceFile extern = JSSourceFile.fromCode("/dev/null", "");
+    JSSourceFile nullExtern = JSSourceFile.fromCode("/dev/null", "");
 
     private static final String PROCESSED_ATTR = YUIMinFilter.class.getName() + ".MINIFIED";
 
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
-        compilerOptions.setCodingConvention(new ClosureCodingConvention());
+        compilerOptions = buildCompilerOptionsFromConfig(config);
         LOGGER.config("Filter initialized with: " +
-                "{" +
+                "{" + compilerOptions.toString() +
                 "}");
     }
     //init
@@ -98,7 +102,7 @@ public class ClosureCompilerFilter extends AbstractFilter{
                 LOGGER.finest("Compressing JS/JSON type");
                 CompilationLevel level = CompilationLevel.SIMPLE_OPTIMIZATIONS;
                 level.setOptionsForCompilationLevel(compilerOptions);
-                Result result = closureCompiler.compile(extern,JSSourceFile.fromInputStream(null,is), compilerOptions);
+                Result result = closureCompiler.compile(nullExtern,JSSourceFile.fromInputStream(null,is), compilerOptions);
                 if(result.success){
                     out.append(closureCompiler.toSource());
                 }
@@ -113,5 +117,34 @@ public class ClosureCompilerFilter extends AbstractFilter{
             chain.doFilter(req, resp);
         }
     }
-    //destroy
+
+    private static CompilerOptions buildCompilerOptionsFromConfig(FilterConfig config){
+
+        CompilerOptions compilerOptions = new CompilerOptions();
+        compilerOptions.setCodingConvention(new DefaultCodingConvention());
+        //List<String> processedArgs = Lists.newArrayList();
+        Enumeration<String> initParams = config.getInitParameterNames();
+        while(initParams.hasMoreElements()){
+            String name = initParams.nextElement().trim();
+            String value = config.getInitParameter(name);
+            if("acceptConstKeyword".equals(name)){
+                compilerOptions.setAcceptConstKeyword(Utils.readBoolean(value, false));
+            }else if("charset".equals(name)){
+                compilerOptions.setOutputCharset(Utils.readString(value, "UTF-8"));
+            }else if("compilationLevel".equals(name)){
+                CompilationLevel compilationLevel = CompilationLevel.valueOf(value);
+                compilationLevel.setOptionsForCompilationLevel(compilerOptions);
+            }else if("formatting".equals(name)){
+                if("PRETTY_PRINT".equals(value)){
+                    compilerOptions.prettyPrint = true;
+                }else if("PRINT_INPUT_DELIMITER".equals(value)){
+                    compilerOptions.printInputDelimiter = true;
+                }
+            }else if("loggingLevel".equals(name)){
+                Compiler.setLoggingLevel(Level.parse(value));
+            }
+        }
+        return compilerOptions;
+    }
+
 }
