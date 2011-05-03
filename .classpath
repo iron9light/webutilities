@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/mockrunner-tag.jar"/>
 	<classpathentry kind="lib" path="lib/mockrunner.jar"/>
 	<classpathentry kind="lib" path="lib/yuicompressor.jar"/>
+	<classpathentry kind="lib" path="lib/compiler.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
