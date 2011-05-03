@@ -18,6 +18,7 @@ package com.googlecode.webutilities.tags;
 import static com.googlecode.webutilities.common.Constants.DEFAULT_CHARSET;
 import static com.googlecode.webutilities.common.Constants.TYPE_CSS;
 import static com.googlecode.webutilities.common.Constants.TYPE_JS;
+import static com.googlecode.webutilities.util.Utils.*;
 
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -113,7 +114,7 @@ public class YUIMinTag extends BodyTagSupport {
         this.charset = charset;
 
         if(!Charset.isSupported(this.charset)){
-            LOGGER.warning("Charset " + this.charset + " not supported. Using default : " + DEFAULT_CHARSET);
+            LOGGER.warning(buildLoggerMessage("Charset " ,this.charset , " not supported. Using default : " , DEFAULT_CHARSET));
             this.charset = DEFAULT_CHARSET;
         }
 

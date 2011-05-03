@@ -15,6 +15,8 @@
  */
 package com.googlecode.webutilities.filters;
 
+import static com.googlecode.webutilities.util.Utils.*; 
+
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
@@ -29,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
-import com.googlecode.webutilities.util.Utils;
+
 
 /**
  * The <code>CharacterEncodingFilter</code> can be used to specify a character encoding for requests in Servlet 2.3/2.4.
@@ -120,13 +122,10 @@ public class CharacterEncodingFilter extends AbstractFilter {
         super.init(config);
 
         this.encoding = filterConfig.getInitParameter(INIT_PARAM_ENCODING);
-        this.force = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_FORCE), this.force);
+        this.force = readBoolean(filterConfig.getInitParameter(INIT_PARAM_FORCE), this.force);
 
-        LOGGER.config("Filter initialized with: " +
-                "{" +
-                INIT_PARAM_ENCODING + ":" + encoding + "," +
-                INIT_PARAM_FORCE + ":" + force +
-                "}");
+        LOGGER.config(buildLoggerMessage("Filter initialized with: {",INIT_PARAM_ENCODING,":",encoding,",",
+                INIT_PARAM_FORCE,":",force.toString(),"}"));
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -136,22 +135,22 @@ public class CharacterEncodingFilter extends AbstractFilter {
         if (isURLAccepted(url) && isUserAgentAccepted(req.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (force || request.getCharacterEncoding() == null)) {
             if (encoding != null) {
                 request.setCharacterEncoding(encoding);
-                LOGGER.fine("Applied request encoding : " + encoding);
+                LOGGER.fine(buildLoggerMessage("Applied request encoding : ",encoding));
             }
         }
-        String extensionOrFile = Utils.detectExtension(url);
+        String extensionOrFile = detectExtension(url);
         if(extensionOrFile == null){
-            List<String> resources = Utils.findResourcesToMerge(req.getContextPath(), url);
+            List<String> resources = findResourcesToMerge(req.getContextPath(), url);
             extensionOrFile = resources.get(0);
         }
-        String mime = Utils.selectMimeForExtension(extensionOrFile);
+        String mime = selectMimeForExtension(extensionOrFile);
         LOGGER.finest("Predicted output mime : " + mime + " for url: " + url);
         if (encoding != null && force && this.isMIMEAccepted(mime)) {
             try {
                 resp.setCharacterEncoding(encoding);
-                LOGGER.fine("Applied response encoding : " + encoding);
+                LOGGER.fine(buildLoggerMessage("Applied response encoding : ", encoding));
             } catch (Exception e) {
-                LOGGER.severe("Failed to set response encoding : " + encoding);
+                LOGGER.severe(buildLoggerMessage("Failed to set response encoding : ", encoding));
                 //failed to set encoding may be you have Servlet <= 2.3 (which doesn't have response.setCharacterEncoding)
             }
         }

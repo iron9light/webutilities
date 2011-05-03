@@ -27,6 +27,7 @@ import static com.googlecode.webutilities.common.Constants.HTTP_ETAG_HEADER;
 import static com.googlecode.webutilities.common.Constants.HTTP_IF_MODIFIED_SINCE;
 import static com.googlecode.webutilities.common.Constants.HTTP_IF_NONE_MATCH_HEADER;
 import static com.googlecode.webutilities.common.Constants.X_OPTIMIZED_BY_VALUE;
+import static com.googlecode.webutilities.util.Utils.*;
 
 import java.io.*;
 import java.util.Date;
@@ -41,7 +42,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.googlecode.webutilities.util.Utils;
+
 
 /**
  * The <code>JSCSSMergeServet</code> is the Http Servlet to combine multiple JS or CSS static resources in one HTTP request.
@@ -168,17 +169,16 @@ public class JSCSSMergeServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.expiresMinutes = Utils.readLong(config.getInitParameter(INIT_PARAM_EXPIRES_MINUTES), this.expiresMinutes);
+        this.expiresMinutes = readLong(config.getInitParameter(INIT_PARAM_EXPIRES_MINUTES), this.expiresMinutes);
         this.cacheControl = config.getInitParameter(INIT_PARAM_CACHE_CONTROL) != null ? config.getInitParameter(INIT_PARAM_CACHE_CONTROL) : this.cacheControl ;
-        this.autoCorrectUrlsInCSS = Utils.readBoolean(config.getInitParameter(INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS),this.autoCorrectUrlsInCSS);
-        this.turnOfETag = Utils.readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_E_TAG),this.turnOfETag);
-        LOGGER.config("Servlet initialized: " +
-                "{" +
-                "   " + INIT_PARAM_EXPIRES_MINUTES + ":" + this.expiresMinutes + "" +
-                "   " + INIT_PARAM_CACHE_CONTROL + ":" + this.cacheControl + "" +
-                "   " + INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS + ":" + this.autoCorrectUrlsInCSS + "" +
-                "   " + INIT_PARAM_TURN_OFF_E_TAG + ":" + this.turnOfETag + "" +
-                "}");
+        this.autoCorrectUrlsInCSS = readBoolean(config.getInitParameter(INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS),this.autoCorrectUrlsInCSS);
+        this.turnOfETag = readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_E_TAG),this.turnOfETag);
+        LOGGER.config(buildLoggerMessage("Servlet initialized: {",
+                "   " , INIT_PARAM_EXPIRES_MINUTES , ":" , String.valueOf(this.expiresMinutes) , "" ,
+                "   " , INIT_PARAM_CACHE_CONTROL , ":" , this.cacheControl , "" ,
+                "   " , INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS , ":" , String.valueOf(this.autoCorrectUrlsInCSS) , "" ,
+                "   " , INIT_PARAM_TURN_OFF_E_TAG , ":" , String.valueOf(this.turnOfETag) , "" ,
+                "}"));
     }
 
     /**
@@ -189,12 +189,12 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @param resp - response object
      */
     private void addAppropriateResponseHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
-        String mime = Utils.selectMimeForExtension(extensionOrFile);
+        String mime = selectMimeForExtension(extensionOrFile);
         if(mime != null){
             LOGGER.finest("Setting MIME to " + mime);
             resp.setContentType(mime);
         }
-        long lastModifiedFor = Utils.getLastModifiedFor(resourcesToMerge, this.getServletContext());
+        long lastModifiedFor = getLastModifiedFor(resourcesToMerge, this.getServletContext());
         resp.addDateHeader(HEADER_EXPIRES, lastModifiedFor + expiresMinutes * 60 * 1000);
         resp.addHeader(HTTP_CACHE_CONTROL_HEADER, this.cacheControl);
         resp.addDateHeader(HEADER_LAST_MODIFIED, lastModifiedFor);
@@ -216,7 +216,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         LOGGER.fine("Started processing request : " + url);
 
-        List<String> resourcesToMerge = Utils.findResourcesToMerge(req.getContextPath(), url);
+        List<String> resourcesToMerge = findResourcesToMerge(req.getContextPath(), url);
 
         //If not modified, return 304 and stop
         ResourceStatus status = this.isNotModified(req, resp, resourcesToMerge);
@@ -226,7 +226,7 @@ public class JSCSSMergeServlet extends HttpServlet {
     		return;
         }
 
-        String extensionOrPath = Utils.detectExtension(url);//in case of non js/css files it null
+        String extensionOrPath = detectExtension(url);//in case of non js/css files it null
         if(extensionOrPath == null){
             extensionOrPath = resourcesToMerge.get(0);//non grouped i.e. non css/js file, we refer it's path in that case
         }
@@ -268,7 +268,7 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @return
      */
     private String getURL(HttpServletRequest request){
-        return Utils.removeFingerPrint(request.getRequestURI());
+        return removeFingerPrint(request.getRequestURI());
     }
 
     /**
@@ -283,9 +283,9 @@ public class JSCSSMergeServlet extends HttpServlet {
         //If-Modified-Since
         String ifModifiedSince = request.getHeader(HTTP_IF_MODIFIED_SINCE);
         if(ifModifiedSince != null){
-            Date date = Utils.readDateFromHeader(ifModifiedSince);
+            Date date = readDateFromHeader(ifModifiedSince);
             if(date != null){
-                if(!Utils.isAnyResourceModifiedSince(resourcesToMerge, date.getTime(), context)){
+                if(!isAnyResourceModifiedSince(resourcesToMerge, date.getTime(), context)){
                     this.sendNotModified(response);
                     return new ResourceStatus(null, true);
                 }
@@ -293,8 +293,8 @@ public class JSCSSMergeServlet extends HttpServlet {
         }
         //If-None-match
         String requestETag = request.getHeader(HTTP_IF_NONE_MATCH_HEADER);
-        String actualETag = this.turnOfETag ? null : Utils.buildETagForResources(resourcesToMerge, context);
-        if(!this.turnOfETag && !Utils.isAnyResourceETagModified(resourcesToMerge, requestETag, actualETag, context)){
+        String actualETag = this.turnOfETag ? null : buildETagForResources(resourcesToMerge, context);
+        if(!this.turnOfETag && !isAnyResourceETagModified(resourcesToMerge, requestETag, actualETag, context)){
         	return new ResourceStatus(actualETag, true);
         }
         return new ResourceStatus(actualETag, false);
@@ -393,21 +393,21 @@ public class JSCSSMergeServlet extends HttpServlet {
         String cssRealPath = context.getRealPath(cssFilePath);
         while (matcher.find()) {
             String refImgPath = matcher.group(1);
-            if (!Utils.isProtocolURL(refImgPath)) { //ignore absolute protocol paths
+            if (!isProtocolURL(refImgPath)) { //ignore absolute protocol paths
                 String resolvedImgPath = refImgPath;
                 if(!refImgPath.startsWith("/")){
-                    resolvedImgPath = Utils.buildProperPath(Utils.getParentPath(cssFilePath), refImgPath);
+                    resolvedImgPath = buildProperPath(getParentPath(cssFilePath), refImgPath);
                 }
                 String imgRealPath = context.getRealPath(resolvedImgPath);
-                String fingerPrint = Utils.buildETagForResource(resolvedImgPath, context);
+                String fingerPrint = buildETagForResource(resolvedImgPath, context);
                 int offset = line.indexOf(refImgPath);
                 line.replace(
                         offset, //from
                         offset + refImgPath.length(), //to
-                        contextPath + Utils.addFingerPrint(fingerPrint, resolvedImgPath)
+                        contextPath + addFingerPrint(fingerPrint, resolvedImgPath)
                 );
 
-                Utils.updateReferenceMap(cssRealPath, imgRealPath);
+                updateReferenceMap(cssRealPath, imgRealPath);
             }
         }
         return line.toString();

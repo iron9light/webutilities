@@ -18,6 +18,7 @@ package com.googlecode.webutilities.filters;
 
 import static com.googlecode.webutilities.common.Constants.HTTP_IF_MODIFIED_SINCE;
 import static com.googlecode.webutilities.common.Constants.HTTP_IF_NONE_MATCH_HEADER;
+import static com.googlecode.webutilities.util.Utils.*;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -40,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.common.ServletResponseWrapper;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
-import com.googlecode.webutilities.util.Utils;
+
 
 /**
  * The <code>ResponseCacheFilter</code> is implemented as Servlet Filter to enable caching of STATIC resources (JS, CSS, static HTML files)
@@ -136,17 +137,15 @@ public class ResponseCacheFilter extends AbstractFilter {
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
 
-        this.reloadTime = Utils.readInt(filterConfig.getInitParameter(INIT_PARAM_RELOAD_TIME),reloadTime);
+        this.reloadTime = readInt(filterConfig.getInitParameter(INIT_PARAM_RELOAD_TIME),reloadTime);
 
-        this.resetTime = Utils.readInt(filterConfig.getInitParameter(INIT_PARAM_RESET_TIME),resetTime);
+        this.resetTime = readInt(filterConfig.getInitParameter(INIT_PARAM_RESET_TIME),resetTime);
 
         lastResetTime = new Date().getTime();
 
-        LOGGER.config("Cache Filter initialized with: " +
-                "{" +
-                INIT_PARAM_RELOAD_TIME + ":" + reloadTime + "," +
-                INIT_PARAM_RESET_TIME + ":" + resetTime + "," +
-                "}");
+        LOGGER.config(buildLoggerMessage("Cache Filter initialized with: {",
+                INIT_PARAM_RELOAD_TIME,  ":" ,  String.valueOf(reloadTime), ",", 
+                INIT_PARAM_RESET_TIME , ":" , String.valueOf(resetTime) + "," ,"}"));
 
     }
 
@@ -159,7 +158,7 @@ public class ResponseCacheFilter extends AbstractFilter {
         String url = httpServletRequest.getRequestURI();
 
         if(!isURLAccepted(url) || !isUserAgentAccepted(httpServletRequest.getHeader(Constants.HTTP_USER_AGENT_HEADER))){
-            LOGGER.fine("Skipping Cache filter for: " + url);
+            LOGGER.fine(buildLoggerMessage("Skipping Cache filter for: " , url));
             LOGGER.fine("URL or UserAgent not accepted");
             filterChain.doFilter(servletRequest,servletResponse);
             return;
@@ -174,7 +173,7 @@ public class ResponseCacheFilter extends AbstractFilter {
                 (cacheObject != null &&  reloadTime > 0 && (now - cacheObject.getTime())/1000 > reloadTime);
 
         if(expireCache){
-            LOGGER.finest("Removing Cache for: " + url + " due to URL parameter.");
+            LOGGER.finest(buildLoggerMessage("Removing Cache for: " , url , " due to URL parameter."));
             cache.remove(url);
         }
 
@@ -191,18 +190,18 @@ public class ResponseCacheFilter extends AbstractFilter {
 
         if(skipCache){
             filterChain.doFilter(servletRequest, servletResponse);
-            LOGGER.finest("Skipping Cache for: " + url + " due to URL parameter.");
+            LOGGER.finest(buildLoggerMessage("Skipping Cache for: " , url , " due to URL parameter."));
             return;
         }
         
-        List<String> requestedResources = Utils.findResourcesToMerge(httpServletRequest.getContextPath(), url);
+        List<String> requestedResources = findResourcesToMerge(httpServletRequest.getContextPath(), url);
         ServletContext context = filterConfig.getServletContext();
         //If-Modified-Since
         String ifModifiedSince = httpServletRequest.getHeader(HTTP_IF_MODIFIED_SINCE);
         if(ifModifiedSince != null){
-            Date date = Utils.readDateFromHeader(ifModifiedSince);
+            Date date = readDateFromHeader(ifModifiedSince);
             if(date != null){
-                if(!Utils.isAnyResourceModifiedSince(requestedResources, date.getTime(), context)){
+                if(!isAnyResourceModifiedSince(requestedResources, date.getTime(), context)){
                     cache.remove(url);
                     this.sendNotModified(httpServletResponse);
                     return;
@@ -211,7 +210,7 @@ public class ResponseCacheFilter extends AbstractFilter {
         }
         //If-None-match
         String requestETag = httpServletRequest.getHeader(HTTP_IF_NONE_MATCH_HEADER);
-        if(!Utils.isAnyResourceETagModified(requestedResources, requestETag, null, context)){
+        if(!isAnyResourceETagModified(requestedResources, requestETag, null, context)){
             cache.remove(url);
         	this.sendNotModified(httpServletResponse);
     		return;
@@ -220,8 +219,8 @@ public class ResponseCacheFilter extends AbstractFilter {
         boolean cacheFound = false;
 
         if(cacheObject != null && cacheObject.getServletResponseWrapper() != null){
-            if(requestedResources != null && Utils.isAnyResourceModifiedSince(requestedResources, cacheObject.getTime(), context)){
-                LOGGER.finest("Some resources have been modified since last cache: " + url);
+            if(requestedResources != null && isAnyResourceModifiedSince(requestedResources, cacheObject.getTime(), context)){
+                LOGGER.finest(buildLoggerMessage("Some resources have been modified since last cache: " , url));
                 cache.remove(url);
                 cacheFound = false;
             }else{
@@ -240,7 +239,7 @@ public class ResponseCacheFilter extends AbstractFilter {
             filterChain.doFilter(servletRequest, wrapper);
 
             if(isMIMEAccepted(wrapper.getContentType()) && !expireCache && !resetCache && wrapper.getStatus() != HttpServletResponse.SC_NOT_MODIFIED){
-            	cache.put(url, new CacheObject(Utils.getLastModifiedFor(requestedResources, context), wrapper));
+            	cache.put(url, new CacheObject(getLastModifiedFor(requestedResources, context), wrapper));
 	            LOGGER.fine("Cache added for: " + url);
             }else{
                 LOGGER.finest("Cache NOT added for: " + url);

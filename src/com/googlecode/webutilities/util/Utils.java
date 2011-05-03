@@ -533,6 +533,19 @@ public final class Utils {
         }
         return "/";
     }
+    
+    /**
+     * This method accept string tokens and return the concatenated logger message. 
+     * @param messages
+     * @return
+     */
+    public static String buildLoggerMessage(String... messages){
+    	StringBuilder strBuilder=new StringBuilder();
+    	for(int i=0; i<messages.length; i++){
+    		strBuilder.append(messages[i]);
+    	}
+    	return strBuilder.toString();
+    }
 
     private Utils() {
     } //non instantiable

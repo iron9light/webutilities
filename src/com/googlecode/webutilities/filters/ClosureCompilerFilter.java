@@ -16,16 +16,13 @@
 
 package com.googlecode.webutilities.filters;
 
-import com.google.javascript.jscomp.*;
-import com.google.javascript.jscomp.Compiler;
-import com.google.javascript.jscomp.parsing.Config;
-import com.googlecode.webutilities.common.*;
-import com.googlecode.webutilities.filters.common.AbstractFilter;
-import com.googlecode.webutilities.util.Utils;
+import static com.googlecode.webutilities.common.Constants.EXT_CSS;
+import static com.googlecode.webutilities.common.Constants.EXT_JS;
+import static com.googlecode.webutilities.common.Constants.EXT_JSON;
+import static com.googlecode.webutilities.common.Constants.MIME_JS;
+import static com.googlecode.webutilities.common.Constants.MIME_JSON;
+import static com.googlecode.webutilities.util.Utils.*;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Writer;
@@ -33,7 +30,24 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.googlecode.webutilities.common.Constants.*;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.javascript.jscomp.CompilationLevel;
+import com.google.javascript.jscomp.Compiler;
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.DefaultCodingConvention;
+import com.google.javascript.jscomp.JSSourceFile;
+import com.google.javascript.jscomp.LoggerErrorManager;
+import com.google.javascript.jscomp.Result;
+import com.googlecode.webutilities.common.Constants;
+import com.googlecode.webutilities.filters.common.AbstractFilter;
+
 
 /**
  * Filter that performs minification using Google Closure Compiler
@@ -54,9 +68,7 @@ public class ClosureCompilerFilter extends AbstractFilter{
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
         compilerOptions = buildCompilerOptionsFromConfig(config);
-        LOGGER.config("Filter initialized with: " +
-                "{" + compilerOptions.toString() +
-                "}");
+        LOGGER.config(buildLoggerMessage("Filter initialized with: {",compilerOptions.toString(),"}"));
     }
     //init
     @Override
@@ -90,7 +102,7 @@ public class ClosureCompilerFilter extends AbstractFilter{
             if(!isMIMEAccepted(mime)){
                 out.write(wrapper.getContents());
                 out.flush();
-                LOGGER.finest("Not minifying. Mime (" + mime + ") not allowed.");
+                LOGGER.finest(buildLoggerMessage("Not minifying. Mime (", mime, ") not allowed."));
                 return;
             }
 
@@ -118,7 +130,8 @@ public class ClosureCompilerFilter extends AbstractFilter{
         }
     }
 
-    private static CompilerOptions buildCompilerOptionsFromConfig(FilterConfig config){
+    @SuppressWarnings("unchecked")
+	private static CompilerOptions buildCompilerOptionsFromConfig(FilterConfig config){
 
         CompilerOptions compilerOptions = new CompilerOptions();
         compilerOptions.setCodingConvention(new DefaultCodingConvention());
@@ -128,9 +141,9 @@ public class ClosureCompilerFilter extends AbstractFilter{
             String name = initParams.nextElement().trim();
             String value = config.getInitParameter(name);
             if("acceptConstKeyword".equals(name)){
-                compilerOptions.setAcceptConstKeyword(Utils.readBoolean(value, false));
+                compilerOptions.setAcceptConstKeyword(readBoolean(value, false));
             }else if("charset".equals(name)){
-                compilerOptions.setOutputCharset(Utils.readString(value, "UTF-8"));
+                compilerOptions.setOutputCharset(readString(value, "UTF-8"));
             }else if("compilationLevel".equals(name)){
                 CompilationLevel compilationLevel = CompilationLevel.valueOf(value);
                 compilationLevel.setOptionsForCompilationLevel(compilerOptions);

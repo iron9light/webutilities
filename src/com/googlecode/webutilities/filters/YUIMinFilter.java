@@ -23,6 +23,7 @@ import static com.googlecode.webutilities.common.Constants.EXT_JSON;
 import static com.googlecode.webutilities.common.Constants.MIME_CSS;
 import static com.googlecode.webutilities.common.Constants.MIME_JS;
 import static com.googlecode.webutilities.common.Constants.MIME_JSON;
+import static com.googlecode.webutilities.util.Utils.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,7 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.googlecode.webutilities.common.Constants;
 import com.googlecode.webutilities.common.ServletResponseWrapper;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
-import com.googlecode.webutilities.util.Utils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
@@ -201,26 +201,25 @@ public class YUIMinFilter extends AbstractFilter {
         this.charset = this.filterConfig.getInitParameter(INIT_PARAM_CHARSET) == null ? this.charset : this.filterConfig.getInitParameter(INIT_PARAM_CHARSET);
 
         if(!Charset.isSupported(this.charset)){
-            LOGGER.config("Charset " + charset + " not supported. Using default: " + DEFAULT_CHARSET);
+            LOGGER.config(buildLoggerMessage("Charset ",charset," not supported. Using default: ",DEFAULT_CHARSET));
             this.charset = DEFAULT_CHARSET;
         }
 
-        this.lineBreak = Utils.readInt(filterConfig.getInitParameter(INIT_PARAM_LINE_BREAK), this.lineBreak);
+        this.lineBreak = readInt(filterConfig.getInitParameter(INIT_PARAM_LINE_BREAK), this.lineBreak);
 
-        this.noMunge = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_NO_MUNGE), this.noMunge);
+        this.noMunge = readBoolean(filterConfig.getInitParameter(INIT_PARAM_NO_MUNGE), this.noMunge);
 
-        this.preserveSemi = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_PRESERVE_SEMI), this.preserveSemi);
+        this.preserveSemi = readBoolean(filterConfig.getInitParameter(INIT_PARAM_PRESERVE_SEMI), this.preserveSemi);
 
-        this.disableOptimizations = Utils.readBoolean(filterConfig.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
+        this.disableOptimizations = readBoolean(filterConfig.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
 
-        LOGGER.config("Filter initialized with: " +
-                "{" +
-                "   " + INIT_PARAM_LINE_BREAK + ":" + lineBreak + "," +
-                "   " + INIT_PARAM_NO_MUNGE + ":" + noMunge + "," +
-                "   " + INIT_PARAM_PRESERVE_SEMI + ":" + preserveSemi + "," +
-                "   " + INIT_PARAM_DISABLE_OPTIMIZATIONS + ":" + disableOptimizations + "," +
-                "   " + INIT_PARAM_CHARSET + ":" + charset + "," +
-                "}");
+        LOGGER.config(buildLoggerMessage("Filter initialized with: {",
+                "   " , INIT_PARAM_LINE_BREAK , ":" , String.valueOf(lineBreak) , "," ,
+                "   " , INIT_PARAM_NO_MUNGE , ":" , String.valueOf(noMunge) + "," ,
+                "   " , INIT_PARAM_PRESERVE_SEMI , ":" , String.valueOf(preserveSemi) , "," +
+                "   " , INIT_PARAM_DISABLE_OPTIMIZATIONS , ":" , String.valueOf(disableOptimizations) , ",",
+                "   " , INIT_PARAM_CHARSET , ":" , charset , "," ,
+                "}"));
 
     }
 
