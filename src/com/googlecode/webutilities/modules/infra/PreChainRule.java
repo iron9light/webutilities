@@ -14,10 +14,8 @@
  *  limitations under the License.
  */
 
-package com.googlecode.webutilities.modules;
+package com.googlecode.webutilities.modules.infra;
 
-public interface IModule {
-
-    IRule parseRule(String ruleString);
+public interface PreChainRule extends IRule{
 
 }

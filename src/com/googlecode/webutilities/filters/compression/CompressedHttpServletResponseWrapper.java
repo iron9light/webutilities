@@ -36,11 +36,11 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import com.googlecode.webutilities.filters.common.IgnoreAcceptContext;
+import com.googlecode.webutilities.modules.infra.ModuleResponse;
 
-public class CompressedHttpServletResponseWrapper extends HttpServletResponseWrapper {
+public class CompressedHttpServletResponseWrapper extends ModuleResponse {
 
 
     private final HttpServletResponse httpResponse;
@@ -92,6 +92,10 @@ public class CompressedHttpServletResponseWrapper extends HttpServletResponseWra
         mimeIgnored = false;
         this.threshold = threshold;
         this.ignoreAcceptContext = ignoreAcceptContext;
+    }
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
     }
 
     @Override

@@ -126,7 +126,7 @@ public class CompressedServletOutputStream extends ServletOutputStream {
     }
 
     void reset() {
-        if (useBuffer) {
+        if (useBuffer && buffer != null) {
             buffer.reset();
         }
     }

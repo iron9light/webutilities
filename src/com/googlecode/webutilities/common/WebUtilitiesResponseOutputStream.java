@@ -18,8 +18,10 @@ package com.googlecode.webutilities.common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Common Simple Servlet Response stream using ByteArrayOutputStream
@@ -27,11 +29,14 @@ import javax.servlet.ServletOutputStream;
  * @author rpatil
  * @version 1.0
  */
-public class ServletResponseOutputStream extends ServletOutputStream {
+public class WebUtilitiesResponseOutputStream extends ServletOutputStream {
+
+    private WebUtilitiesResponseWrapper wrapper;
 
 	private ByteArrayOutputStream byteArrayOutputStream;
 	
-	public ServletResponseOutputStream(){
+	public WebUtilitiesResponseOutputStream(WebUtilitiesResponseWrapper wrapper){
+        this.wrapper = wrapper;
 		byteArrayOutputStream = new ByteArrayOutputStream();
 	}
 	
@@ -57,4 +62,8 @@ public class ServletResponseOutputStream extends ServletOutputStream {
 	public ByteArrayOutputStream getByteArrayOutputStream() {
 		return byteArrayOutputStream;
 	}
+    void reset() {
+        byteArrayOutputStream.reset();
+    }
+
 }

@@ -187,6 +187,9 @@
     <option name="snCheckCPP" value="true" />
     <option name="snCheckC" value="true" />
   </component>
+  <component name="ClearCaseSharedConfig">
+    <option name="myUseUcmModel" value="true" />
+  </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
     <resourceExtensions>
@@ -205,6 +208,7 @@
       <entry name="?*.tld" />
       <entry name="?*.ftl" />
       <entry name="/**/resources/**/*.*" />
+      <entry name="?*.conf" />
     </wildcardResourcePatterns>
     <annotationProcessing enabled="false" useClasspath="true" />
   </component>

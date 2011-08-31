@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.googlecode.webutilities.common.Constants;
-import com.googlecode.webutilities.common.ServletResponseWrapper;
+import com.googlecode.webutilities.common.WebUtilitiesResponseWrapper;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
 
 
@@ -93,19 +93,19 @@ public class ResponseCacheFilter extends AbstractFilter {
 
         //private long accessCount = 0;
 
-        private ServletResponseWrapper servletResponseWrapper;
+        private WebUtilitiesResponseWrapper webUtilitiesResponseWrapper;
 
-        CacheObject(long time, ServletResponseWrapper servletResponseWrapper){
+        CacheObject(long time, WebUtilitiesResponseWrapper webUtilitiesResponseWrapper){
             this.time = time;
-            this.servletResponseWrapper = servletResponseWrapper;
+            this.webUtilitiesResponseWrapper = webUtilitiesResponseWrapper;
         }
 
         public long getTime() {
             return time;
         }
 
-        public ServletResponseWrapper getServletResponseWrapper() {
-            return servletResponseWrapper;
+        public WebUtilitiesResponseWrapper getWebUtilitiesResponseWrapper() {
+            return webUtilitiesResponseWrapper;
         }
 
         /*public void increaseAccessCount(){
@@ -202,7 +202,7 @@ public class ResponseCacheFilter extends AbstractFilter {
             Date date = readDateFromHeader(ifModifiedSince);
             if(date != null){
                 if(!isAnyResourceModifiedSince(requestedResources, date.getTime(), context)){
-                    cache.remove(url);
+                    //cache.remove(url);
                     this.sendNotModified(httpServletResponse);
                     return;
                 }
@@ -218,7 +218,7 @@ public class ResponseCacheFilter extends AbstractFilter {
 
         boolean cacheFound = false;
 
-        if(cacheObject != null && cacheObject.getServletResponseWrapper() != null){
+        if(cacheObject != null && cacheObject.getWebUtilitiesResponseWrapper() != null){
             if(requestedResources != null && isAnyResourceModifiedSince(requestedResources, cacheObject.getTime(), context)){
                 LOGGER.finest(buildLoggerMessage("Some resources have been modified since last cache: " , url));
                 cache.remove(url);
@@ -232,10 +232,11 @@ public class ResponseCacheFilter extends AbstractFilter {
 
         if(cacheFound){
             LOGGER.fine("Returning Cached response.");
-            fillResponseFromCache(httpServletResponse, cacheObject.getServletResponseWrapper());
+            cacheObject.getWebUtilitiesResponseWrapper().fill(httpServletResponse);
+            //fillResponseFromCache(httpServletResponse, cacheObject.getModuleResponse());
         }else{
             LOGGER.finest("Cache not found or invalidated");
-            ServletResponseWrapper wrapper = new ServletResponseWrapper(httpServletResponse);
+            WebUtilitiesResponseWrapper wrapper = new WebUtilitiesResponseWrapper(httpServletResponse);
             filterChain.doFilter(servletRequest, wrapper);
 
             if(isMIMEAccepted(wrapper.getContentType()) && !expireCache && !resetCache && wrapper.getStatus() != HttpServletResponse.SC_NOT_MODIFIED){
@@ -247,35 +248,11 @@ public class ResponseCacheFilter extends AbstractFilter {
                 LOGGER.finest("is expireCache: " + expireCache);
                 LOGGER.finest("is resetCache: " + resetCache);
             }
-
-            httpServletResponse.setCharacterEncoding(wrapper.getCharacterEncoding());
-            httpServletResponse.setContentType(wrapper.getContentType());
-            httpServletResponse.getOutputStream().write(wrapper.getBytes());
-            httpServletResponse.setStatus(wrapper.getStatus());
+            wrapper.fill(httpServletResponse);
         }
 
     }
     
-    private void fillResponseFromCache(HttpServletResponse actual, ServletResponseWrapper cache) throws IOException{
-    	for(Cookie cookie : cache.getCookies()){
-    		actual.addCookie(cookie);
-    	}
-    	for(String headerName : cache.getHeaders().keySet()){
-    		Object value = cache.getHeaders().get(headerName);
-    		if(value instanceof Long){
-    			actual.addDateHeader(headerName, ((Long) value));
-    		}else if(value instanceof Integer){
-    			actual.addIntHeader(headerName, ((Integer) value));
-    		}else {
-    			actual.addHeader(headerName, value.toString());
-    		}
-    	}
-    	actual.setCharacterEncoding(cache.getCharacterEncoding());
-    	actual.setContentType(cache.getContentType());
-    	actual.getOutputStream().write(cache.getBytes());
-    	actual.setStatus(cache.getStatus());
-    }
-
     private void sendNotModified(HttpServletResponse httpServletResponse){
         httpServletResponse.setContentLength(0);
         httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);

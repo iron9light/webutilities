@@ -46,6 +46,7 @@ import com.google.javascript.jscomp.JSSourceFile;
 import com.google.javascript.jscomp.LoggerErrorManager;
 import com.google.javascript.jscomp.Result;
 import com.googlecode.webutilities.common.Constants;
+import com.googlecode.webutilities.common.WebUtilitiesResponseWrapper;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
 
 
@@ -92,7 +93,7 @@ public class ClosureCompilerFilter extends AbstractFilter{
 
             req.setAttribute(PROCESSED_ATTR, Boolean.TRUE);
 
-            com.googlecode.webutilities.common.ServletResponseWrapper wrapper = new com.googlecode.webutilities.common.ServletResponseWrapper(rs);
+            WebUtilitiesResponseWrapper wrapper = new WebUtilitiesResponseWrapper(rs);
             //Let the response be generated
 
             chain.doFilter(req, wrapper);

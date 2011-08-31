@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.googlecode.webutilities.common.Constants;
-import com.googlecode.webutilities.common.ServletResponseWrapper;
+import com.googlecode.webutilities.common.WebUtilitiesResponseWrapper;
 import com.googlecode.webutilities.filters.common.AbstractFilter;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
@@ -156,7 +156,7 @@ public class YUIMinFilter extends AbstractFilter {
 
             req.setAttribute(PROCESSED_ATTR, Boolean.TRUE);
 
-            ServletResponseWrapper wrapper = new ServletResponseWrapper(rs);
+            WebUtilitiesResponseWrapper wrapper = new WebUtilitiesResponseWrapper(rs);
             //Let the response be generated
 
             chain.doFilter(req, wrapper);

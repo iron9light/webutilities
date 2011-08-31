@@ -16,26 +16,8 @@
 
 package com.googlecode.webutilities.util;
 
-import static com.googlecode.webutilities.common.Constants.CSS_IMG_REFERENCES;
-import static com.googlecode.webutilities.common.Constants.CSS_IMG_URL_PATTERN;
-import static com.googlecode.webutilities.common.Constants.DATE_PATTERN_ANSI_C;
-import static com.googlecode.webutilities.common.Constants.DATE_PATTERN_HTTP_HEADER;
-import static com.googlecode.webutilities.common.Constants.DATE_PATTERN_RFC_1036;
-import static com.googlecode.webutilities.common.Constants.DATE_PATTERN_RFC_1123;
-import static com.googlecode.webutilities.common.Constants.DEFAULT_LOCALE_US;
-import static com.googlecode.webutilities.common.Constants.EXT_CSS;
-import static com.googlecode.webutilities.common.Constants.EXT_JS;
-import static com.googlecode.webutilities.common.Constants.EXT_JSON;
-import static com.googlecode.webutilities.common.Constants.MIME_CSS;
-import static com.googlecode.webutilities.common.Constants.MIME_JS;
-import static com.googlecode.webutilities.common.Constants.MIME_JSON;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.FileNameMap;
+import javax.servlet.ServletContext;
+import java.io.*;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -47,7 +29,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
-import javax.servlet.ServletContext;
+import static com.googlecode.webutilities.common.Constants.*;
 
 /**
  * Common Utilities provider class
@@ -109,7 +91,7 @@ public final class Utils {
     }
 
     /**
-     * @param string string
+     * @param string       string
      * @param defaultValue in case string is null or empty
      * @return String parsed value or the default value
      */
@@ -145,8 +127,16 @@ public final class Utils {
      * @return contentType - mime type of the file
      */
     public static String selectMimeByFile(String filePath) {
-        FileNameMap fileNameMap = URLConnection.getFileNameMap();
-        return fileNameMap.getContentTypeFor(filePath);
+        if (filePath == null) return null;
+        if (filePath.toLowerCase().endsWith(EXT_JS)) {
+            return MIME_JS;
+        } else if (filePath.toLowerCase().endsWith(EXT_CSS)) {
+            return MIME_CSS;
+        } else if (filePath.toLowerCase().endsWith(EXT_JSON)) {
+            return MIME_JSON;
+        }
+        String guess = URLConnection.guessContentTypeFromName(filePath);
+        return guess != null ? guess : MIME_OCTET_STREAM;
     }
 
     /**
@@ -168,7 +158,7 @@ public final class Utils {
     //!TODO might have problems, need to test or replace with something better
     public static String buildProperPath(String parentPath, String relativePathFromParent) {
         if (relativePathFromParent == null) return null;
-        if(parentPath != null){
+        if (parentPath != null) {
             parentPath = parentPath.trim();
         }
 
@@ -235,7 +225,7 @@ public final class Utils {
             extension = "";
         }
 
-        requestURI = requestURI.replace(contextPath,"").replace(extension,"");//remove the context path & ext. will become /path/subpath/a,b,/anotherpath/c
+        requestURI = requestURI.replace(contextPath, "").replace(extension, "");//remove the context path & ext. will become /path/subpath/a,b,/anotherpath/c
 
         String[] resourcesPath = requestURI.split(",");
 
@@ -297,7 +287,7 @@ public final class Utils {
     /**
      * @param resources      - list of resources
      * @param requestETag    - request ETag from If-None-Match header
-     * @param actualETag    - current ETag of a resource
+     * @param actualETag     - current ETag of a resource
      * @param servletContext - servlet context
      * @return true if any resource ETag is modified, false otherwise.
      */
@@ -328,12 +318,11 @@ public final class Utils {
     }
 
     /**
-     *
      * @param cssFilePath
      * @param imgFilePath
      * @return
      */
-    public static boolean updateReferenceMap(String cssFilePath, String imgFilePath){
+    public static boolean updateReferenceMap(String cssFilePath, String imgFilePath) {
         if (imgFilePath != null) {
             File imgFile = new File(imgFilePath);
             List<String> referencesList = CSS_IMG_REFERENCES.get(cssFilePath);
@@ -352,15 +341,15 @@ public final class Utils {
                     cssFile.setLastModified(new Date().getTime());
                     return true;
                 }
-            }else if(referencesList != null){
-               referencesList.remove(imgFilePath);
+            } else if (referencesList != null) {
+                referencesList.remove(imgFilePath);
             }
         }
         return false;
     }
 
-    public static boolean isProtocolURL(String url){
-        if(url == null || url.trim().length() == 0) return false;
+    public static boolean isProtocolURL(String url) {
+        if (url == null || url.trim().length() == 0) return false;
         return url.matches("^[a-z0-9\\+\\.\\-]+:.*$");
     }
 
@@ -408,7 +397,7 @@ public final class Utils {
                                     resolvedImgPath = Utils.buildProperPath(Utils.getParentPath(realPath), refImgPath);
                                 }
 
-                                if(updateReferenceMap(realPath,resolvedImgPath)){
+                                if (updateReferenceMap(realPath, resolvedImgPath)) {
                                     break;
                                 }
 
@@ -492,7 +481,6 @@ public final class Utils {
     }
 
     /**
-     *
      * @param fingerPrint hex digest
      * @param url
      * @return url with fingerprint
@@ -511,43 +499,48 @@ public final class Utils {
      */
     public static String removeFingerPrint(String url) {
         int from = url.indexOf(FINGERPRINT_SEPARATOR);
-        if(from <= 0) return url;
+        if (from <= 0) return url;
         int to = url.lastIndexOf(".");
         return url.substring(0, from) + url.substring(to);
     }
 
     /**
      * Fast get parent directory
-    // * @param path
+     * // * @param path
+     *
      * @return
      */
-    public static String getParentPath(String path){
-        if(path == null) return null;
+    public static String getParentPath(String path) {
+        if (path == null) return null;
         path = path.trim();
-        if(path.endsWith("/") && path.length() > 1){
-            path = path.substring(0, path.length() -1 );
+        if (path.endsWith("/") && path.length() > 1) {
+            path = path.substring(0, path.length() - 1);
         }
         int lastIndex = path.lastIndexOf("/");
-        if(path.length() > 1 && lastIndex > 0){
+        if (path.length() > 1 && lastIndex > 0) {
             return path.substring(0, lastIndex);
         }
         return "/";
     }
-    
+
     /**
-     * This method accept string tokens and return the concatenated logger message. 
+     * This method accept string tokens and return the concatenated logger message.
+     *
      * @param messages
      * @return
      */
-    public static String buildLoggerMessage(String... messages){
-    	StringBuilder strBuilder=new StringBuilder();
-    	for(int i=0; i<messages.length; i++){
-    		strBuilder.append(messages[i]);
-    	}
-    	return strBuilder.toString();
+    public static String buildLoggerMessage(Object... messages) {
+        StringBuilder strBuilder = new StringBuilder();
+        for (int i = 0; i < messages.length; i++) {
+            strBuilder.append(messages[i]);
+        }
+        return strBuilder.toString();
     }
 
     private Utils() {
     } //non instantiable
 
+    public static void main(String[] args) {
+        System.out.println(Utils.selectMimeByFile("/Users/rpatil/Documents/workspace/ARCC/js/unittest.js"));
+    }
 }

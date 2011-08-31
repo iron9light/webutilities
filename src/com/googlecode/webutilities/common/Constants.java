@@ -45,6 +45,8 @@ public final class Constants {
 
     public static final String EXT_CSS = ".css";
 
+    public static final String MIME_OCTET_STREAM = "application/octet-stream";
+
     public static final String MIME_JS = "text/javascript";
 
     public static final String MIME_JSON = "application/json";

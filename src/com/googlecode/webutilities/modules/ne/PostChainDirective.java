@@ -14,20 +14,8 @@
  *  limitations under the License.
  */
 
-package com.googlecode.webutilities.filters;
+package com.googlecode.webutilities.modules.ne;
 
-import com.googlecode.webutilities.filters.common.AbstractFilter;
+public interface PostChainDirective extends IDirective{
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import java.io.IOException;
-
-public class AllInOneFilter extends AbstractFilter{
-
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
-    }
 }

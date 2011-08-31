@@ -22,10 +22,10 @@ import javax.servlet.ServletException;
 import java.util.logging.Logger;
 
 /**
- * Common AbstractFilter - common filter code to be used by other filters
+ * Common AbstractFilter - infra filter code to be used by other filters
  * through inheritance
  * <p/>
- * This is to have following common init parameters to all the filter
+ * This is to have following infra init parameters to all the filter
  * <p/>
  * - ignoreURLPattern - to ignore the URLs matching this regex
  * - acceptURLPattern - to process the URLs matching this regex (ignore precedes)

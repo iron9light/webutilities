@@ -42,6 +42,9 @@
     </path>
 
     <target name="compile" depends="init">
+        <copy todir="${build.dir}/classes">
+            <fileset dir="${src.dir}/" includes="**/*.conf"/>
+        </copy>
         <mkdir dir="${build.dir}/classes"/>
         <javac srcdir="${src.dir}"
                destdir="${build.dir}/classes"
@@ -85,7 +88,7 @@
     <target name="jar" depends="compile,test">
         <mkdir dir="${build.dir}/jar"/>
         <copy todir="${build.dir}/jar">
-            <fileset dir="${build.dir}/classes" includes="**/*.class"/>
+            <fileset dir="${build.dir}/classes" includes="**/*.class,**/*.conf"/>
         </copy>
         <jar destfile="${build.dir}/${jar.name}" basedir="${build.dir}/jar">
         	<metainf dir="${meta-inf.dir}"/>

@@ -95,7 +95,7 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * <p>To serve multiple CSS files through one HTTP request</p>
  * <pre>
- * &lt;link rel="StyleSheet" href="<b>/myapp/css/common,calendar,aquaskin.css</b>"/&gt;
+ * &lt;link rel="StyleSheet" href="<b>/myapp/css/infra,calendar,aquaskin.css</b>"/&gt;
  * </pre>
  * <p>
  * Also if you wanted to serve them minified all together then you can add <code>YUIMinFilter</code> on them. See <code>YUIMinFilter</code> from <code>webutilities.jar</code> for details.
@@ -127,14 +127,14 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * <pre>
  * <b>Eg.</b>
- * &lt;link rel="StyleSheet" href="/myapp/css/common,calendar,aquaskin.css<b>?_dbg=1</b>"/&gt;
+ * &lt;link rel="StyleSheet" href="/myapp/css/infra,calendar,aquaskin.css<b>?_dbg=1</b>"/&gt;
  * or
  * &lt;script language="JavaScript" src="/myapp/js/prototype,controls,dragdrop,myapp.js<b>?_expirecache_=1</b>"&gt;&lt;/script&gt;
  * </pre>
  * <h3>Limitations</h3>
  * <p>
  * The multiple JS or CSS files <b>can be combined together in one request if they are in same parent path</b>. eg. <code><b>/myapp/js/a.js</b></code>, <code><b>/myapp/js/b.js</b></code> and <code><b>/myapp/js/c.js</b></code>
- * can be combined together as <code><b>/myapp/js/a,b,c.js</b></code>. If they are not in common path then they can not be combined in one request. Same applies for CSS too.
+ * can be combined together as <code><b>/myapp/js/a,b,c.js</b></code>. If they are not in infra path then they can not be combined in one request. Same applies for CSS too.
  * </p>
  *
  * Visit http://code.google.com/p/webutilities/wiki/JSCSSMergeServlet for more details.

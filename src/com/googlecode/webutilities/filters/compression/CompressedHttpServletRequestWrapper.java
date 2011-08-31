@@ -18,6 +18,8 @@
 
 package com.googlecode.webutilities.filters.compression;
 
+import com.googlecode.webutilities.modules.infra.ModuleRequest;
+
 import static com.googlecode.webutilities.common.Constants.HTTP_ACCEPT_ENCODING_HEADER;
 import static com.googlecode.webutilities.common.Constants.HTTP_CONTENT_ENCODING_HEADER;
 
@@ -31,9 +33,8 @@ import java.util.Enumeration;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
-public final class CompressedHttpServletRequestWrapper extends HttpServletRequestWrapper {
+public final class CompressedHttpServletRequestWrapper extends ModuleRequest {
 
     private final HttpServletRequest request;
     private final EncodedStreamsFactory encodedStreamsFactory;

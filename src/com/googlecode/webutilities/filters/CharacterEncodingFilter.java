@@ -91,7 +91,7 @@ import com.googlecode.webutilities.filters.common.AbstractFilter;
  * <pre>
  *  <b>encoding</b> - name of the encoding that you wanted to set. e.g. UTF-8
  *  <b>force</b> - true or false. If true this encoding will be forced and overwrite already set encoding for both request and response.
- *  And all common the six filtering criteria parameters for better customization.
+ *  And all infra the six filtering criteria parameters for better customization.
  *  <b>ignoreURLPattern</b> - regular expression. e.g. <code>.*\.(jpg|png|gif)</code>.
  *  <b>acceptURLPattern</b> - regular expression. e.g. <code>.*\.(css|js|html)</code>.
  *  <b>ignoreMIMEPattern</b> - regular expression. e.g. <code>images/.*|video/.*</code>.
