@@ -199,7 +199,7 @@ public class JSCSSMergeServlet extends HttpServlet {
             LOGGER.finest("Setting MIME to " + mime);
             resp.setContentType(mime);
         }
-        long lastModifiedFor = getLastModifiedFor(resourcesToMerge, this.getServletContext());
+        long lastModifiedFor = new Date().getTime();//getLastModifiedFor(resourcesToMerge, this.getServletContext());
         resp.addDateHeader(HEADER_EXPIRES, lastModifiedFor + expiresMinutes * 60 * 1000);
         resp.addHeader(HTTP_CACHE_CONTROL_HEADER, this.cacheControl);
         resp.addDateHeader(HEADER_LAST_MODIFIED, lastModifiedFor);
