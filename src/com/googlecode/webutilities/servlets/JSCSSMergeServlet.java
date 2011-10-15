@@ -155,6 +155,8 @@ public class JSCSSMergeServlet extends HttpServlet {
     public static final String INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS = "autoCorrectUrlsInCSS";
 
     public static final String INIT_PARAM_TURN_OFF_E_TAG = "turnOffETag";
+    
+    public static final String INIT_PARAM_CUSTOM_CONTEXT_PATH_FOR_CSS_URLS = "customContextPathForCSSUrls";
 
     private long expiresMinutes = DEFAULT_EXPIRES_MINUTES; //default value 7 days
 
@@ -166,6 +168,8 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(JSCSSMergeServlet.class.getName());
 
+    private String customContextPathForCSSUrls; // filling this will replace the default value: request.getContextPath()
+    
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -173,6 +177,7 @@ public class JSCSSMergeServlet extends HttpServlet {
         this.cacheControl = config.getInitParameter(INIT_PARAM_CACHE_CONTROL) != null ? config.getInitParameter(INIT_PARAM_CACHE_CONTROL) : this.cacheControl ;
         this.autoCorrectUrlsInCSS = readBoolean(config.getInitParameter(INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS),this.autoCorrectUrlsInCSS);
         this.turnOfETag = readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_E_TAG),this.turnOfETag);
+        this.customContextPathForCSSUrls = config.getInitParameter(INIT_PARAM_CUSTOM_CONTEXT_PATH_FOR_CSS_URLS);
         LOGGER.config(buildLoggerMessage("Servlet initialized: {",
                 "   " , INIT_PARAM_EXPIRES_MINUTES , ":" , String.valueOf(this.expiresMinutes) , "" ,
                 "   " , INIT_PARAM_CACHE_CONTROL , ":" , this.cacheControl , "" ,
@@ -235,7 +240,9 @@ public class JSCSSMergeServlet extends HttpServlet {
         this.addAppropriateResponseHeaders(extensionOrPath, resourcesToMerge, status.getActualETag(), resp);
 
         OutputStream outputStream = resp.getOutputStream();
-        int resourcesNotFound = this.processResources(req.getContextPath(), outputStream, resourcesToMerge);
+        String contextPathForCss = customContextPathForCSSUrls != null ?
+                      customContextPathForCSSUrls : req.getContextPath();
+        int resourcesNotFound = this.processResources(contextPathForCss, outputStream, resourcesToMerge);
 
         if(resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()){ //all resources not found
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
