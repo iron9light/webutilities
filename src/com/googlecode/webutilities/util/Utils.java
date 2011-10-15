@@ -354,8 +354,7 @@ public final class Utils {
   }
 
   public static boolean isProtocolURL(String url) {
-    if (url == null || url.trim().length() == 0) return false;
-    return url.matches("^[a-z0-9\\+\\.\\-]+:.*$");
+    return url != null && url.trim().length() != 0 && url.matches("^[a-z0-9\\+\\.\\-]+:.*$");
   }
 
   /**
@@ -487,7 +486,7 @@ public final class Utils {
 
   /**
    * @param fingerPrint hex digest
-   * @param url
+   * @param url original url w/o fingerprint
    * @return url with fingerprint
    */
   public static String addFingerPrint(String fingerPrint, String url) {
@@ -510,10 +509,9 @@ public final class Utils {
   }
 
   /**
-   * Fast get parent directory
-   * // * @param path
-   *
-   * @return
+   * Fast get parent directory using substring
+   * @param path path whose parent path has to be returned
+   * @return parent path of the argument
    */
   public static String getParentPath(String path) {
     if (path == null) return null;
@@ -536,8 +534,8 @@ public final class Utils {
    */
   public static String buildLoggerMessage(Object... messages) {
     StringBuilder strBuilder = new StringBuilder();
-    for (int i = 0; i < messages.length; i++) {
-      strBuilder.append(messages[i]);
+    for (Object message : messages) {
+      strBuilder.append(message);
     }
     return strBuilder.toString();
   }

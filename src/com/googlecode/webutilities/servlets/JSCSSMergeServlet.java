@@ -155,7 +155,9 @@ public class JSCSSMergeServlet extends HttpServlet {
     public static final String INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS = "autoCorrectUrlsInCSS";
 
     public static final String INIT_PARAM_TURN_OFF_E_TAG = "turnOffETag";
-    
+
+    public static final String INIT_PARAM_TURN_OFF_URL_FINGERPRINTING = "turnOffUrlFingerPrinting";
+
     public static final String INIT_PARAM_CUSTOM_CONTEXT_PATH_FOR_CSS_URLS = "customContextPathForCSSUrls";
 
     private long expiresMinutes = DEFAULT_EXPIRES_MINUTES; //default value 7 days
@@ -169,33 +171,36 @@ public class JSCSSMergeServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(JSCSSMergeServlet.class.getName());
 
     private String customContextPathForCSSUrls; // filling this will replace the default value: request.getContextPath()
-    
+
+    private boolean turnOfUrlFingerPrinting = false; //default enabled fingerprinting
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         this.expiresMinutes = readLong(config.getInitParameter(INIT_PARAM_EXPIRES_MINUTES), this.expiresMinutes);
-        this.cacheControl = config.getInitParameter(INIT_PARAM_CACHE_CONTROL) != null ? config.getInitParameter(INIT_PARAM_CACHE_CONTROL) : this.cacheControl ;
-        this.autoCorrectUrlsInCSS = readBoolean(config.getInitParameter(INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS),this.autoCorrectUrlsInCSS);
-        this.turnOfETag = readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_E_TAG),this.turnOfETag);
+        this.cacheControl = config.getInitParameter(INIT_PARAM_CACHE_CONTROL) != null ? config.getInitParameter(INIT_PARAM_CACHE_CONTROL) : this.cacheControl;
+        this.autoCorrectUrlsInCSS = readBoolean(config.getInitParameter(INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS), this.autoCorrectUrlsInCSS);
+        this.turnOfETag = readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_E_TAG), this.turnOfETag);
+        this.turnOfUrlFingerPrinting = readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_URL_FINGERPRINTING), this.turnOfUrlFingerPrinting);
         this.customContextPathForCSSUrls = config.getInitParameter(INIT_PARAM_CUSTOM_CONTEXT_PATH_FOR_CSS_URLS);
         LOGGER.config(buildLoggerMessage("Servlet initialized: {",
-                "   " , INIT_PARAM_EXPIRES_MINUTES , ":" , String.valueOf(this.expiresMinutes) , "" ,
-                "   " , INIT_PARAM_CACHE_CONTROL , ":" , this.cacheControl , "" ,
-                "   " , INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS , ":" , String.valueOf(this.autoCorrectUrlsInCSS) , "" ,
-                "   " , INIT_PARAM_TURN_OFF_E_TAG , ":" , String.valueOf(this.turnOfETag) , "" ,
-                "}"));
+            "   ", INIT_PARAM_EXPIRES_MINUTES, ":", String.valueOf(this.expiresMinutes), "",
+            "   ", INIT_PARAM_CACHE_CONTROL, ":", this.cacheControl, "",
+            "   ", INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS, ":", String.valueOf(this.autoCorrectUrlsInCSS), "",
+            "   ", INIT_PARAM_TURN_OFF_E_TAG, ":", String.valueOf(this.turnOfETag), "",
+            "   ", INIT_PARAM_TURN_OFF_URL_FINGERPRINTING, ":", String.valueOf(this.turnOfUrlFingerPrinting), "",
+            "}"));
     }
 
     /**
-     *
-     * @param extensionOrFile - .css or .js etc. (lower case) or the absolute path of the file in case of image files
+     * @param extensionOrFile  - .css or .js etc. (lower case) or the absolute path of the file in case of image files
      * @param resourcesToMerge - from request
-     * @param hashForETag - from request
-     * @param resp - response object
+     * @param hashForETag      - from request
+     * @param resp             - response object
      */
     private void addAppropriateResponseHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
         String mime = selectMimeForExtension(extensionOrFile);
-        if(mime != null){
+        if (mime != null) {
             LOGGER.finest("Setting MIME to " + mime);
             resp.setContentType(mime);
         }
@@ -203,19 +208,19 @@ public class JSCSSMergeServlet extends HttpServlet {
         resp.addDateHeader(HEADER_EXPIRES, lastModifiedFor + expiresMinutes * 60 * 1000);
         resp.addHeader(HTTP_CACHE_CONTROL_HEADER, this.cacheControl);
         resp.addDateHeader(HEADER_LAST_MODIFIED, lastModifiedFor);
-        if(hashForETag != null && !this.turnOfETag){
-        	resp.addHeader(HTTP_ETAG_HEADER, hashForETag);
+        if (hashForETag != null && !this.turnOfETag) {
+            resp.addHeader(HTTP_ETAG_HEADER, hashForETag);
         }
         resp.addHeader(HEADER_X_OPTIMIZED_BY, X_OPTIMIZED_BY_VALUE);
         LOGGER.finest("Added expires, last-modified & ETag headers");
     }
 
     /* (non-Javadoc)
-      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-      */
+    * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+    */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
         String url = this.getURL(req);
 
@@ -225,14 +230,14 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         //If not modified, return 304 and stop
         ResourceStatus status = this.isNotModified(req, resp, resourcesToMerge);
-        if(status.isNotModified()){
+        if (status.isNotModified()) {
             LOGGER.finest("Resources Not Modified. Sending 304.");
             this.sendNotModified(resp);
-    		return;
+            return;
         }
 
         String extensionOrPath = detectExtension(url);//in case of non js/css files it null
-        if(extensionOrPath == null){
+        if (extensionOrPath == null) {
             extensionOrPath = resourcesToMerge.get(0);//non grouped i.e. non css/js file, we refer it's path in that case
         }
 
@@ -241,58 +246,55 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         OutputStream outputStream = resp.getOutputStream();
         String contextPathForCss = customContextPathForCSSUrls != null ?
-                      customContextPathForCSSUrls : req.getContextPath();
+            customContextPathForCSSUrls : req.getContextPath();
         int resourcesNotFound = this.processResources(contextPathForCss, outputStream, resourcesToMerge);
 
-        if(resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()){ //all resources not found
+        if (resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()) { //all resources not found
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             LOGGER.warning("All resources are not found. Sending 404.");
             return;
         }
         if (outputStream != null) {
-        	try{
-        		resp.setStatus(HttpServletResponse.SC_OK);
+            try {
+                resp.setStatus(HttpServletResponse.SC_OK);
                 outputStream.close();
-        	}catch (Exception e) {
-				// ignore
-			}
+            } catch (Exception e) {
+                // ignore
+            }
         }
         LOGGER.fine("Finished processing Request : " + url);
     }
 
     /**
-     *
      * @param response httpServletResponse
      */
-    private void sendNotModified(HttpServletResponse response){
+    private void sendNotModified(HttpServletResponse response) {
         response.setContentLength(0);
         response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
     }
 
     /**
-     *
      * @param request HttpServletRequest
      * @return
      */
-    private String getURL(HttpServletRequest request){
+    private String getURL(HttpServletRequest request) {
         return removeFingerPrint(request.getRequestURI());
     }
 
     /**
-     *
      * @param request
      * @param response
      * @param resourcesToMerge
      * @return true if not modified based on if-None-Match and If-Modified-Since
      */
-    private ResourceStatus isNotModified(HttpServletRequest request, HttpServletResponse response, List<String> resourcesToMerge){
+    private ResourceStatus isNotModified(HttpServletRequest request, HttpServletResponse response, List<String> resourcesToMerge) {
         ServletContext context = this.getServletContext();
         //If-Modified-Since
         String ifModifiedSince = request.getHeader(HTTP_IF_MODIFIED_SINCE);
-        if(ifModifiedSince != null){
+        if (ifModifiedSince != null) {
             Date date = readDateFromHeader(ifModifiedSince);
-            if(date != null){
-                if(!isAnyResourceModifiedSince(resourcesToMerge, date.getTime(), context)){
+            if (date != null) {
+                if (!isAnyResourceModifiedSince(resourcesToMerge, date.getTime(), context)) {
                     this.sendNotModified(response);
                     return new ResourceStatus(null, true);
                 }
@@ -301,21 +303,20 @@ public class JSCSSMergeServlet extends HttpServlet {
         //If-None-match
         String requestETag = request.getHeader(HTTP_IF_NONE_MATCH_HEADER);
         String actualETag = this.turnOfETag ? null : buildETagForResources(resourcesToMerge, context);
-        if(!this.turnOfETag && !isAnyResourceETagModified(resourcesToMerge, requestETag, actualETag, context)){
-        	return new ResourceStatus(actualETag, true);
+        if (!this.turnOfETag && !isAnyResourceETagModified(resourcesToMerge, requestETag, actualETag, context)) {
+            return new ResourceStatus(actualETag, true);
         }
         return new ResourceStatus(actualETag, false);
     }
 
     /**
-     *
-     * @param contextPath HttpServletRequest context path
-     * @param outputStream - OutputStream
+     * @param contextPath      HttpServletRequest context path
+     * @param outputStream     - OutputStream
      * @param resourcesToMerge list of resources to merge
      * @return number of non existing, unprocessed resources
      */
 
-    private int processResources(String contextPath, OutputStream outputStream, List<String> resourcesToMerge){
+    private int processResources(String contextPath, OutputStream outputStream, List<String> resourcesToMerge) {
 
         int resourcesNotFound = 0;
 
@@ -337,7 +338,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
                     this.processCSS(contextPath, resourcePath, is, outputStream);
 
-                }else{
+                } else {
                     byte[] buffer = new byte[128];
                     int c;
                     while ((c = is.read(buffer)) != -1) {
@@ -350,14 +351,14 @@ public class JSCSSMergeServlet extends HttpServlet {
             }
 
             if (is != null) {
-                try{
+                try {
                     is.close();
-                }catch (IOException ex){
+                } catch (IOException ex) {
                     LOGGER.warning("Failed to close stream:" + ex);
                 }
-                try{
+                try {
                     outputStream.flush();
-                }catch (IOException ex){
+                } catch (IOException ex) {
                     LOGGER.severe("Failed to flush out:" + outputStream);
                 }
             }
@@ -367,14 +368,13 @@ public class JSCSSMergeServlet extends HttpServlet {
     }
 
     /**
-     *
      * @param cssFilePath
      * @param contextPath
      * @param is
      * @param outputStream
      * @throws IOException
      */
-    private void processCSS(String contextPath, String cssFilePath, InputStream is, OutputStream outputStream) throws IOException{
+    private void processCSS(String contextPath, String cssFilePath, InputStream is, OutputStream outputStream) throws IOException {
         ServletContext context = this.getServletContext();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
         String line;
@@ -388,30 +388,28 @@ public class JSCSSMergeServlet extends HttpServlet {
     }
 
     /**
-     *
      * @param context
      * @param contextPath
      * @param cssFilePath
      * @param line
      * @return
      */
-    private String processCSSLine(ServletContext context, String contextPath, String cssFilePath, StringBuffer line){
+    private String processCSSLine(ServletContext context, String contextPath, String cssFilePath, StringBuffer line) {
         Matcher matcher = CSS_IMG_URL_PATTERN.matcher(line);
         String cssRealPath = context.getRealPath(cssFilePath);
         while (matcher.find()) {
             String refImgPath = matcher.group(1);
             if (!isProtocolURL(refImgPath)) { //ignore absolute protocol paths
                 String resolvedImgPath = refImgPath;
-                if(!refImgPath.startsWith("/")){
+                if (!refImgPath.startsWith("/")) {
                     resolvedImgPath = buildProperPath(getParentPath(cssFilePath), refImgPath);
                 }
                 String imgRealPath = context.getRealPath(resolvedImgPath);
-                String fingerPrint = buildETagForResource(resolvedImgPath, context);
                 int offset = line.indexOf(refImgPath);
                 line.replace(
-                        offset, //from
-                        offset + refImgPath.length(), //to
-                        contextPath + addFingerPrint(fingerPrint, resolvedImgPath)
+                    offset, //from
+                    offset + refImgPath.length(), //to
+                    contextPath + (this.turnOfUrlFingerPrinting ? resolvedImgPath : addFingerPrint(buildETagForResource(resolvedImgPath, context), resolvedImgPath))
                 );
 
                 updateReferenceMap(cssRealPath, imgRealPath);
@@ -423,7 +421,7 @@ public class JSCSSMergeServlet extends HttpServlet {
     /**
      * Class to store resource ETag and modified status
      */
-    private class ResourceStatus{
+    private class ResourceStatus {
 
         private String actualETag;
 
