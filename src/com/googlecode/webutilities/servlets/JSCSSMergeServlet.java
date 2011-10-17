@@ -32,7 +32,10 @@ import static com.googlecode.webutilities.util.Utils.*;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
@@ -41,7 +44,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 
 
 /**
@@ -136,7 +138,7 @@ import javax.servlet.http.HttpServletResponse;
  * The multiple JS or CSS files <b>can be combined together in one request if they are in same parent path</b>. eg. <code><b>/myapp/js/a.js</b></code>, <code><b>/myapp/js/b.js</b></code> and <code><b>/myapp/js/c.js</b></code>
  * can be combined together as <code><b>/myapp/js/a,b,c.js</b></code>. If they are not in infra path then they can not be combined in one request. Same applies for CSS too.
  * </p>
- *
+ * <p/>
  * Visit http://code.google.com/p/webutilities/wiki/JSCSSMergeServlet for more details.
  * Also visit http://code.google.com/p/webutilities/wiki/AddExpiresHeader for details about how to use for setting
  * expires/Cache control header.
@@ -168,7 +170,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     private boolean turnOfETag = false; //default enable eTag
 
-    private static final Logger LOGGER = Logger.getLogger(JSCSSMergeServlet.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSCSSMergeServlet.class.getName());
 
     private String customContextPathForCSSUrls; // filling this will replace the default value: request.getContextPath()
 
@@ -183,13 +185,13 @@ public class JSCSSMergeServlet extends HttpServlet {
         this.turnOfETag = readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_E_TAG), this.turnOfETag);
         this.turnOfUrlFingerPrinting = readBoolean(config.getInitParameter(INIT_PARAM_TURN_OFF_URL_FINGERPRINTING), this.turnOfUrlFingerPrinting);
         this.customContextPathForCSSUrls = config.getInitParameter(INIT_PARAM_CUSTOM_CONTEXT_PATH_FOR_CSS_URLS);
-        LOGGER.config(buildLoggerMessage("Servlet initialized: {",
-            "   ", INIT_PARAM_EXPIRES_MINUTES, ":", String.valueOf(this.expiresMinutes), "",
-            "   ", INIT_PARAM_CACHE_CONTROL, ":", this.cacheControl, "",
-            "   ", INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS, ":", String.valueOf(this.autoCorrectUrlsInCSS), "",
-            "   ", INIT_PARAM_TURN_OFF_E_TAG, ":", String.valueOf(this.turnOfETag), "",
-            "   ", INIT_PARAM_TURN_OFF_URL_FINGERPRINTING, ":", String.valueOf(this.turnOfUrlFingerPrinting), "",
-            "}"));
+        LOGGER.debug("Servlet initialized: {\n\t{}:{},\n\t{}:{},\n\t{}:{},\n\t{}:{}\n\t{}:{}\n}", new Object[]{
+            INIT_PARAM_EXPIRES_MINUTES, String.valueOf(this.expiresMinutes),
+            INIT_PARAM_CACHE_CONTROL, this.cacheControl,
+            INIT_PARAM_AUTO_CORRECT_URLS_IN_CSS, String.valueOf(this.autoCorrectUrlsInCSS),
+            INIT_PARAM_TURN_OFF_E_TAG, String.valueOf(this.turnOfETag),
+            INIT_PARAM_TURN_OFF_URL_FINGERPRINTING, String.valueOf(this.turnOfUrlFingerPrinting)}
+        );
     }
 
     /**
@@ -198,21 +200,22 @@ public class JSCSSMergeServlet extends HttpServlet {
      * @param hashForETag      - from request
      * @param resp             - response object
      */
+
     private void addAppropriateResponseHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
         String mime = selectMimeForExtension(extensionOrFile);
         if (mime != null) {
-            LOGGER.finest("Setting MIME to " + mime);
+            LOGGER.trace("Setting MIME to {}", mime);
             resp.setContentType(mime);
         }
-        long lastModifiedFor = new Date().getTime();//getLastModifiedFor(resourcesToMerge, this.getServletContext());
-        resp.addDateHeader(HEADER_EXPIRES, lastModifiedFor + expiresMinutes * 60 * 1000);
+        long lastModifiedFor = getLastModifiedFor(resourcesToMerge, this.getServletContext());
+        resp.addDateHeader(HEADER_EXPIRES, new Date().getTime() + expiresMinutes * 60 * 1000);
         resp.addHeader(HTTP_CACHE_CONTROL_HEADER, this.cacheControl);
         resp.addDateHeader(HEADER_LAST_MODIFIED, lastModifiedFor);
         if (hashForETag != null && !this.turnOfETag) {
             resp.addHeader(HTTP_ETAG_HEADER, hashForETag);
         }
         resp.addHeader(HEADER_X_OPTIMIZED_BY, X_OPTIMIZED_BY_VALUE);
-        LOGGER.finest("Added expires, last-modified & ETag headers");
+        LOGGER.trace("Added expires, last-modified & ETag headers");
     }
 
     /* (non-Javadoc)
@@ -224,14 +227,14 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         String url = this.getURL(req);
 
-        LOGGER.fine("Started processing request : " + url);
+        LOGGER.debug("Started processing request : {}", url);
 
         List<String> resourcesToMerge = findResourcesToMerge(req.getContextPath(), url);
 
         //If not modified, return 304 and stop
         ResourceStatus status = this.isNotModified(req, resp, resourcesToMerge);
         if (status.isNotModified()) {
-            LOGGER.finest("Resources Not Modified. Sending 304.");
+            LOGGER.trace("Resources Not Modified. Sending 304.");
             this.sendNotModified(resp);
             return;
         }
@@ -251,7 +254,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         if (resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()) { //all resources not found
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-            LOGGER.warning("All resources are not found. Sending 404.");
+            LOGGER.warn("All resources are not found. Sending 404.");
             return;
         }
         if (outputStream != null) {
@@ -262,7 +265,7 @@ public class JSCSSMergeServlet extends HttpServlet {
                 // ignore
             }
         }
-        LOGGER.fine("Finished processing Request : " + url);
+        LOGGER.debug("Finished processing Request : {}", url);
     }
 
     /**
@@ -275,16 +278,16 @@ public class JSCSSMergeServlet extends HttpServlet {
 
     /**
      * @param request HttpServletRequest
-     * @return
+     * @return URL with fingerprint removed if had any
      */
     private String getURL(HttpServletRequest request) {
         return removeFingerPrint(request.getRequestURI());
     }
 
     /**
-     * @param request
-     * @param response
-     * @param resourcesToMerge
+     * @param request          - HttpServletRequest
+     * @param response         - HttpServletResponse
+     * @param resourcesToMerge - list of resources relative paths
      * @return true if not modified based on if-None-Match and If-Modified-Since
      */
     private ResourceStatus isNotModified(HttpServletRequest request, HttpServletResponse response, List<String> resourcesToMerge) {
@@ -324,7 +327,7 @@ public class JSCSSMergeServlet extends HttpServlet {
 
         for (String resourcePath : resourcesToMerge) {
 
-            LOGGER.finest("Processing resource : " + resourcePath);
+            LOGGER.trace("Processing resource : {}", resourcePath);
 
             InputStream is = null;
 
@@ -346,20 +349,20 @@ public class JSCSSMergeServlet extends HttpServlet {
                     }
                 }
             } catch (IOException e) {
-                LOGGER.severe("Error while reading resource : " + resourcePath);
-                LOGGER.severe("IOException :" + e);
+                LOGGER.error("Error while reading resource : {}", resourcePath);
+                LOGGER.error("IOException: ", e);
             }
 
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException ex) {
-                    LOGGER.warning("Failed to close stream:" + ex);
+                    LOGGER.warn("Failed to close stream:", ex);
                 }
                 try {
                     outputStream.flush();
                 } catch (IOException ex) {
-                    LOGGER.severe("Failed to flush out:" + outputStream);
+                    LOGGER.error("Failed to flush out: {}", outputStream);
                 }
             }
 
@@ -368,15 +371,15 @@ public class JSCSSMergeServlet extends HttpServlet {
     }
 
     /**
-     * @param cssFilePath
-     * @param contextPath
-     * @param is
-     * @param outputStream
-     * @throws IOException
+     * @param cssFilePath  - css file path
+     * @param contextPath  - context path or custom configured context path
+     * @param inputStream  - input stream
+     * @param outputStream - output stream
+     * @throws IOException - thrown in case anything (IO read/write) goes wrong
      */
-    private void processCSS(String contextPath, String cssFilePath, InputStream is, OutputStream outputStream) throws IOException {
+    private void processCSS(String contextPath, String cssFilePath, InputStream inputStream, OutputStream outputStream) throws IOException {
         ServletContext context = this.getServletContext();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         StringBuffer buffer = new StringBuffer();
         while ((line = bufferedReader.readLine()) != null) {
@@ -388,11 +391,11 @@ public class JSCSSMergeServlet extends HttpServlet {
     }
 
     /**
-     * @param context
-     * @param contextPath
-     * @param cssFilePath
-     * @param line
-     * @return
+     * @param context     - ServletContext
+     * @param contextPath - APP context path or any custom configured context path
+     * @param cssFilePath - css file path
+     * @param line        - single line css file
+     * @return - processed line with img path if it had any replaced to appropriate path
      */
     private String processCSSLine(ServletContext context, String contextPath, String cssFilePath, StringBuffer line) {
         Matcher matcher = CSS_IMG_URL_PATTERN.matcher(line);

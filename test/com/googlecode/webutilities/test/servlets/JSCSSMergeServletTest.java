@@ -21,7 +21,8 @@ import static com.googlecode.webutilities.common.Constants.HEADER_LAST_MODIFIED;
 
 import java.io.File;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +50,7 @@ public class JSCSSMergeServletTest extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger LOGGER = Logger.getLogger(JSCSSMergeServletTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSCSSMergeServletTest.class.getName());
 
     private List<Filter> filters = new ArrayList<Filter>();
 
@@ -81,7 +82,7 @@ public class JSCSSMergeServletTest extends TestCase {
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                LOGGER.info("Setting resource : " + resource);
+                LOGGER.info("Setting resource : {}", resource);
                 webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
                 webMockObjectFactory.getMockServletContext().setRealPath(resource, this.getClass().getResource(resource).getPath());
             }
@@ -195,15 +196,19 @@ public class JSCSSMergeServletTest extends TestCase {
 
     public boolean hasCorrectDateHeaders() {
 
+        Date now = new Date();
+
         Date lastModified = Utils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_LAST_MODIFIED));
 
         Date expires = Utils.readDateFromHeader(webMockObjectFactory.getMockResponse().getHeader(HEADER_EXPIRES));
 
         if (lastModified == null || expires == null) return false;
 
-        long differenceInMinutes = (expires.getTime() - lastModified.getTime()) / 1000 / 60;
+        long differenceInMilliseconds = expires.getTime() - now.getTime();
 
-        return (differenceInMinutes == expiresMinutes); //ensure difference between last modified and expires is exactly same as we mentioned in test
+        //!TODO test lastModified value
+
+        return (expiresMinutes - differenceInMilliseconds <= 5*1000); //ensure difference between last modified and expires is almost same (tolerate 5 sec)
 
     }
 
@@ -218,7 +223,7 @@ public class JSCSSMergeServletTest extends TestCase {
                 return; // no more test cases in properties file.
             }
 
-            LOGGER.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
+            LOGGER.info("Running Test {}: {}", new Object[]{this.currentTestNumber, testCase});
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");
@@ -243,6 +248,9 @@ public class JSCSSMergeServletTest extends TestCase {
             if(actualStatusCode != HttpServletResponse.SC_NOT_MODIFIED){
                 assertTrue(this.hasCorrectDateHeaders());
                 String actualOutput = servletTestModule.getOutput();
+                //!TODO for now hash is ignored bcoz it will differ based last modification time of the resource
+                //!TODO need to consider and test actual generated hash
+                actualOutput = actualOutput.replaceAll("_wu_[0-9a-f]{32}\\.","_wu_<ignore_hash>.");
 
                 assertNotNull(actualOutput);
 

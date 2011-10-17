@@ -17,7 +17,8 @@
 package com.googlecode.webutilities.test.filters;
 
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import junit.framework.TestCase;
 
@@ -41,7 +42,7 @@ public class YUIMinFilterTest extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger LOGGER = Logger.getLogger(YUIMinFilterTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(YUIMinFilterTest.class.getName());
 
     public YUIMinFilterTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(YUIMinFilterTest.class.getSimpleName() + ".properties"));
@@ -64,7 +65,7 @@ public class YUIMinFilterTest extends TestCase {
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                LOGGER.info("Setting resource : " + resource);
+                LOGGER.info("Setting resource : {}", resource);
                 webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
             }
         }
@@ -128,7 +129,7 @@ public class YUIMinFilterTest extends TestCase {
                 return; // no more test cases in properties file.
             }
 
-            LOGGER.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
+            LOGGER.info("Running Test {}: {}", new Object[]{this.currentTestNumber, testCase});
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");

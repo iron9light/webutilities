@@ -26,14 +26,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 
 import static com.googlecode.webutilities.common.Constants.*;
 
 public class JSCSSMergeModule implements IModule {
 
-    public static final Logger LOGGER = Logger.getLogger(JSCSSMergeModule.class.getName());
+    public static final Logger LOGGER = LoggerFactory.getLogger(JSCSSMergeModule.class.getName());
 
     @Override
     public DirectivePair parseDirectives(String ruleString) {
@@ -71,7 +72,7 @@ class JSCSSMergeDirective implements PreChainDirective {
 
     ServletContext context;
 
-    public static final Logger LOGGER = Logger.getLogger(JSCSSMergeDirective.class.getName());
+    public static final Logger LOGGER = LoggerFactory.getLogger(JSCSSMergeDirective.class.getName());
 
     JSCSSMergeDirective(boolean autoCorrectUrlsInCss) {
         this.autoCorrectUrlsInCss = autoCorrectUrlsInCss;
@@ -82,14 +83,14 @@ class JSCSSMergeDirective implements PreChainDirective {
         this.context = context;
         String url = getURL(request);
 
-        LOGGER.fine("Started processing request : " + url);
+        LOGGER.trace("Started processing request : {}", url);
 
         List<String> resourcesToMerge = Utils.findResourcesToMerge(request.getContextPath(), url);
 
         //If not modified, return 304 and stop
         ResourceStatus status = isNotModified(request, response, resourcesToMerge);
         if (status.isNotModified()) {
-            LOGGER.finest("Resources Not Modified. Sending 304.");
+            LOGGER.debug("Resources Not Modified. Sending 304.");
             sendNotModified(response);
             return STOP_CHAIN;
         }
@@ -107,7 +108,7 @@ class JSCSSMergeDirective implements PreChainDirective {
 
             if (resourcesNotFound > 0 && resourcesNotFound == resourcesToMerge.size()) { //all resources not found
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                LOGGER.warning("All resources are not found. Sending 404.");
+                LOGGER.warn("All resources are not found. Sending 404.");
                 return STOP_CHAIN;
             }
 
@@ -118,18 +119,18 @@ class JSCSSMergeDirective implements PreChainDirective {
                 //response.commit();
                 //} catch (IOException e) {
                 //e.printStackTrace();
-                //  LOGGER.severe(Utils.buildLoggerMessage("Response commit failed.", e.getMessage()));
+                //  LOGGER.error(Utils.buildLoggerMessage("Response commit failed.", e.getMessage()));
                 //return IRule.Status.CONTINUE;
                 //}
             }
         } catch (IOException ex) {
             //ex.printStackTrace();
-            LOGGER.severe(Utils.buildLoggerMessage("Error in processing request.", ex.getMessage()));
+            LOGGER.error("Error in processing request.", ex);
             return OK;
 
         }
 
-        LOGGER.fine("Finished processing Request : " + url);
+        LOGGER.debug("Finished processing Request : {}", url);
         return STOP_CHAIN;
     }
 
@@ -143,16 +144,16 @@ class JSCSSMergeDirective implements PreChainDirective {
 
     /**
      * @param request HttpServletRequest
-     * @return
+     * @return The URL without fingerprint if it has any
      */
     private String getURL(HttpServletRequest request) {
         return Utils.removeFingerPrint(request.getRequestURI());
     }
 
     /**
-     * @param request
-     * @param response
-     * @param resourcesToMerge
+     * @param request - HttpServletRequest
+     * @param response - HttpServletResponse
+     * @param resourcesToMerge - List of resources relative paths
      * @return true if not modified based on if-None-Match and If-Modified-Since
      */
     private ResourceStatus isNotModified(HttpServletRequest request, HttpServletResponse response, List<String> resourcesToMerge) {
@@ -190,7 +191,7 @@ class JSCSSMergeDirective implements PreChainDirective {
 
         for (String resourcePath : resourcesToMerge) {
 
-            LOGGER.finest("Processing resource : " + resourcePath);
+            LOGGER.trace("Processing resource : {}", resourcePath);
 
             InputStream is = null;
 
@@ -212,20 +213,20 @@ class JSCSSMergeDirective implements PreChainDirective {
                     }
                 }
             } catch (IOException e) {
-                LOGGER.severe("Error while reading resource : " + resourcePath);
-                LOGGER.severe("IOException :" + e);
+                LOGGER.error("Error while reading resource : {}", resourcePath);
+                LOGGER.error("IOException :",  e);
             }
 
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException ex) {
-                    LOGGER.warning("Failed to close stream:" + ex);
+                    LOGGER.warn("Failed to close stream: {}", ex);
                 }
                 try {
                     outputStream.flush();
                 } catch (IOException ex) {
-                    LOGGER.severe("Failed to flush out:" + outputStream);
+                    LOGGER.error("Failed to flush out:{}",  outputStream);
                 }
             }
 
@@ -234,14 +235,14 @@ class JSCSSMergeDirective implements PreChainDirective {
     }
 
     /**
-     * @param cssFilePath
-     * @param contextPath
-     * @param is
-     * @param outputStream
-     * @throws java.io.IOException
+     * @param cssFilePath - path of the cssFile
+     * @param contextPath - web app context path or custom context path
+     * @param inputStream - input stream
+     * @param outputStream - output stream
+     * @throws java.io.IOException - throws exception in case something woes wrong (IO read/write)
      */
-    private void processCSS(String contextPath, String cssFilePath, InputStream is, OutputStream outputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+    private void processCSS(String contextPath, String cssFilePath, InputStream inputStream, OutputStream outputStream) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         StringBuffer buffer = new StringBuffer();
         while ((line = bufferedReader.readLine()) != null) {
@@ -253,11 +254,11 @@ class JSCSSMergeDirective implements PreChainDirective {
     }
 
     /**
-     * @param context
-     * @param contextPath
-     * @param cssFilePath
-     * @param line
-     * @return
+     * @param context - ServletContext
+     * @param contextPath - context path or custom configured context path
+     * @param cssFilePath - css file path
+     * @param line - one single line in a css file
+     * @return processed string with appropriate replacement of image URLs if any
      */
     private String processCSSLine(ServletContext context, String contextPath, String cssFilePath, StringBuffer line) {
         Matcher matcher = CSS_IMG_URL_PATTERN.matcher(line);
@@ -293,12 +294,12 @@ class JSCSSMergeDirective implements PreChainDirective {
     private void addAppropriateResponseHeaders(String extensionOrFile, List<String> resourcesToMerge, String hashForETag, HttpServletResponse resp) {
         String mime = Utils.selectMimeForExtension(extensionOrFile);
         if (mime != null) {
-            LOGGER.finest("Setting MIME to " + mime);
+            LOGGER.trace("Setting MIME to ",  mime);
             resp.setContentType(mime);
         }
         if (hashForETag != null) {
             resp.addHeader(HTTP_ETAG_HEADER, hashForETag);
-            LOGGER.finest("Added ETag headers");
+            LOGGER.trace("Added ETag headers");
         }
         resp.addHeader(HEADER_X_OPTIMIZED_BY, X_OPTIMIZED_BY_VALUE);
 

@@ -32,7 +32,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -78,12 +80,12 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
     /**
      * Logger
      */
-    private static final Logger LOGGER = Logger.getLogger(CompressedHttpServletResponseWrapper.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompressedHttpServletResponseWrapper.class.getName());
 
 
     public CompressedHttpServletResponseWrapper(HttpServletResponse httpResponse,
-                                         EncodedStreamsFactory encodedStreamsFactory,
-                                         String contentEncoding, int threshold, IgnoreAcceptContext ignoreAcceptContext) {
+                                                EncodedStreamsFactory encodedStreamsFactory,
+                                                String contentEncoding, int threshold, IgnoreAcceptContext ignoreAcceptContext) {
         super(httpResponse);
         this.httpResponse = httpResponse;
         this.compressedContentEncoding = contentEncoding;
@@ -115,8 +117,8 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
         getWriterCalled = true;
         if (printWriter == null) {
             printWriter = new PrintWriter(new OutputStreamWriter(getCompressedServletOutputStream(),
-                    getCharacterEncoding()),
-                    true);
+                getCharacterEncoding()),
+                true);
         }
         return printWriter;
     }
@@ -129,7 +131,7 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
         if (HTTP_CACHE_CONTROL_HEADER.equalsIgnoreCase(name)) {
             httpResponse.addHeader(HTTP_CACHE_CONTROL_HEADER, value);
             if (value.contains("no-transform")) {
-                LOGGER.finest("No compression: due to no-transform");
+                LOGGER.trace("No compression: due to no-transform");
                 noTransformSet = true;
                 cancelCompression();
             }
@@ -180,7 +182,7 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
         if (HTTP_CACHE_CONTROL_HEADER.equalsIgnoreCase(name)) {
             httpResponse.setHeader(HTTP_CACHE_CONTROL_HEADER, value);
             if (value.contains("no-transform")) {
-                LOGGER.finest("No compression: due to no-transform directive");
+                LOGGER.trace("No compression: due to no-transform directive");
                 noTransformSet = true;
                 cancelCompression();
             }
@@ -205,10 +207,10 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
     private void cancelCompression() {
         if (compressingStream != null) {
             try {
-                LOGGER.finest("Cancelling compression.");
+                LOGGER.trace("Cancelling compression.");
                 compressingStream.cancelCompression();
             } catch (IOException ioe) {
-                LOGGER.severe("Error while cancelling compression" + ioe);
+                LOGGER.error("Error while cancelling compression.", ioe);
             }
         }
     }
@@ -317,8 +319,8 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
     private void setCompressionResponseHeaders() {
         httpResponse.addHeader(HTTP_VARY_HEADER, HTTP_ACCEPT_ENCODING_HEADER);
         String fullContentEncodingHeader = savedContentEncoding == null ?
-                compressedContentEncoding :
-                savedContentEncoding + ',' + compressedContentEncoding;
+            compressedContentEncoding :
+            savedContentEncoding + ',' + compressedContentEncoding;
         httpResponse.setHeader(HTTP_CONTENT_ENCODING_HEADER, fullContentEncodingHeader);
         setETagHeader();
     }
@@ -338,7 +340,7 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
     }
 
     void useCompression() {
-        LOGGER.finest("Switching to compression");
+        LOGGER.trace("Switching to compression");
         compressing = true;
         setCompressionResponseHeaders();
     }
@@ -362,9 +364,9 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
     private CompressedServletOutputStream getCompressedServletOutputStream() throws IOException {
         if (compressingStream == null) {
             compressingStream =
-                    new CompressedServletOutputStream(httpResponse.getOutputStream(),
-                            encodedStreamsFactory,
-                            this, threshold);
+                new CompressedServletOutputStream(httpResponse.getOutputStream(),
+                    encodedStreamsFactory,
+                    this, threshold);
         }
 
         if (!compressingStream.isClosed()) {
@@ -378,15 +380,15 @@ public class CompressedHttpServletResponseWrapper extends ModuleResponse {
 
     private boolean mustNotCompress() {
         if (mimeIgnored) {
-            LOGGER.finest("No Compression: Mime is ignored");
+            LOGGER.trace("No Compression: Mime is ignored");
             return true;
         }
         if (savedContentLengthSet && savedContentLength < (long) threshold) {
-            LOGGER.finest("No Compression: Already set content length (" + savedContentLength + ") less than threshold (" + threshold + ")");
+            LOGGER.trace("No Compression: Already set content length {} less than threshold {}", new Object[]{savedContentLength, threshold});
             return true;
         }
         if (noTransformSet) {
-            LOGGER.finest("No Compression: no-transform is set");
+            LOGGER.trace("No Compression: no-transform is set");
             return true;
         }
         return alreadyCompressedEncoding(savedContentEncoding);

@@ -27,7 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.googlecode.webutilities.common.Constants.*;
 
@@ -45,7 +46,7 @@ public class YUICompressModule implements IModule {
 
     //private static final String PROCESSED_ATTR = YUICompress.class.getName() + ".MINIFIED";
 
-    private static final Logger LOGGER = Logger.getLogger(YUICompressModule.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(YUICompressModule.class.getName());
 
     @Override
     public DirectivePair parseDirectives(String ruleString) {
@@ -90,7 +91,7 @@ public class YUICompressModule implements IModule {
 
 class YUICompressRulesPair extends DirectivePair {
 
-    private static final Logger LOGGER = Logger.getLogger(YUICompressRulesPair.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(YUICompressRulesPair.class.getName());
 
     YUICompressRulesPair(PreChainDirective preChainDirective, PostChainDirective postChainDirective) {
         super(preChainDirective, postChainDirective);
@@ -113,11 +114,11 @@ class YUICompressRulesPair extends DirectivePair {
                     //work on generated response
                     if (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || (response.getContentType() != null && (response.getContentType().equals(MIME_JS) || response.getContentType().equals(MIME_JSON)))) {
                         JavaScriptCompressor compressor = new JavaScriptCompressor(sr, null);
-                        LOGGER.finest("Compressing JS/JSON type");
+                        LOGGER.trace("Compressing JS/JSON type");
                         compressor.compress(out, rule.lineBreak, !rule.noMunge, false, rule.preserveSemi, rule.disableOptimizations);
                     } else if (lowerUrl.endsWith(EXT_CSS) || (response.getContentType() != null && (response.getContentType().equals(MIME_CSS)))) {
                         CssCompressor compressor = new CssCompressor(sr);
-                        LOGGER.finest("Compressing CSS type");
+                        LOGGER.trace("Compressing CSS type");
                         compressor.compress(out, rule.lineBreak);
                     }
                     return out.getBuffer().toString().getBytes();

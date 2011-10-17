@@ -19,7 +19,9 @@ package com.googlecode.webutilities.filters.common;
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Common AbstractFilter - infra filter code to be used by other filters
@@ -70,12 +72,12 @@ public abstract class AbstractFilter implements Filter, IgnoreAcceptContext {
     private static final String INIT_PARAM_ACCEPT_UA_PATTERN = "acceptUAPattern";
 
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractFilter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFilter.class.getName());
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
-        LOGGER.config("Initializing...");
+        LOGGER.debug("Initializing...");
 
         this.filterConfig = filterConfig;
 
@@ -91,15 +93,14 @@ public abstract class AbstractFilter implements Filter, IgnoreAcceptContext {
 
         this.acceptUAPattern = filterConfig.getInitParameter(INIT_PARAM_ACCEPT_UA_PATTERN);
 
-        LOGGER.config("Abstract Filter initialized with: " +
-                "{" +
-                "   " + INIT_PARAM_IGNORE_URL_PATTERN + ":" + ignoreURLPattern + "," +
-                "   " + INIT_PARAM_ACCEPT_URL_PATTERN + ":" + acceptURLPattern + "," +
-                "   " + INIT_PARAM_IGNORE_MIME_PATTERN + ":" + ignoreMIMEPattern + "" +
-                "   " + INIT_PARAM_ACCEPT_MIME_PATTERN + ":" + acceptMIMEPattern + "," +
-                "   " + INIT_PARAM_IGNORE_UA_PATTERN + ":" + ignoreUAPattern + "," +
-                "   " + INIT_PARAM_ACCEPT_UA_PATTERN + ":" + acceptUAPattern + "," +
-                "}");
+        LOGGER.debug("Abstract Filter initialized with: {\n\t{}:{},\n\t{}:{},\n\t{}:{},\n\t{}:{}\n\t{}:{},\n\t{}:{}\n}",
+            new Object[]{INIT_PARAM_IGNORE_URL_PATTERN, ignoreURLPattern,
+                INIT_PARAM_ACCEPT_URL_PATTERN, acceptURLPattern,
+                INIT_PARAM_IGNORE_MIME_PATTERN, acceptMIMEPattern,
+                INIT_PARAM_ACCEPT_MIME_PATTERN, ignoreMIMEPattern,
+                INIT_PARAM_IGNORE_UA_PATTERN, ignoreUAPattern,
+                INIT_PARAM_ACCEPT_UA_PATTERN, acceptUAPattern}
+        );
     }
 
     private boolean isURLIgnored(String url) {
@@ -128,7 +129,7 @@ public abstract class AbstractFilter implements Filter, IgnoreAcceptContext {
 
     @Override
     public void destroy() {
-        LOGGER.config("destroying...");
+        LOGGER.debug("destroying...");
         this.filterConfig = null;
     }
 

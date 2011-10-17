@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 
 import static com.googlecode.webutilities.common.Constants.*;
@@ -39,7 +40,7 @@ import static com.googlecode.webutilities.common.Constants.*;
  */
 public final class Utils {
 
-  private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class.getName());
 
   private static final String FINGERPRINT_SEPARATOR = "_wu_";
 
@@ -292,7 +293,7 @@ public final class Utils {
   /**
    * @param resources      - list of resources
    * @param requestETag    - request ETag from If-None-Match header
-   * @param actualETag     - current ETag of a resource
+   * @param actualETag     - current ETag of a resource (can be null)
    * @param servletContext - servlet context
    * @return true if any resource ETag is modified, false otherwise.
    */
@@ -323,9 +324,9 @@ public final class Utils {
   }
 
   /**
-   * @param cssFilePath
-   * @param imgFilePath
-   * @return
+   * @param cssFilePath - css file path
+   * @param imgFilePath - img file path
+   * @return true if all goes well and paths are touched, false otherwise
    */
   public static boolean updateReferenceMap(String cssFilePath, String imgFilePath) {
     if (imgFilePath != null) {
@@ -343,8 +344,7 @@ public final class Utils {
         File cssFile = new File(cssFilePath);
         if (cssFile.lastModified() < imgFile.lastModified()) { //means img got modified after css
           //so touch css file
-          cssFile.setLastModified(new Date().getTime());
-          return true;
+          return cssFile.setLastModified(new Date().getTime());
         }
       } else if (referencesList != null) {
         referencesList.remove(imgFilePath);
@@ -409,9 +409,9 @@ public final class Utils {
             }
           }
         } catch (FileNotFoundException ex) {
-          LOGGER.warning("File not found." + ex);
+          LOGGER.warn("File not found.", ex);
         } catch (IOException ex) {
-          LOGGER.warning("Failed to read/touch " + realPath + ". ex:" + ex);
+          LOGGER.warn("Failed to read/touch {}. ex: {}", realPath, ex);
         }
       }
     }
@@ -430,7 +430,7 @@ public final class Utils {
     try {
       return simpleDateFormat.parse(headerDateString);
     } catch (Exception e) {
-      LOGGER.warning("Date parsing using HTTP header pattern failed.");
+      LOGGER.warn("Date parsing using HTTP header pattern failed.");
     }
 
     //try another rfc1123
@@ -438,7 +438,7 @@ public final class Utils {
     try {
       return simpleDateFormat.parse(headerDateString);
     } catch (Exception e) {
-      LOGGER.warning("Date parsing using RFC_1123 pattern failed.");
+      LOGGER.warn("Date parsing using RFC_1123 pattern failed.");
     }
 
     //try another rfc1036
@@ -446,7 +446,7 @@ public final class Utils {
     try {
       return simpleDateFormat.parse(headerDateString);
     } catch (Exception e) {
-      LOGGER.warning("Date parsing using RFC_1036 pattern failed.");
+      LOGGER.warn("Date parsing using RFC_1036 pattern failed.");
     }
 
     //try another ansi
@@ -454,7 +454,7 @@ public final class Utils {
     try {
       return simpleDateFormat.parse(headerDateString);
     } catch (Exception e) {
-      LOGGER.warning("Date is not even ANSI C pattern.");
+      LOGGER.warn("Date is not even ANSI C pattern.");
     }
 
     return null;
@@ -470,7 +470,7 @@ public final class Utils {
     try {
       md5Digest = MessageDigest.getInstance("MD5");
     } catch (NoSuchAlgorithmException ex) {
-      LOGGER.warning("Unable to use MD5 for digesting." + ex);
+      LOGGER.warn("Unable to use MD5 for digesting.", ex);
     }
     if (md5Digest != null) {
       data = md5Digest.digest(data);
@@ -524,20 +524,6 @@ public final class Utils {
       return path.substring(0, lastIndex);
     }
     return PATH_ROOT;
-  }
-
-  /**
-   * This method accept string tokens and return the concatenated logger message.
-   *
-   * @param messages
-   * @return
-   */
-  public static String buildLoggerMessage(Object... messages) {
-    StringBuilder strBuilder = new StringBuilder();
-    for (Object message : messages) {
-      strBuilder.append(message);
-    }
-    return strBuilder.toString();
   }
 
   private Utils() {

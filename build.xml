@@ -15,8 +15,8 @@
   ~  limitations under the License.
   -->
 
-<project name="Web Utilities for JS CSS Compression and Merging" default="jar" basedir=".">
-	<property file="build.properties"/>
+<project name="Web Utilities for JS CSS Compression and Merging" default="test-and-jar" basedir=".">
+    <property file="build.properties"/>
     <target name="clean">
         <delete dir="${build.dir}" quiet="true"/>
     </target>
@@ -26,19 +26,24 @@
     </target>
 
     <path id="compile.classpath">
-        <pathelement location="${build.dir}/classes" />
-        <pathelement location="${build.dir}/tests" />
+        <pathelement location="${build.dir}/classes"/>
         <pathelement location="${lib.dir}/yuicompressor.jar"/>
         <pathelement location="${lib.dir}/jsp-api.jar"/>
         <pathelement location="${lib.dir}/servlet-api.jar"/>
+        <pathelement location="${lib.dir}/compiler.jar"/>
+        <pathelement location="${lib.dir}/slf4j-api.jar"/>
+    </path>
+    <path id="test.classpath">
+        <pathelement location="${lib.dir}/commons-logging.jar"/>
+        <pathelement location="${lib.dir}/commons-beanutils.jar"/>
+        <pathelement location="${build.dir}/tests"/>
+        <pathelement location="${lib.dir}/logback-classic.jar"/>
+        <pathelement location="${lib.dir}/logback-core.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${lib.dir}/mockrunner-servlet.jar"/>
         <pathelement location="${lib.dir}/mockrunner-tag.jar"/>
         <pathelement location="${lib.dir}/mockrunner.jar"/>
         <pathelement location="${lib.dir}/jdom.jar"/>
-        <pathelement location="${lib.dir}/commons-logging.jar"/>
-        <pathelement location="${lib.dir}/commons-beanutils.jar"/>
-        <pathelement location="${lib.dir}/compiler.jar"/>
     </path>
 
     <target name="compile" depends="init">
@@ -52,8 +57,8 @@
                deprecation="off"
                debug="on"
                source="1.5"
-                   target="1.5" includeantruntime="true">
-                <classpath refid="compile.classpath"/>
+               target="1.5" includeantruntime="true">
+            <classpath refid="compile.classpath"/>
         </javac>
     </target>
 
@@ -65,57 +70,61 @@
                deprecation="off"
                debug="on"
                source="1.5"
-                   target="1.5" includeantruntime="true">
-            <classpath refid="compile.classpath">
-            </classpath>
+               target="1.5" includeantruntime="true">
+            <classpath refid="compile.classpath"/>
+            <classpath refid="test.classpath"/>
         </javac>
         <copy todir="${build.dir}/tests/resources">
             <fileset dir="${test.dir}/resources"/>
         </copy>
         <copy todir="${build.dir}/tests/">
-           <fileset dir="${test.dir}" includes="**/*.properties"/>
+            <fileset dir="${test.dir}" includes="**/*.properties"/>
+        </copy>
+        <copy todir="${build.dir}/classes">
+            <fileset dir="${src.dir}" includes="**/logback*.xml"/>
         </copy>
     </target>
 
     <target name="test" depends="compileTests">
         <junit fork="yes" haltonfailure="yes">
-            <test name="com.googlecode.webutilities.test.WebutilitiesTestSuit" />
-            <formatter type="plain" usefile="false" />
-            <classpath refid="compile.classpath" />
+            <test name="com.googlecode.webutilities.test.WebutilitiesTestSuit"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="test.classpath"/>
         </junit>
     </target>
 
-    <target name="jar" depends="compile,test">
+    <target name="jar" depends="compile">
         <mkdir dir="${build.dir}/jar"/>
         <copy todir="${build.dir}/jar">
             <fileset dir="${build.dir}/classes" includes="**/*.class,**/*.conf"/>
         </copy>
         <jar destfile="${build.dir}/${jar.name}" basedir="${build.dir}/jar">
-        	<metainf dir="${meta-inf.dir}"/>
+            <metainf dir="${meta-inf.dir}"/>
             <manifest>
-        		<!--attribute name="Class-Path" value="yuicompressor.jar"/-->
+                <!--attribute name="Class-Path" value="yuicompressor.jar"/-->
             </manifest>
         </jar>
     </target>
-        
-        <target name="javadoc" depends="compile">
-                <delete dir="${doc.dir}" quiet="true"/>
-                <mkdir dir="${doc.dir}" />
-                <javadoc packagenames="com.googlecode.webutilities.*"
-                     destdir="${doc.dir}"
-                     author="true"
-                     private="false"
-                     version="true">
-                <classpath>
-            		<pathelement location="lib/yuicompressor.jar"/>
-                    <pathelement location="${lib.dir}/jsp-api.jar"/>
-            		<pathelement location="${lib.dir}/servlet-api.jar"/>
-            	</classpath>
-              	<sourcepath>
-                	<pathelement path="${src.dir}" />
-              </sourcepath>
-            </javadoc>
-        </target>
+
+    <target name="javadoc" depends="compile">
+        <delete dir="${doc.dir}" quiet="true"/>
+        <mkdir dir="${doc.dir}"/>
+        <javadoc packagenames="com.googlecode.webutilities.*"
+                 destdir="${doc.dir}"
+                 author="true"
+                 private="false"
+                 version="true">
+            <classpath>
+                <pathelement location="lib/yuicompressor.jar"/>
+                <pathelement location="${lib.dir}/jsp-api.jar"/>
+                <pathelement location="${lib.dir}/servlet-api.jar"/>
+            </classpath>
+            <sourcepath>
+                <pathelement path="${src.dir}"/>
+            </sourcepath>
+        </javadoc>
+    </target>
 
     <target name="dist" depends="jar,javadoc">
         <mkdir dir="${build.dir}/${dist.package.name}"/>
@@ -125,7 +134,7 @@
             <fileset dir=".">
                 <include name="build.properties"/>
                 <include name="build.xml"/>
-            	<include name="${meta-inf.dir}/*"/>
+                <include name="${meta-inf.dir}/*"/>
                 <include name="doc/**/*"/>
                 <include name="lib/**/*"/>
                 <include name="src/**/*"/>
@@ -136,5 +145,7 @@
              basedir="${build.dir}"
              includes="${dist.package.name}/**/*"/>
     </target>
+
+    <target name="test-and-jar" depends="test, jar"/>
 
 </project>

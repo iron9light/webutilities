@@ -19,7 +19,8 @@ package com.googlecode.webutilities.test.tags;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import junit.framework.TestCase;
 
@@ -41,7 +42,7 @@ public class YUIMinTagTest extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger LOGGER = Logger.getLogger(YUIMinTagTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(YUIMinTagTest.class.getName());
 
     public YUIMinTagTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(YUIMinTagTest.class.getSimpleName() + ".properties"));
@@ -67,7 +68,7 @@ public class YUIMinTagTest extends TestCase {
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                LOGGER.info("Setting resource : " + resource);
+                LOGGER.info("Setting resource : {}", resource);
                 yuiMinTag.addTextChild(TestUtils.readContents(this.getClass().getResourceAsStream(resource),webMockObjectFactory.getMockResponse().getCharacterEncoding()));
             }
         }
@@ -105,7 +106,7 @@ public class YUIMinTagTest extends TestCase {
                 return; // no more test cases in properties file.
             }
 
-            LOGGER.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
+            LOGGER.info("Running Test {}: {}", new Object[]{this.currentTestNumber, testCase});
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");

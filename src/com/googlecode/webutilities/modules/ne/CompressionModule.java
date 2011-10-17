@@ -112,7 +112,7 @@ class FinishCompressionRule implements PostChainDirective {
 
             } catch (IOException ex) {
 
-                //LOGGER.severe("Response was already closed: " + ex);
+                //LOGGER.error("Response was already closed: " + ex);
 
             }
 
@@ -167,11 +167,7 @@ class CompressionRulePair extends DirectivePair {
             return new ModuleResponse(response);
         }
 
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        String acceptEncoding = httpRequest.getHeader(HTTP_ACCEPT_ENCODING_HEADER);
+        String acceptEncoding = request.getHeader(HTTP_ACCEPT_ENCODING_HEADER);
 
         String contentEncoding = getAppropriateContentEncoding(acceptEncoding);
 
@@ -184,7 +180,7 @@ class CompressionRulePair extends DirectivePair {
 
         //LOGGER.fine("Compressing response: content encoding : " + contentEncoding);
 
-        return new CompressedHttpServletResponseWrapper(httpResponse, encodedStreamsFactory, contentEncoding, 0, null);
+        return new CompressedHttpServletResponseWrapper(response, encodedStreamsFactory, contentEncoding, 0, null);
     }
 
     @Override
@@ -192,9 +188,7 @@ class CompressionRulePair extends DirectivePair {
 
         request.setAttribute(PROCESSED_ATTR, Boolean.TRUE);
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        String contentEncoding = httpRequest.getHeader(HTTP_CONTENT_ENCODING_HEADER);
+        String contentEncoding = request.getHeader(HTTP_CONTENT_ENCODING_HEADER);
 
         if (contentEncoding == null) {
             //LOGGER.finest("No Compression: Request content encoding is: " + contentEncoding);
@@ -208,6 +202,6 @@ class CompressionRulePair extends DirectivePair {
 
         //LOGGER.fine("Decompressing request: content encoding : " + contentEncoding);
 
-        return new CompressedHttpServletRequestWrapper(httpRequest, EncodedStreamsFactory.getFactoryForContentEncoding(contentEncoding));
+        return new CompressedHttpServletRequestWrapper(request, EncodedStreamsFactory.getFactoryForContentEncoding(contentEncoding));
     }
 }

@@ -22,7 +22,9 @@ import static com.googlecode.webutilities.common.Constants.HTTP_USER_AGENT_HEADE
 import static com.googlecode.webutilities.common.Constants.HTTP_VARY_HEADER;
 
 import java.util.Properties;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import junit.framework.TestCase;
 
@@ -46,7 +48,7 @@ public class CompressionFilterTest extends TestCase {
 
     private int currentTestNumber = 1;
 
-    private static final Logger LOGGER = Logger.getLogger(CompressionFilterTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompressionFilterTest.class.getName());
 
     public CompressionFilterTest() throws Exception {
         properties.load(this.getClass().getResourceAsStream(CompressionFilterTest.class.getSimpleName() + ".properties"));
@@ -69,7 +71,7 @@ public class CompressionFilterTest extends TestCase {
         if (resourcesString != null && !resourcesString.trim().equals("")) {
             String[] resources = resourcesString.split(",");
             for (String resource : resources) {
-                LOGGER.info("Setting resource : " + resource);
+                LOGGER.info("Setting resource : {}", resource);
                 webMockObjectFactory.getMockServletContext().setResourceAsStream(resource, this.getClass().getResourceAsStream(resource));
             }
         }
@@ -111,7 +113,7 @@ public class CompressionFilterTest extends TestCase {
 
         String expectedResource = properties.getProperty(this.currentTestNumber + ".test.expected.output");
         if (expectedResource == null || expectedResource.trim().equals("")) return null;
-        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource),webMockObjectFactory.getMockResponse().getCharacterEncoding());
+        return TestUtils.readContents(this.getClass().getResourceAsStream(expectedResource), webMockObjectFactory.getMockResponse().getCharacterEncoding());
 
     }
 
@@ -149,7 +151,7 @@ public class CompressionFilterTest extends TestCase {
                 //return; // no more test cases in properties file.
             }
 
-            LOGGER.info("Running Test (" + this.currentTestNumber + "): " + testCase + "");
+            LOGGER.info("Running Test {}:{}", new Object[]{this.currentTestNumber, testCase});
 
             System.out.println("##################################################################################################################");
             System.out.println("Running Test (" + this.currentTestNumber + "): " + testCase + "");
@@ -173,10 +175,10 @@ public class CompressionFilterTest extends TestCase {
 
                 String expected = getExpectedOutput();
                 String actual = servletTestModule.getOutput();
-                if(expected != null){ //!NEED TO REMOVE AND ADD .output in test cases - to test deflate also
-                    if(expectedEncoding.equalsIgnoreCase("gzip")){
-                        assertTrue("Contents not matching for test: " + currentTestNumber, TestUtils.compressedContentEquals(expected,actual));
-                    }else if(!expectedEncoding.equalsIgnoreCase("compress")){
+                if (expected != null) { //!NEED TO REMOVE AND ADD .output in test cases - to test deflate also
+                    if (expectedEncoding.equalsIgnoreCase("gzip")) {
+                        assertTrue("Contents not matching for test: " + currentTestNumber, TestUtils.compressedContentEquals(expected, actual));
+                    } else if (!expectedEncoding.equalsIgnoreCase("compress")) {
                         //WE ARE NOT ABLE TO TEST COMPRESS ENCODING AT THIS TIME :(
                         //IT DIFFERS IN HEADER, FILENAME AND FOOTER when compared with one created from zip command
                         assertEquals(expected, actual);

@@ -29,7 +29,8 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ModulesFilter extends AbstractFilter {
 
@@ -37,7 +38,7 @@ public class ModulesFilter extends AbstractFilter {
 
     private Config config = null;
 
-    public static final Logger LOGGER = Logger.getLogger(ModulesFilter.class.getName());
+    public static final Logger LOGGER = LoggerFactory.getLogger(ModulesFilter.class.getName());
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -48,14 +49,14 @@ public class ModulesFilter extends AbstractFilter {
             try {
                 config = Config.load(new FileInputStream(configFile));
             } catch (FileNotFoundException ex) {
-                LOGGER.severe(Utils.buildLoggerMessage("Specified file could not be loaded.", configFile));
+                LOGGER.error("Specified file could not be loaded.{}", configFile);
                 throw new ServletException("Could not load config file: " + configFile);
             }
-            LOGGER.fine(Utils.buildLoggerMessage("Found config file in the classpath.", configFile));
+            LOGGER.debug("Found config file in the classpath. {}", configFile);
         }
 
         if (config == null) {
-            LOGGER.fine("Using default config file.");
+            LOGGER.debug("Using default config file.");
             config = Config.load();
         }
     }
@@ -68,14 +69,14 @@ public class ModulesFilter extends AbstractFilter {
             ModuleRequest moduleRequest = module.getRequest(httpServletRequest);
             ModuleResponse moduleResponse = module.getResponse(moduleRequest, httpServletResponse);
 
-            LOGGER.fine(Utils.buildLoggerMessage("Processing Module: ", module.getClass().getName()));
+            LOGGER.debug("Processing Module: {}", module.getClass().getName());
 
             IRule.Status status = IRule.Status.CONTINUE;
 
             for (PreChainRule rule : module.activeModuleRules.getPreChainRules()) {
                 status = rule.process(moduleRequest, moduleResponse);
                 if (IRule.Status.CONTINUE != status) {
-                    LOGGER.warning(Utils.buildLoggerMessage("PreChainRule ", rule.getClass().getName(), " returned false | no_chain"));
+                    LOGGER.warn("PreChainRule {} returned false | no_chain", rule.getClass().getName());
                     break;
                 }
             }
@@ -88,21 +89,21 @@ public class ModulesFilter extends AbstractFilter {
             for (PostChainRule rule : module.activeModuleRules.getPostChainRules()) {
                 status = rule.process(moduleRequest, moduleResponse);
                 if (status != IRule.Status.CONTINUE) {
-                    LOGGER.warning(Utils.buildLoggerMessage("PostChainRule ", rule.getClass().getName(), " returned false"));
+                    LOGGER.warn("PostChainRule {} returned false.", rule.getClass().getName());
                     return status;
                 }
             }
             moduleResponse.commit();
         } else {
             try {
-                LOGGER.finest("Doing chaining, finally.");
+                LOGGER.trace("Doing chaining, finally.");
                 chain.doFilter(httpServletRequest, httpServletResponse);
             } catch (Exception ex) {
                 ex.getCause().printStackTrace(httpServletResponse.getWriter());
                 if (httpServletResponse instanceof ModuleResponse) {
                     ((ModuleResponse) httpServletResponse).commit();
                 }
-                LOGGER.severe(Utils.buildLoggerMessage("Error in chaining.", ex.getMessage()));
+                LOGGER.error("Error in chaining.", ex);
                 return IRule.Status.NO_CHAIN;
             }
         }
@@ -131,7 +132,7 @@ public class ModulesFilter extends AbstractFilter {
 
             }
         }
-        LOGGER.fine(Utils.buildLoggerMessage("Found ", eligibleModule != null ? eligibleModule.size() : 0, " modules."));
+        LOGGER.debug("Found {} modules.", eligibleModule != null ? eligibleModule.size() : 0);
         return eligibleModule;
     }
 
@@ -209,17 +210,17 @@ public class ModulesFilter extends AbstractFilter {
             if (inputStream != null) {
 
 
-                String ignoreURLPattern = null;
+                String ignoreURLPattern;
 
-                String acceptURLPattern = null;
+                String acceptURLPattern;
 
-                String ignoreMIMEPattern = null;
+                String ignoreMIMEPattern;
 
-                String acceptMIMEPattern = null;
+                String acceptMIMEPattern;
 
-                String ignoreUAPattern = null;
+                String ignoreUAPattern;
 
-                String acceptUAPattern = null;
+                String acceptUAPattern;
 
                 String line;
 

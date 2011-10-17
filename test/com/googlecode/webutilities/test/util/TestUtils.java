@@ -21,11 +21,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class TestUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(TestUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestUtils.class.getName());
 
     private TestUtils() {
     }
@@ -74,7 +75,7 @@ public final class TestUtils {
             int ch2 = streamRight.read();
             if (ch != ch2) {
                 if(pos == 9){ //Ignore OS byte in GZIP header
-                	LOGGER.info("Ignoring OS bit.... " + ch + "!=" + ch2);
+                	LOGGER.info("Ignoring OS bit.... {} != {}", new Object[]{ch, ch2});
                     continue;
                 }
                 return false;

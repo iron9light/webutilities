@@ -29,7 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.googlecode.webutilities.util.Utils.findResourcesToMerge;
 
@@ -39,7 +40,7 @@ public class ResponseCacheModule implements IModule {
 
     static final Map<String, CacheObject> cache = new ConcurrentHashMap<String, CacheObject>();
 
-    private static final Logger LOGGER = Logger.getLogger(ResponseCacheModule.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResponseCacheModule.class.getName());
 
     @Override
     public DirectivePair parseDirectives(String ruleString) {
@@ -74,7 +75,7 @@ public class ResponseCacheModule implements IModule {
 
 class CheckCacheDirective implements PreChainDirective {
 
-    private static final Logger LOGGER = Logger.getLogger(CheckCacheDirective.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckCacheDirective.class.getName());
 
     private int reloadTime = 0;
 
@@ -98,7 +99,7 @@ class CheckCacheDirective implements PreChainDirective {
                 (cacheObject != null && reloadTime > 0 && (now - cacheObject.getTime()) / 1000 > reloadTime);
 
         if (expireCache) {
-            LOGGER.finest(Utils.buildLoggerMessage("Removing Cache for: ", url, " due to URL parameter."));
+            LOGGER.trace("Removing Cache for {} due to URL parameter.", url);
             ResponseCacheModule.cache.remove(url);
         }
 
@@ -106,7 +107,7 @@ class CheckCacheDirective implements PreChainDirective {
                 resetTime > 0 && (now - ResponseCacheModule.lastResetTime) / 1000 > resetTime;
 
         if (resetCache) {
-            LOGGER.finest("Resetting whole Cache for due to URL parameter.");
+            LOGGER.trace("Resetting whole Cache for due to URL parameter.");
             ResponseCacheModule.cache.clear();
             ResponseCacheModule.lastResetTime = now;
         }
@@ -114,7 +115,7 @@ class CheckCacheDirective implements PreChainDirective {
         boolean skipCache = request.getParameter(Constants.PARAM_DEBUG) != null || request.getParameter(Constants.PARAM_SKIP_CACHE) != null;
 
         if (skipCache) {
-            LOGGER.finest(Utils.buildLoggerMessage("Skipping Cache for: ", url, " due to URL parameter."));
+            LOGGER.trace("Skipping Cache for {} due to URL parameter.", url);
             return OK;
         }
 
@@ -143,18 +144,18 @@ class CheckCacheDirective implements PreChainDirective {
 
         if (cacheObject != null && cacheObject.getModuleResponse() != null) {
             if (requestedResources != null && Utils.isAnyResourceModifiedSince(requestedResources, cacheObject.getTime(), context)) {
-                LOGGER.finest(Utils.buildLoggerMessage("Some resources have been modified since last cache: ", url));
+                LOGGER.trace("Some resources have been modified since last cache: {}", url);
                 ResponseCacheModule.cache.remove(url);
                 cacheFound = false;
             } else {
-                LOGGER.finest("Found valid cached response.");
+                LOGGER.trace("Found valid cached response.");
                 //cacheObject.increaseAccessCount();
                 cacheFound = true;
             }
         }
 
         if (cacheFound) {
-            LOGGER.fine("Returning Cached response.");
+            LOGGER.debug("Returning Cached response.");
             try {
                 cacheObject.getModuleResponse().fill(response);
                 return STOP_CHAIN;
@@ -169,7 +170,7 @@ class CheckCacheDirective implements PreChainDirective {
     private void sendNotModified(HttpServletResponse httpServletResponse) {
         httpServletResponse.setContentLength(0);
         httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-        LOGGER.finest("returning Not Modified (304)");
+        LOGGER.trace("returning Not Modified (304)");
     }
 
     @Override
@@ -193,7 +194,7 @@ class CheckCacheDirective implements PreChainDirective {
 
 class StoreCacheDirective implements PostChainDirective {
 
-    private static final Logger LOGGER = Logger.getLogger(StoreCacheDirective.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(StoreCacheDirective.class.getName());
 
     private int reloadTime = 0;
 
@@ -217,7 +218,7 @@ class StoreCacheDirective implements PostChainDirective {
                 (cacheObject != null && reloadTime > 0 && (now - cacheObject.getTime()) / 1000 > reloadTime);
 
         if (expireCache) {
-            LOGGER.finest(Utils.buildLoggerMessage("Removing Cache for: ", url, " due to URL parameter."));
+            LOGGER.trace("Removing Cache for {} due to URL parameter.", url);
             ResponseCacheModule.cache.remove(url);
         }
 
@@ -225,7 +226,7 @@ class StoreCacheDirective implements PostChainDirective {
                 resetTime > 0 && (now - ResponseCacheModule.lastResetTime) / 1000 > resetTime;
 
         if (resetCache) {
-            LOGGER.finest("Resetting whole Cache for due to URL parameter.");
+            LOGGER.trace("Resetting whole Cache for due to URL parameter.");
             ResponseCacheModule.cache.clear();
             ResponseCacheModule.lastResetTime = now;
         }
@@ -237,10 +238,10 @@ class StoreCacheDirective implements PostChainDirective {
             try {
                 response.commit();
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                LOGGER.warn("Response commit failed: ", e);
             }
             ResponseCacheModule.cache.put(url, new CacheObject(Utils.getLastModifiedFor(requestedResources, context), response));
-            LOGGER.fine("Cache added for: " + url);
+            LOGGER.debug("Cache added for: {}", url);
         }
 
 //            try {

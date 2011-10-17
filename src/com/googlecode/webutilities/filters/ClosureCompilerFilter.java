@@ -28,7 +28,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import com.google.javascript.jscomp.BasicErrorManager;
+import com.google.javascript.jscomp.CheckLevel;
+import com.google.javascript.jscomp.JSError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -56,9 +61,9 @@ import com.googlecode.webutilities.filters.common.AbstractFilter;
  * @author rpatil
  * @version 1.0
  */
-public class ClosureCompilerFilter extends AbstractFilter{
+public class ClosureCompilerFilter extends AbstractFilter {
 
-    private static final Logger LOGGER = Logger.getLogger(ClosureCompilerFilter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClosureCompilerFilter.class.getName());
 
     CompilerOptions compilerOptions;
 
@@ -69,8 +74,9 @@ public class ClosureCompilerFilter extends AbstractFilter{
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
         compilerOptions = buildCompilerOptionsFromConfig(config);
-        LOGGER.config(buildLoggerMessage("Filter initialized with: {",compilerOptions.toString(),"}"));
+        LOGGER.debug("Filter initialized with: {}", compilerOptions.toString());
     }
+
     //init
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
@@ -85,11 +91,11 @@ public class ClosureCompilerFilter extends AbstractFilter{
 
         String url = rq.getRequestURI(), lowerUrl = url.toLowerCase();
 
-        LOGGER.fine("Filtering URI: " + url);
+        LOGGER.debug("Filtering URI: {}", url);
 
         boolean alreadyProcessed = req.getAttribute(PROCESSED_ATTR) != null;
 
-        if (!alreadyProcessed && isURLAccepted (url) && isUserAgentAccepted(rq.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
+        if (!alreadyProcessed && isURLAccepted(url) && isUserAgentAccepted(rq.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
 
             req.setAttribute(PROCESSED_ATTR, Boolean.TRUE);
 
@@ -100,10 +106,10 @@ public class ClosureCompilerFilter extends AbstractFilter{
 
             Writer out = resp.getWriter();
             String mime = wrapper.getContentType();
-            if(!isMIMEAccepted(mime)){
+            if (!isMIMEAccepted(mime)) {
                 out.write(wrapper.getContents());
                 out.flush();
-                LOGGER.finest(buildLoggerMessage("Not minifying. Mime (", mime, ") not allowed."));
+                LOGGER.trace("Not minifying. Mime {) not allowed.", mime);
                 return;
             }
 
@@ -111,54 +117,69 @@ public class ClosureCompilerFilter extends AbstractFilter{
 
             //work on generated response
             if (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_JS) || wrapper.getContentType().equals(MIME_JSON)))) {
-                Compiler closureCompiler = new Compiler(new LoggerErrorManager(LOGGER));
-                LOGGER.finest("Compressing JS/JSON type");
+                Compiler closureCompiler = new Compiler(new BasicErrorManager() {
+                    @Override
+                    public void println(CheckLevel checkLevel, JSError jsError) {
+                        if (checkLevel.equals(CheckLevel.WARNING)) {
+                            LOGGER.warn("Warning. {}", jsError);
+                        } else if (checkLevel.equals(CheckLevel.ERROR)) {
+                            LOGGER.error("Error. {}", jsError);
+                        }
+                    }
+
+                    @Override
+                    protected void printSummary() {
+                        //!TODO implementation
+                    }
+                });
+                LOGGER.trace("Compressing JS/JSON type");
                 CompilationLevel level = CompilationLevel.SIMPLE_OPTIMIZATIONS;
                 level.setOptionsForCompilationLevel(compilerOptions);
-                Result result = closureCompiler.compile(nullExtern,JSSourceFile.fromInputStream(null,is), compilerOptions);
-                if(result.success){
+                Result result = closureCompiler.compile(nullExtern, JSSourceFile.fromInputStream(null, is), compilerOptions);
+                if (result.success) {
                     out.append(closureCompiler.toSource());
                 }
             } else {
-                LOGGER.finest("Not Compressing anything.");
+                LOGGER.trace("Not Compressing anything.");
                 out.write(wrapper.getContents());
             }
 
             out.flush();
         } else {
-            LOGGER.finest("Not minifying. URL/UserAgent not allowed.");
+            LOGGER.trace("Not minifying. URL/UserAgent not allowed.");
             chain.doFilter(req, resp);
         }
     }
 
     @SuppressWarnings("unchecked")
-	private static CompilerOptions buildCompilerOptionsFromConfig(FilterConfig config){
+    private static CompilerOptions buildCompilerOptionsFromConfig(FilterConfig config) {
 
         CompilerOptions compilerOptions = new CompilerOptions();
         compilerOptions.setCodingConvention(new DefaultCodingConvention());
         //List<String> processedArgs = Lists.newArrayList();
         Enumeration<String> initParams = config.getInitParameterNames();
-        while(initParams.hasMoreElements()){
+        while (initParams.hasMoreElements()) {
             String name = initParams.nextElement().trim();
             String value = config.getInitParameter(name);
-            if("acceptConstKeyword".equals(name)){
+            if ("acceptConstKeyword".equals(name)) {
                 compilerOptions.setAcceptConstKeyword(readBoolean(value, false));
-            }else if("charset".equals(name)){
+            } else if ("charset".equals(name)) {
                 compilerOptions.setOutputCharset(readString(value, "UTF-8"));
-            }else if("compilationLevel".equals(name)){
+            } else if ("compilationLevel".equals(name)) {
                 CompilationLevel compilationLevel = CompilationLevel.valueOf(value);
                 compilationLevel.setOptionsForCompilationLevel(compilerOptions);
-            }else if("formatting".equals(name)){
-                if("PRETTY_PRINT".equals(value)){
+            } else if ("formatting".equals(name)) {
+                if ("PRETTY_PRINT".equals(value)) {
                     compilerOptions.prettyPrint = true;
-                }else if("PRINT_INPUT_DELIMITER".equals(value)){
+                } else if ("PRINT_INPUT_DELIMITER".equals(value)) {
                     compilerOptions.printInputDelimiter = true;
                 }
-            }else if("loggingLevel".equals(name)){
-                Compiler.setLoggingLevel(Level.parse(value));
+            } else if ("loggingLevel".equals(name)) {
+                Compiler.setLoggingLevel(Level.parse(value)); //warning or error
             }
         }
         return compilerOptions;
     }
 
 }
+

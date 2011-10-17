@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -105,7 +107,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  * <p> As a best practice you should also add appropriate expires header on static resources so that browser caches them and doesn't request them again and again.
  * You can use the <code>JSCSSMergeServlet</code> from <code>webutilities.jar</code> to add expires header on JS and CSS. It also helps combines multiple JS or CSS requests in one HTTP request. See <code>JSCSSMergeServlet</code> for details.
  * </p>
- *
+ * <p/>
  * Visit http://code.google.com/p/webutilities/wiki/YUIMinFilter for more details.
  *
  * @author rpatil
@@ -136,7 +138,7 @@ public class YUIMinFilter extends AbstractFilter {
     private static final String PROCESSED_ATTR = YUIMinFilter.class.getName() + ".MINIFIED";
 
 
-    private static final Logger LOGGER = Logger.getLogger(YUIMinFilter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(YUIMinFilter.class.getName());
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp,
@@ -148,11 +150,11 @@ public class YUIMinFilter extends AbstractFilter {
 
         String url = rq.getRequestURI(), lowerUrl = url.toLowerCase();
 
-        LOGGER.fine("Filtering URI: " + url);
+        LOGGER.debug("Filtering URI: {}", url);
 
         boolean alreadyProcessed = req.getAttribute(PROCESSED_ATTR) != null;
 
-        if (!alreadyProcessed && isURLAccepted (url) && isUserAgentAccepted(rq.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
+        if (!alreadyProcessed && isURLAccepted(url) && isUserAgentAccepted(rq.getHeader(Constants.HTTP_USER_AGENT_HEADER)) && (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || lowerUrl.endsWith(EXT_CSS))) {
 
             req.setAttribute(PROCESSED_ATTR, Boolean.TRUE);
 
@@ -163,10 +165,10 @@ public class YUIMinFilter extends AbstractFilter {
 
             Writer out = resp.getWriter();
             String mime = wrapper.getContentType();
-            if(!isMIMEAccepted(mime)){
+            if (!isMIMEAccepted(mime)) {
                 out.write(wrapper.getContents());
                 out.flush();
-                LOGGER.finest("Not minifying. Mime (" + mime + ") not allowed.");
+                LOGGER.trace("Not minifying. Mime {} not allowed", mime);
                 return;
             }
 
@@ -175,20 +177,20 @@ public class YUIMinFilter extends AbstractFilter {
             //work on generated response
             if (lowerUrl.endsWith(EXT_JS) || lowerUrl.endsWith(EXT_JSON) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_JS) || wrapper.getContentType().equals(MIME_JSON)))) {
                 JavaScriptCompressor compressor = new JavaScriptCompressor(sr, null);
-                LOGGER.finest("Compressing JS/JSON type");
+                LOGGER.trace("Compressing JS/JSON type");
                 compressor.compress(out, this.lineBreak, !this.noMunge, false, this.preserveSemi, this.disableOptimizations);
             } else if (lowerUrl.endsWith(EXT_CSS) || (wrapper.getContentType() != null && (wrapper.getContentType().equals(MIME_CSS)))) {
                 CssCompressor compressor = new CssCompressor(sr);
-                LOGGER.finest("Compressing CSS type");
+                LOGGER.trace("Compressing CSS type");
                 compressor.compress(out, this.lineBreak);
             } else {
-                LOGGER.finest("Not Compressing anything.");
+                LOGGER.trace("Not Compressing anything.");
                 out.write(wrapper.getContents());
             }
 
             out.flush();
         } else {
-            LOGGER.finest("Not minifying. URL/UserAgent not allowed.");
+            LOGGER.trace("Not minifying. URL/UserAgent not allowed.");
             chain.doFilter(req, resp);
         }
     }
@@ -200,8 +202,8 @@ public class YUIMinFilter extends AbstractFilter {
 
         this.charset = this.filterConfig.getInitParameter(INIT_PARAM_CHARSET) == null ? this.charset : this.filterConfig.getInitParameter(INIT_PARAM_CHARSET);
 
-        if(!Charset.isSupported(this.charset)){
-            LOGGER.config(buildLoggerMessage("Charset ",charset," not supported. Using default: ",DEFAULT_CHARSET));
+        if (!Charset.isSupported(this.charset)) {
+            LOGGER.debug("Charset {}  not supported. Using default: {}", charset, DEFAULT_CHARSET);
             this.charset = DEFAULT_CHARSET;
         }
 
@@ -213,13 +215,12 @@ public class YUIMinFilter extends AbstractFilter {
 
         this.disableOptimizations = readBoolean(filterConfig.getInitParameter(INIT_PARAM_DISABLE_OPTIMIZATIONS), this.disableOptimizations);
 
-        LOGGER.config(buildLoggerMessage("Filter initialized with: {",
-                "   " , INIT_PARAM_LINE_BREAK , ":" , String.valueOf(lineBreak) , "," ,
-                "   " , INIT_PARAM_NO_MUNGE , ":" , String.valueOf(noMunge) + "," ,
-                "   " , INIT_PARAM_PRESERVE_SEMI , ":" , String.valueOf(preserveSemi) , "," +
-                "   " , INIT_PARAM_DISABLE_OPTIMIZATIONS , ":" , String.valueOf(disableOptimizations) , ",",
-                "   " , INIT_PARAM_CHARSET , ":" , charset , "," ,
-                "}"));
+        LOGGER.debug("Filter initialized with: {\n\t{}:{},\n\t{}:{},\n\t{}:{}\n\t{}:{},\n\t{}:{}\n}", new Object[]{
+            INIT_PARAM_LINE_BREAK, String.valueOf(lineBreak),
+            INIT_PARAM_NO_MUNGE, String.valueOf(noMunge),
+            INIT_PARAM_PRESERVE_SEMI, String.valueOf(preserveSemi),
+            INIT_PARAM_DISABLE_OPTIMIZATIONS, String.valueOf(disableOptimizations),
+            INIT_PARAM_CHARSET, charset});
 
     }
 
