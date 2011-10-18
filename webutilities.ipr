@@ -1,228 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AnalysisProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
-    <profiles>
-      <profile version="1.0" is_locked="false">
-        <option name="myName" value="Project Default" />
-        <option name="myLocal" value="false" />
-        <coding_rule class="AbstractClassNameCheck" level="WARNING" enabled="false" />
-        <coding_rule class="AnnotationUseStyleCheck" level="WARNING" enabled="false" />
-        <coding_rule class="AnonInnerLengthCheck" level="WARNING" enabled="true" />
-        <coding_rule class="ArrayTrailingCommaCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ArrayTypeStyleCheck" level="INFO" enabled="false" />
-        <coding_rule class="AvoidInlineConditionalsCheck" level="INFO" enabled="false" />
-        <coding_rule class="AvoidNestedBlocksCheck" level="WARNING" enabled="false" />
-        <coding_rule class="AvoidStarImportCheck" level="INFO" enabled="false" />
-        <coding_rule class="AvoidStaticImportCheck" level="WARNING" enabled="false" />
-        <coding_rule class="BooleanExpressionComplexityCheck" level="WARNING" enabled="true" />
-        <coding_rule class="ClassDataAbstractionCouplingCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ClassFanOutComplexityCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ClassTypeParameterNameCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ConstantNameCheck" level="INFO" enabled="true" />
-        <coding_rule class="CovariantEqualsCheck" level="ERROR" enabled="false" />
-        <coding_rule class="CyclomaticComplexityCheck" level="WARNING" enabled="true" />
-        <coding_rule class="DeclarationOrderCheck" level="INFO" enabled="false" />
-        <coding_rule class="DefaultComesLastCheck" level="WARNING" enabled="true" />
-        <coding_rule class="DescendantTokenCheck" level="WARNING" enabled="false" />
-        <coding_rule class="DesignForExtensionCheck" level="INFO" enabled="true" />
-        <coding_rule class="DoubleCheckedLockingCheck" level="WARNING" enabled="true" />
-        <coding_rule class="EmptyBlockCheck" level="WARNING" enabled="false" />
-        <coding_rule class="EmptyForInitializerPadCheck" level="INFO" enabled="false" />
-        <coding_rule class="EmptyForIteratorPadCheck" level="INFO" enabled="false" />
-        <coding_rule class="EmptyStatementCheck" level="INFO" enabled="true" />
-        <coding_rule class="EqualsAvoidNullCheck" level="WARNING" enabled="false" />
-        <coding_rule class="EqualsHashCodeCheck" level="ERROR" enabled="true" />
-        <coding_rule class="ExecutableStatementCountCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ExplicitInitializationCheck" level="WARNING" enabled="false" />
-        <coding_rule class="FallThroughCheck" level="WARNING" enabled="false" />
-        <coding_rule class="FileLengthCheck" level="WARNING" enabled="false" />
-        <coding_rule class="FileTabCharacterCheck" level="WARNING" enabled="false" />
-        <coding_rule class="FinalClassCheck" level="WARNING" enabled="true" />
-        <coding_rule class="FinalLocalVariableCheck" level="INFO" enabled="false" />
-        <coding_rule class="FinalParametersCheck" level="INFO" enabled="false" />
-        <coding_rule class="GenericWhitespaceCheck" level="WARNING" enabled="false" />
-        <coding_rule class="HeaderCheck" level="WARNING" enabled="false" />
-        <coding_rule class="HiddenFieldCheck" level="WARNING" enabled="true" />
-        <coding_rule class="HideUtilityClassConstructorCheck" level="WARNING" enabled="true" />
-        <coding_rule class="IllegalCatchCheck" level="WARNING" enabled="false" />
-        <coding_rule class="IllegalImportCheck" level="WARNING" enabled="false" />
-        <coding_rule class="IllegalInstantiationCheck" level="WARNING" enabled="false" />
-        <coding_rule class="IllegalThrowsCheck" level="WARNING" enabled="true" />
-        <coding_rule class="IllegalTokenCheck" level="WARNING" enabled="false" />
-        <coding_rule class="IllegalTokenTextCheck" level="WARNING" enabled="false" />
-        <coding_rule class="IllegalTypeCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ImportControlCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ImportOrderCheck" level="INFO" enabled="false" />
-        <coding_rule class="IndentationCheck" level="INFO" enabled="false" />
-        <coding_rule class="InnerAssignmentCheck" level="WARNING" enabled="true" />
-        <coding_rule class="InterfaceIsTypeCheck" level="WARNING" enabled="false" />
-        <coding_rule class="JUnitTestCaseCheck" level="WARNING" enabled="false" />
-        <coding_rule class="JavaNCSSCheck" level="WARNING" enabled="false" />
-        <coding_rule class="JavadocMethodCheck" level="WARNING" enabled="false" />
-        <coding_rule class="JavadocPackageCheck" level="WARNING" enabled="false" />
-        <coding_rule class="JavadocStyleCheck" level="WARNING" enabled="false" />
-        <coding_rule class="JavadocTypeCheck" level="WARNING" enabled="false" />
-        <coding_rule class="JavadocVariableCheck" level="WARNING" enabled="false" />
-        <coding_rule class="LeftCurlyCheck" level="INFO" enabled="false" />
-        <coding_rule class="LineLengthCheck" level="WARNING" enabled="false" />
-        <coding_rule class="LocalFinalVariableNameCheck" level="WARNING" enabled="true" />
-        <coding_rule class="LocalVariableNameCheck" level="WARNING" enabled="true" />
-        <coding_rule class="MagicNumberCheck" level="INFO" enabled="true" />
-        <coding_rule class="MemberNameCheck" level="WARNING" enabled="true" />
-        <coding_rule class="MethodLengthCheck" level="WARNING" enabled="false" />
-        <coding_rule class="MethodNameCheck" level="WARNING" enabled="true" />
-        <coding_rule class="MethodParamPadCheck" level="WARNING" enabled="false" />
-        <coding_rule class="MethodTypeParameterNameCheck" level="WARNING" enabled="false" />
-        <coding_rule class="MissingCtorCheck" level="WARNING" enabled="false" />
-        <coding_rule class="MissingDeprecatedCheck" level="WARNING" enabled="false" />
-        <coding_rule class="MissingOverrideCheck" level="WARNING" enabled="false" />
-        <coding_rule class="MissingSwitchDefaultCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ModifiedControlVariableCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ModifierOrderCheck" level="INFO" enabled="true" />
-        <coding_rule class="MultipleStringLiteralsCheck" level="WARNING" enabled="false" />
-        <coding_rule class="MultipleVariableDeclarationsCheck" level="WARNING" enabled="false" />
-        <coding_rule class="MutableExceptionCheck" level="WARNING" enabled="false" />
-        <coding_rule class="NPathComplexityCheck" level="WARNING" enabled="false" />
-        <coding_rule class="NeedBracesCheck" level="INFO" enabled="false" />
-        <coding_rule class="NestedIfDepthCheck" level="WARNING" enabled="false" />
-        <coding_rule class="NestedTryDepthCheck" level="WARNING" enabled="false" />
-        <coding_rule class="NewlineAtEndOfFileCheck" level="INFO" enabled="false" />
-        <coding_rule class="NoCloneCheck" level="WARNING" enabled="false" />
-        <coding_rule class="NoFinalizerCheck" level="WARNING" enabled="false" />
-        <coding_rule class="NoWhitespaceAfterCheck" level="INFO" enabled="false" />
-        <coding_rule class="NoWhitespaceBeforeCheck" level="INFO" enabled="false" />
-        <coding_rule class="OperatorWrapCheck" level="INFO" enabled="false" />
-        <coding_rule class="OuterTypeNumberCheck" level="WARNING" enabled="false" />
-        <coding_rule class="PackageAnnotationCheck" level="WARNING" enabled="false" />
-        <coding_rule class="PackageDeclarationCheck" level="WARNING" enabled="false" />
-        <coding_rule class="PackageNameCheck" level="WARNING" enabled="true" />
-        <coding_rule class="ParameterAssignmentCheck" level="WARNING" enabled="true" />
-        <coding_rule class="ParameterNameCheck" level="WARNING" enabled="true" />
-        <coding_rule class="ParameterNumberCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ParenPadCheck" level="INFO" enabled="false" />
-        <coding_rule class="RedundantImportCheck" level="INFO" enabled="false" />
-        <coding_rule class="RedundantModifierCheck" level="INFO" enabled="true" />
-        <coding_rule class="RedundantThrowsCheck" level="INFO" enabled="true" />
-        <coding_rule class="RegexpCheck" level="WARNING" enabled="false" />
-        <coding_rule class="RegexpHeaderCheck" level="WARNING" enabled="false" />
-        <coding_rule class="RegexpMultilineCheck" level="WARNING" enabled="false">
-          <param name="message" value="TODO item found" />
-          <param name="minimum" value="0" />
-          <param name="maximum" value="0" />
-          <param name="format" value="TODO" />
-          <param name="ignoreCase" value="true" />
-        </coding_rule>
-        <coding_rule class="RegexpSinglelineCheck" level="WARNING" enabled="false">
-          <param name="message" value="TODO item found" />
-          <param name="minimum" value="0" />
-          <param name="maximum" value="0" />
-          <param name="format" value="TODO" />
-          <param name="ignoreCase" value="true" />
-        </coding_rule>
-        <coding_rule class="RegexpSinglelineJavaCheck" level="WARNING" enabled="false">
-          <param name="message" value="TODO item found" />
-          <param name="minimum" value="0" />
-          <param name="maximum" value="0" />
-          <param name="ignoreComments" value="false" />
-          <param name="format" value="TODO" />
-          <param name="ignoreCase" value="true" />
-        </coding_rule>
-        <coding_rule class="RequireThisCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ReturnCountCheck" level="WARNING" enabled="false" />
-        <coding_rule class="RightCurlyCheck" level="INFO" enabled="false" />
-        <coding_rule class="SimplifyBooleanExpressionCheck" level="WARNING" enabled="true" />
-        <coding_rule class="SimplifyBooleanReturnCheck" level="WARNING" enabled="true" />
-        <coding_rule class="StaticVariableNameCheck" level="WARNING" enabled="true" />
-        <coding_rule class="StrictDuplicateCodeCheck" level="WARNING" enabled="false" />
-        <coding_rule class="StringLiteralEqualityCheck" level="WARNING" enabled="true" />
-        <coding_rule class="SuperCloneCheck" level="WARNING" enabled="false" />
-        <coding_rule class="SuperFinalizeCheck" level="WARNING" enabled="false" />
-        <coding_rule class="SuppressWarningsCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ThrowsCountCheck" level="WARNING" enabled="false" />
-        <coding_rule class="TodoCommentCheck" level="INFO" enabled="false" />
-        <coding_rule class="TrailingCommentCheck" level="INFO" enabled="false" />
-        <coding_rule class="TranslationCheck" level="INFO" enabled="false" />
-        <coding_rule class="TypeNameCheck" level="WARNING" enabled="false" />
-        <coding_rule class="TypecastParenPadCheck" level="WARNING" enabled="false" />
-        <coding_rule class="UncommentedMainCheck" level="WARNING" enabled="false" />
-        <coding_rule class="UnnecessaryParenthesesCheck" level="INFO" enabled="false" />
-        <coding_rule class="UnusedImportsCheck" level="INFO" enabled="true" />
-        <coding_rule class="UpperEllCheck" level="INFO" enabled="false" />
-        <coding_rule class="VisibilityModifierCheck" level="WARNING" enabled="true" />
-        <coding_rule class="WhitespaceAfterCheck" level="INFO" enabled="false" />
-        <coding_rule class="WhitespaceAroundCheck" level="INFO" enabled="false" />
-        <coding_rule class="WriteTagCheck" level="INFO" enabled="false" />
-      </profile>
-    </profiles>
-    <list size="0" />
-  </component>
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
-    <buildFile url="file://$PROJECT_DIR$/build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="2" />
-      <properties />
-    </buildFile>
   </component>
-  <component name="CheckstyleConfigurable">
-    <option name="suppFilterFilename" value="" />
-    <option name="suppCommentFilter" value="false" />
-    <option name="offComment" value="CHECKSTYLE\:OFF" />
-    <option name="onComment" value="CHECKSTYLE\:ON" />
-    <option name="checkFormat" value=".*" />
-    <option name="messageFormat" value="" />
-    <option name="checkCPP" value="true" />
-    <option name="checkC" value="true" />
-    <option name="suppNearbyCommentFilter" value="false" />
-    <option name="snCommentFormat" value="SUPPRESS CHECKSTYLE (\w+)" />
-    <option name="snCheckFormat" value="$1" />
-    <option name="snMessageFormat" value="" />
-    <option name="snInfluenceFormat" value="0" />
-    <option name="snCheckCPP" value="true" />
-    <option name="snCheckC" value="true" />
-  </component>
-  <component name="ClearCaseSharedConfig">
-    <option name="myUseUcmModel" value="true" />
+  <component name="CodeStyleManager">
+    <option name="USE_DEFAULT_CODE_STYLE_SCHEME" value="true" />
+    <option name="CODE_STYLE_SCHEME" value="" />
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <resourceExtensions>
-      <entry name=".+\.(properties|xml|html|dtd|tld)" />
-      <entry name=".+\.(gif|png|jpeg|jpg)" />
-    </resourceExtensions>
+    <resourceExtensions />
     <wildcardResourcePatterns>
-      <entry name="?*.properties" />
-      <entry name="?*.xml" />
-      <entry name="?*.gif" />
-      <entry name="?*.png" />
-      <entry name="?*.jpeg" />
-      <entry name="?*.jpg" />
-      <entry name="?*.html" />
-      <entry name="?*.dtd" />
-      <entry name="?*.tld" />
-      <entry name="?*.ftl" />
-      <entry name="/**/resources/**/*.*" />
-      <entry name="?*.conf" />
+      <entry name="!?*.java" />
     </wildcardResourcePatterns>
     <annotationProcessing enabled="false" useClasspath="true" />
   </component>
-  <component name="CopyrightManager" default="Apache2">
-    <copyright>
-      <option name="notice" value="Copyright 2010-2011 Rajendra Patil                                            &#10;                                                                         &#10; Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);         &#10; you may not use this file except in compliance with the License.        &#10; You may obtain a copy of the License at                                 &#10;                                                                         &#10;     http://www.apache.org/licenses/LICENSE-2.0                          &#10;                                                                         &#10; Unless required by applicable law or agreed to in writing, software     &#10; distributed under the License is distributed on an &quot;AS IS&quot; BASIS,       &#10; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#10; See the License for the specific language governing permissions and     &#10; limitations under the License." />
-      <option name="keyword" value="Copyright" />
-      <option name="allowReplaceKeyword" value="2010" />
-      <option name="myName" value="Apache2" />
-      <option name="myLocal" value="true" />
-    </copyright>
-    <module2copyright>
-      <element module="All" copyright="Apache2" />
-    </module2copyright>
+  <component name="CopyrightManager" default="">
+    <module2copyright />
   </component>
   <component name="DependencyValidationManager">
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
@@ -231,23 +25,55 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
-  <component name="IdProvider" IDEtalkID="1D53ACE0DFBDBF673B64BE17C4F6670A" />
+  <component name="ExportToHTMLSettings">
+    <option name="PRINT_LINE_NUMBERS" value="false" />
+    <option name="OPEN_IN_BROWSER" value="false" />
+    <option name="OUTPUT_DIRECTORY" />
+  </component>
+  <component name="ImportConfiguration">
+    <option name="VENDOR" />
+    <option name="RELEASE_TAG" />
+    <option name="LOG_MESSAGE" />
+    <option name="CHECKOUT_AFTER_IMPORT" value="true" />
+  </component>
+  <component name="IvyIDEA.ProjectSettings">
+    <option name="propertiesSettings">
+      <PropertiesSettings />
+    </option>
+  </component>
+  <component name="JUnitProjectSettings">
+    <option name="TEST_RUNNER" value="UI" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.6" />
+  </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
     <option name="OPTION_SCOPE" value="protected" />
-    <option name="OPTION_HIERARCHY" value="true" />
-    <option name="OPTION_NAVIGATOR" value="true" />
-    <option name="OPTION_INDEX" value="true" />
-    <option name="OPTION_SEPARATE_INDEX" value="true" />
+    <option name="OPTION_HIERARCHY" value="false" />
+    <option name="OPTION_NAVIGATOR" value="false" />
+    <option name="OPTION_INDEX" value="false" />
+    <option name="OPTION_SEPARATE_INDEX" value="false" />
     <option name="OPTION_DOCUMENT_TAG_USE" value="false" />
     <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="false" />
     <option name="OPTION_DOCUMENT_TAG_VERSION" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_DEPRECATED" value="true" />
-    <option name="OPTION_DEPRECATED_LIST" value="true" />
-    <option name="OTHER_OPTIONS" value="" />
+    <option name="OPTION_DOCUMENT_TAG_DEPRECATED" value="false" />
+    <option name="OPTION_DEPRECATED_LIST" value="false" />
+    <option name="OTHER_OPTIONS" />
     <option name="HEAP_SIZE" />
     <option name="LOCALE" />
-    <option name="OPEN_IN_BROWSER" value="true" />
+    <option name="OPEN_IN_BROWSER" value="false" />
+  </component>
+  <component name="JikesSettings">
+    <option name="DEBUGGING_INFO" value="true" />
+    <option name="DEPRECATION" value="true" />
+    <option name="GENERATE_NO_WARNINGS" value="false" />
+    <option name="GENERATE_MAKE_FILE_DEPENDENCIES" value="false" />
+    <option name="DO_FULL_DEPENDENCE_CHECK" value="false" />
+    <option name="IS_INCREMENTAL_MODE" value="false" />
+    <option name="IS_EMACS_ERRORS_MODE" value="true" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
+    <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="MavenBuildProjectComponent">
     <option name="mavenExecutable" value="" />
@@ -274,6 +100,13 @@
     <option name="Update Snapshots" value="false" />
     <option name="Skip Tests" value="false" />
     <pom-list />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
   </component>
   <component name="Palette2">
     <group name="Swing">
@@ -397,20 +230,12 @@
     </group>
   </component>
   <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/webutilities.iml" filepath="$PROJECT_DIR$/webutilities.iml" />
-    </modules>
+    <modules />
   </component>
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/build/classes" />
-  </component>
-  <component name="SuppressionsComponent">
-    <option name="suppCommentEnabled" value="false" />
-    <option name="suppComment" value="SUPPRESS CODING RULES" />
-  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" />
   <component name="SvnBranchConfigurationManager">
     <option name="myConfigurationMap">
       <map>
@@ -448,16 +273,226 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />
   </component>
-  <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
-    <library name="jar-libs">
+    <library name="Maven: args4j:args4j:2.0.12">
       <CLASSES>
-        <root url="file://$PROJECT_DIR$/lib" />
-        <root url="file://$PROJECT_DIR$/lib" />
+        <root url="jar://$MAVEN_REPOSITORY$/args4j/args4j/2.0.12/args4j-2.0.12.jar!/" />
       </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-      <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/args4j/args4j/2.0.12/args4j-2.0.12-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/args4j/args4j/2.0.12/args4j-2.0.12-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: ch.qos.logback:logback-classic:0.9.30">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/0.9.30/logback-classic-0.9.30.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/0.9.30/logback-classic-0.9.30-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/0.9.30/logback-classic-0.9.30-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: ch.qos.logback:logback-core:0.9.30">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/0.9.30/logback-core-0.9.30.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/0.9.30/logback-core-0.9.30-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/0.9.30/logback-core-0.9.30-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.google.code.findbugs:jsr305:1.3.9">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.google.guava:guava:r09">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/r09/guava-r09.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/r09/guava-r09-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/r09/guava-r09-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.google.javascript:closure-compiler:r1459">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/javascript/closure-compiler/r1459/closure-compiler-r1459.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/javascript/closure-compiler/r1459/closure-compiler-r1459-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/javascript/closure-compiler/r1459/closure-compiler-r1459-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.google.protobuf:protobuf-java:2.4.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/2.4.1/protobuf-java-2.4.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/2.4.1/protobuf-java-2.4.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/2.4.1/protobuf-java-2.4.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.googlecode.jarjar:jarjar:1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/jarjar/jarjar/1.1/jarjar-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/jarjar/jarjar/1.1/jarjar-1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/jarjar/jarjar/1.1/jarjar-1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.mockrunner:mockrunner:0.4.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/mockrunner/mockrunner/0.4.1/mockrunner-0.4.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/mockrunner/mockrunner/0.4.1/mockrunner-0.4.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/mockrunner/mockrunner/0.4.1/mockrunner-0.4.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.yahoo.platform.yui:yuicompressor:2.4.6">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/yahoo/platform/yui/yuicompressor/2.4.6/yuicompressor-2.4.6.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/yahoo/platform/yui/yuicompressor/2.4.6/yuicompressor-2.4.6-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/yahoo/platform/yui/yuicompressor/2.4.6/yuicompressor-2.4.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-beanutils:commons-beanutils:1.8.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-logging:commons-logging:1.1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.servlet:jsp-api:2.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/jsp-api/2.0/jsp-api-2.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/jsp-api/2.0/jsp-api-2.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/jsp-api/2.0/jsp-api-2.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.servlet:servlet-api:2.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.4/servlet-api-2.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.4/servlet-api-2.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: junit:junit:4.8.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.8.2/junit-4.8.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.8.2/junit-4.8.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.8.2/junit-4.8.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.ant:ant-launcher:1.8.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.8.1/ant-launcher-1.8.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.8.1/ant-launcher-1.8.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.8.1/ant-launcher-1.8.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.ant:ant:1.8.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.8.1/ant-1.8.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.8.1/ant-1.8.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.8.1/ant-1.8.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.json:json:20090211">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20090211/json-20090211.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20090211/json-20090211-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20090211/json-20090211-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.slf4j:slf4j-api:1.6.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.6.2/slf4j-api-1.6.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.6.2/slf4j-api-1.6.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.6.2/slf4j-api-1.6.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: rhino:js:1.6R7">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/rhino/js/1.6R7/js-1.6R7.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/rhino/js/1.6R7/js-1.6R7-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/rhino/js/1.6R7/js-1.6R7-sources.jar!/" />
+      </SOURCES>
     </library>
   </component>
 </project>
