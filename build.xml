@@ -21,7 +21,7 @@
         <delete dir="${build.dir}" quiet="true"/>
     </target>
 
-    <target name="init" depends="clean">
+    <target name="init">
         <mkdir dir="${build.dir}"/>
     </target>
 
