@@ -24,7 +24,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.googlecode.webutilities</groupId>
     <artifactId>webutilities</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>webutilities</name>
@@ -40,9 +40,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://webutilities.googlecode.com/svn/tags/webutilities-0.0.5</connection>
-        <developerConnection>scm:svn:https://webutilities.googlecode.com/svn/tags/webutilities-0.0.5</developerConnection>
-        <url>https://webutilities.googlecode.com/svn/tags/webutilities-0.0.5</url>
+        <connection>scm:svn:http://webutilities.googlecode.com/svn/trunk</connection>
+        <developerConnection>scm:svn:https://webutilities.googlecode.com/svn/trunk</developerConnection>
+        <url>https://webutilities.googlecode.com/svn/trunk</url>
     </scm>
     <issueManagement>
         <system>Google Code</system>
