@@ -93,7 +93,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.2</version>
+            <version>1.6.4</version>
         </dependency>
         <dependency>
             <groupId>com.yahoo.platform.yui</groupId>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler</artifactId>
-            <version>r1459</version>
+            <version>r1592</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
